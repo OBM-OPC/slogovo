@@ -86,27 +86,37 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
     // Try Supabase first
     const fromSupabase = await loadProgressFromSupabase();
 
-    if (fromSupabase) {
-      console.log("[Progress] Loaded from Supabase");
-      set({ progress: fromSupabase, initialized: true, userId });
-      await saveProgressLocal(fromSupabase);
-      return;
-    }
-
-    // Fallback to local cache
+    // Also check localStorage
     const fromLocal = await loadProgressLocal(userId);
 
-    if (fromLocal) {
+    // Merge: prefer Supabase, but keep local if Supabase is empty
+    let finalProgress: UserProgress | null = null;
+
+    if (fromSupabase && fromLocal) {
+      // Both exist — use whichever has more completed lessons
+      if (fromSupabase.completedLessons.length >= fromLocal.completedLessons.length) {
+        console.log("[Progress] Using Supabase data (more complete)");
+        finalProgress = fromSupabase;
+      } else {
+        console.log("[Progress] Using local data (more complete), uploading to Supabase...");
+        finalProgress = fromLocal;
+        await saveProgressToSupabase(fromLocal);
+      }
+    } else if (fromSupabase) {
+      console.log("[Progress] Loaded from Supabase");
+      finalProgress = fromSupabase;
+    } else if (fromLocal) {
       console.log("[Progress] Loaded from local cache, uploading to Supabase...");
+      finalProgress = fromLocal;
       await saveProgressToSupabase(fromLocal);
-      set({ progress: fromLocal, initialized: true, userId });
-      return;
+    } else {
+      console.log("[Progress] Creating fresh progress");
+      finalProgress = await createInitialProgress(userId);
     }
 
-    // No data anywhere — create fresh
-    console.log("[Progress] Creating fresh progress");
-    const fresh = await createInitialProgress(userId);
-    set({ progress: fresh, initialized: true, userId });
+    await saveProgressLocal(finalProgress);
+    set({ progress: finalProgress, initialized: true, userId });
+    console.log("[Progress] Init complete. completedLessons:", finalProgress.completedLessons.length);
   },
 
   syncNow: async () => {
