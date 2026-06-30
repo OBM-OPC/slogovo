@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slogovo App Sitemap</title>
+  <style>
+    body {
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #F5F7FA;
+      margin: 0;
+      padding: 40px 20px;
+      color: #1A1A2E;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 24px;
+      padding: 40px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+    }
+    h1 {
+      text-align: center;
+      color: #009B77;
+      margin-bottom: 8px;
+      font-size: 28px;
+    }
+    .subtitle {
+      text-align: center;
+      color: #6B7280;
+      margin-bottom: 32px;
+      font-size: 14px;
+    }
+    svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .legend {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-top: 24px;
+      font-size: 13px;
+      flex-wrap: wrap;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .legend-color {
+      width: 14px;
+      height: 14px;
+      border-radius: 4px;
+      border: 1px solid rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Slogovo App Sitemap</h1>
+    <p class="subtitle">Visuelle Struktur der Lern-App (A1/A2 Bulgarisch)</p>
+
+    <svg viewBox="0 0 1200 900" xmlns="http://www.w3.org/2000/svg">
+      <!-- Definitions -->
+      <defs>
+        <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+          <path d="M0,0 L0,6 L9,3 z" fill="#9CA3AF"/>
+        </marker>
+      </defs>
+
+      <!-- Background groups -->
+      <rect x="20" y="180" width="360" height="680" rx="16" fill="#F0FDFA" stroke="#E6F7F3" stroke-width="2"/>
+      <text x="200" y="210" text-anchor="middle" font-size="14" font-weight="600" fill="#007C5F">Marketing / Public</text>
+
+      <rect x="420" y="180" width="360" height="680" rx="16" fill="#FFFBEB" stroke="#FEF3C7" stroke-width="2"/>
+      <text x="600" y="210" text-anchor="middle" font-size="14" font-weight="600" fill="#B45309">Auth (Supabase)</text>
+
+      <rect x="820" y="180" width="360" height="680" rx="16" fill="#ECFDF5" stroke="#D1FAE5" stroke-width="2"/>
+      <text x="1000" y="210" text-anchor="middle" font-size="14" font-weight="600" fill="#047857">Lernbereich (App)</text>
+
+      <!-- Root node -->
+      <rect x="500" y="40" width="200" height="60" rx="12" fill="#009B77" stroke="#007C5F" stroke-width="2"/>
+      <text x="600" y="75" text-anchor="middle" font-size="16" font-weight="700" fill="white">Slogovo App</text>
+
+      <!-- Marketing / Public -->
+      <rect x="80" y="260" width="240" height="50" rx="10" fill="white" stroke="#009B77" stroke-width="2"/>
+      <text x="200" y="290" text-anchor="middle" font-size="14" font-weight="600" fill="#1A1A2E">/ (Landing Page)</text>
+
+      <rect x="80" y="340" width="240" height="50" rx="10" fill="white" stroke="#009B77" stroke-width="2"/>
+      <text x="200" y="369" text-anchor="middle" font-size="14" font-weight="600" fill="#1A1A2E">Features / Hero</text>
+
+      <rect x="80" y="420" width="240" height="50" rx="10" fill="white" stroke="#009B77" stroke-width="2"/>
+      <text x="200" y="449" text-anchor="middle" font-size="14" font-weight="600" fill="#1A1A2E">CTA: Registrieren</text>
+
+      <!-- Auth -->
+      <rect x="480" y="260" width="240" height="50" rx="10" fill="white" stroke="#D62612" stroke-width="2"/>
+      <text x="600" y="290" text-anchor="middle" font-size="14" font-weight="600" fill="#1A1A2E">/login</text>
+
+      <rect x="480" y="340" width="240" height="50" rx="10" fill="white" stroke="#D62612" stroke-width="2"/>
+      <text x="600" y="369" text-anchor="middle" font-size="14" font-weight="600" fill="#1A1A2E">/register</text>
+
+      <rect x="480" y="420" width="240" height="50" rx="10" fill="white" stroke="#D62612" stroke-width="2"/>
+      <text x="600" y="449" text-anchor="middle" font-size="14" font-weight="600" fill="#1A1A2E">/forgot-password</text>
+
+      <rect x="480" y="500" width="240" height="50" rx="10" fill="white" stroke="#D62612" stroke-width="2"/>
+      <text x="600" y="529" text-anchor="middle" font-size="14" font-weight="600" fill="#1A1A2E">/reset-password</text>
+
+      <rect x="480" y="580" width="240" height="50" rx="10" fill="#FEF2F2" stroke="#D62612" stroke-width="2"/>
+      <text x="600" y="609" text-anchor="middle" font-size="14" font-weight="600" fill="#1A1A2E">/dashboard</text>
+
+      <!-- Auth API -->
+      <rect x="480" y="700" width="240" height="40" rx="8" fill="#FFF7ED" stroke="#F97316" stroke-width="1.5"/>
+      <text x="600" y="725" text-anchor="middle" font-size="12" fill="#7C2D12">API: /api/auth/*</text>
+
+      <!-- Learn area -->
+      <rect x="880" y="260" width="240" height="50" rx="10" fill="white" stroke="#10B981" stroke-width="2"/>
+      <text x="1000" y="290" text-anchor="middle" font-size="14" font-weight="600" fill="#1A1A2E">/kurs</text>
+
+      <rect x="920" y="320" width="200" height="36" rx="8" fill="#F0FDFA" stroke="#99DFD0" stroke-width="1.5"/>
+      <text x="1020" y="343" text-anchor="middle" font-size="12" fill="#065F46">A1 / A2 Module</text>
+
+      <rect x="920" y="370" width="200" height="36" rx="8" fill="#F0FDFA" stroke="#99DFD0" stroke-width="1.5"/>
+      <text x="1020" y="393" text-anchor="middle" font-size="12" fill="#065F46">60 Lektionen</text>
+
+      <rect x="880" y="440" width="240" height="50" rx="10" fill="white" stroke="#10B981" stroke-width="2"/>
+      <text x="1000" y="470" text-anchor="middle" font-size="14" font-weight="600" fill="#1A1A2E">/kurs/[modul]/[lektion]</text>
+
+      <rect x="920" y="500" width="200" height="36" rx="8" fill="#F0FDFA" stroke="#99DFD0" stroke-width="1.5"/>
+      <text x="1020" y="523" text-anchor="middle" font-size="12" fill="#065F46">Lektion + Übungen</text>
+
+      <rect x="880" y="580" width="240" height="50" rx="10" fill="white" stroke="#10B981" stroke-width="2"/>
+      <text x="1000" y="610" text-anchor="middle" font-size="14" font-weight="600" fill="#1A1A2E">/vokabeln</text>
+
+      <rect x="920" y="640" width="200" height="36" rx="8" fill="#F0FDFA" stroke="#99DFD0" stroke-width="1.5"/>
+      <text x="1020" y="663" text-anchor="middle" font-size="12" fill="#065F46">Kategorieübersicht</text>
+
+      <rect x="880" y="710" width="240" height="50" rx="10" fill="white" stroke="#10B981" stroke-width="2"/>
+      <text x="1000" y="740" text-anchor="middle" font-size="14" font-weight="600" fill="#1A1A2E">/vokabeln/[kategorie]</text>
+
+      <rect x="880" y="780" width="240" height="50" rx="10" fill="white" stroke="#10B981" stroke-width="2"/>
+      <text x="1000" y="810" text-anchor="middle" font-size="14" font-weight="600" fill="#1A1A2E">/alphabet</text>
+
+      <rect x="120" y="780" width="240" height="50" rx="10" fill="white" stroke="#10B981" stroke-width="2"/>
+      <text x="240" y="810" text-anchor="middle" font-size="14" font-weight="600" fill="#1A1A2E">/grammatik</text>
+
+      <rect x="120" y="840" width="240" height="50" rx="10" fill="white" stroke="#10B981" stroke-width="2"/>
+      <text x="240" y="870" text-anchor="middle" font-size="14" font-weight="600" fill="#1A1A2E">/grammatik/[thema]</text>
+
+      <rect x="480" y="780" width="240" height="50" rx="10" fill="white" stroke="#F59E0B" stroke-width="2"/>
+      <text x="600" y="810" text-anchor="middle" font-size="14" font-weight="600" fill="#1A1A2E">/fortschritt</text>
+
+      <rect x="520" y="840" width="200" height="36" rx="8" fill="#FFFBEB" stroke="#FCD34D" stroke-width="1.5"/>
+      <text x="620" y="863" text-anchor="middle" font-size="12" fill="#92400E">Streak, Achievements</text>
+
+      <!-- Connectors -->
+      <line x1="600" y1="100" x2="600" y2="180" stroke="#9CA3AF" stroke-width="2" marker-end="url(#arrow)"/>
+      <line x1="600" y1="100" x2="200" y2="180" stroke="#9CA3AF" stroke-width="2"/>
+      <line x1="600" y1="100" x2="1000" y2="180" stroke="#9CA3AF" stroke-width="2"/>
+
+      <!-- Landing to Auth -->
+      <path d="M320 370 L470 290" stroke="#9CA3AF" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+      <path d="M320 370 L470 370" stroke="#9CA3AF" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+
+      <!-- Auth to Dashboard -->
+      <line x1="600" y1="390" x2="600" y2="580" stroke="#9CA3AF" stroke-width="2" marker-end="url(#arrow)"/>
+
+      <!-- Dashboard to Learn -->
+      <path d="M720 605 L870 290" stroke="#10B981" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+      <path d="M720 605 L870 465" stroke="#10B981" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+      <path d="M720 605 L870 610" stroke="#10B981" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+      <path d="M720 605 L370 805" stroke="#10B981" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+
+      <!-- Course to Lessons -->
+      <line x1="1000" y1="310" x2="1000" y2="440" stroke="#9CA3AF" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+      <!-- Vocab to Category -->
+      <line x1="1000" y1="630" x2="1000" y2="710" stroke="#9CA3AF" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+      <!-- Grammar to Topics -->
+      <line x1="240" y1="830" x2="240" y2="840" stroke="#9CA3AF" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+      <!-- Auth to API -->
+      <line x1="600" y1="630" x2="600" y2="700" stroke="#F97316" stroke-width="1.5" marker-end="url(#arrow)"/>
+    </svg>
+
+    <div class="legend">
+      <div class="legend-item"><div class="legend-color" style="background:#009B77"></div>Marketing / Public</div>
+      <div class="legend-item"><div class="legend-color" style="background:#D62612"></div>Authentifizierung</div>
+      <div class="legend-item"><div class="legend-color" style="background:#10B981"></div>Lerninhalt</div>
+      <div class="legend-item"><div class="legend-color" style="background:#F59E0B"></div>Fortschritt / Gamification</div>
+    </div>
+  </div>
+</body>
+</html>

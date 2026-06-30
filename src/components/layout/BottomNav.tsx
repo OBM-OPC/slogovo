@@ -2,14 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpen, GraduationCap, Target, Settings } from "lucide-react";
+import { BookOpen, User, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { href: "/", label: "Kurs", icon: BookOpen },
-  { href: "/vokabeln/", label: "Üben", icon: GraduationCap },
-  { href: "/fortschritt/", label: "Fortschritt", icon: Target },
-  { href: "/einstellungen/", label: "Einstellungen", icon: Settings },
+  { href: "/lernen", label: "Lernen", icon: BookOpen },
+  { href: "/profil", label: "Profil", icon: User },
+  { href: "/einstellungen", label: "Einstellungen", icon: Settings },
 ];
 
 export function BottomNav() {
@@ -20,7 +19,7 @@ export function BottomNav() {
       <ul className="mx-auto flex max-w-md items-center justify-around px-2 py-2">
         {navItems.map((item) => {
           const Icon = item.icon;
-          const isActive = pathname === item.href || pathname === item.href.slice(0, -1);
+          const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
           return (
             <li key={item.href}>
               <Link

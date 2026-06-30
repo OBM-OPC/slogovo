@@ -67,6 +67,7 @@ export function useAuth() {
     }
 
     await fetchUser();
+    window.location.href = "/lernen";
     return true;
   };
 
