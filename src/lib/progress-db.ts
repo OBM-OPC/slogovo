@@ -48,7 +48,9 @@ export async function clearProgressLocal(userId: string): Promise<void> {
 
 export async function loadProgressFromSupabase(): Promise<UserProgress | null> {
   try {
+    console.log("[Progress] Calling /api/progress/load");
     const response = await fetch("/api/progress/load");
+    console.log("[Progress] /api/progress/load status:", response.status);
     if (!response.ok) {
       if (response.status === 401) {
         console.warn("[Progress] Load: not authenticated");
@@ -59,6 +61,7 @@ export async function loadProgressFromSupabase(): Promise<UserProgress | null> {
     }
 
     const { progress } = await response.json();
+    console.log("[Progress] Loaded:", progress ? "data found" : "no data");
     if (!progress) return null;
 
     return rowToProgress(progress);
@@ -70,12 +73,14 @@ export async function loadProgressFromSupabase(): Promise<UserProgress | null> {
 
 export async function saveProgressToSupabase(progress: UserProgress): Promise<boolean> {
   try {
+    console.log("[Progress] Calling /api/progress/save");
     const response = await fetch("/api/progress/save", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ progress }),
     });
 
+    console.log("[Progress] /api/progress/save status:", response.status);
     if (!response.ok) {
       console.warn("[Progress] Save failed:", response.status);
       return false;

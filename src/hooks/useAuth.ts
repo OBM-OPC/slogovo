@@ -29,19 +29,22 @@ export function useAuth() {
       const response = await fetch("/api/auth/me");
       if (response.ok) {
         const data = await response.json();
+        console.log("[Auth] User loaded:", data.user?.id);
         setState({
           user: data.user,
           isLoading: false,
           isAuthenticated: true,
         });
       } else {
+        console.warn("[Auth] /api/auth/me failed:", response.status);
         setState({
           user: null,
           isLoading: false,
           isAuthenticated: false,
         });
       }
-    } catch {
+    } catch (err) {
+      console.error("[Auth] Error fetching user:", err);
       setState({
         user: null,
         isLoading: false,

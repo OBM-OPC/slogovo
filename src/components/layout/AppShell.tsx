@@ -20,7 +20,9 @@ export function AppShell({ children }: AppShellProps) {
 
   // Initialize progress store once auth is ready
   useEffect(() => {
+    console.log("[AppShell] Auth state:", { isLoading, hasUser: !!user });
     if (!isLoading && user) {
+      console.log("[AppShell] Initializing progress for user:", user.id);
       init(user.id);
     }
   }, [init, user, isLoading]);

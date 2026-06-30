@@ -76,7 +76,10 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
   userId: null,
 
   init: async (userId: string) => {
-    if (get().initialized && get().userId === userId) return;
+    if (get().initialized && get().userId === userId) {
+      console.log("[Progress] Already initialized for", userId);
+      return;
+    }
 
     console.log("[Progress] Init for user:", userId);
 
