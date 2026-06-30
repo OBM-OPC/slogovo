@@ -50,16 +50,17 @@ export async function POST(request: NextRequest) {
 
     const { userId, ...rest } = progressToRow(progress);
 
+    const upsertData = {
+      user_id: userId,
+      ...rest,
+      updated_at: new Date().toISOString(),
+    };
+
+    console.log("[API progress/save] Saving for user:", userId, "data:", upsertData);
+
     const { error } = await supabaseServer
       .from("user_progress")
-      .upsert(
-        {
-          user_id: userId,
-          ...rest,
-          updated_at: new Date().toISOString(),
-        },
-        { onConflict: "user_id" }
-      );
+      .upsert(upsertData, { onConflict: "user_id" });
 
     if (error) {
       console.error("Progress save error:", error);

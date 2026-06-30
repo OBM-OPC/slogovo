@@ -58,6 +58,7 @@ export async function loadProgressFromSupabase(): Promise<UserProgress | null> {
     }
 
     const { progress } = await response.json();
+    console.log("[Progress] Loaded raw data:", progress);
     console.log("[Progress] Loaded:", progress ? "data found" : "no data");
     if (!progress) return null;
 
