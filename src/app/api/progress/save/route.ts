@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { UserProgress } from "@/types";
+
+export const dynamic = "force-dynamic";
 
 function getSupabaseServer() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || "";
@@ -21,7 +24,7 @@ function getSessionFromCookie(request: NextRequest) {
   const sessionCookie = sessionMatch ? decodeURIComponent(sessionMatch[1]) : null;
   if (!sessionCookie) return null;
   try {
-    return JSON.parse(sessionCookie);
+    return JSON.parse(sessionCookie) as { access_token?: string };
   } catch {
     return null;
   }
@@ -41,7 +44,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Ungültige Session" }, { status: 401 });
     }
 
-    const body = await request.json();
+    const body = await request.json() as { progress?: UserProgress };
     const progress = body.progress;
 
     if (!progress || progress.userId !== user.id) {
@@ -49,46 +52,29 @@ export async function POST(request: NextRequest) {
     }
 
     const { userId, ...rest } = progressToRow(progress);
-
-    const upsertData = {
-      user_id: userId,
-      ...rest,
-      updated_at: new Date().toISOString(),
-    };
-
-    console.log("[API progress/save] Saving for user:", userId, "completed_lessons:", upsertData.completed_lessons);
-
-    const { error, data: upsertResult } = await supabaseServer
+    const { error } = await supabaseServer
       .from("user_progress")
-      .upsert(upsertData, { onConflict: "user_id" })
-      .select();
+      .upsert(
+        {
+          user_id: userId,
+          ...rest,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "user_id" }
+      );
 
     if (error) {
-      console.error("[API progress/save] Upsert error:", error);
       return NextResponse.json({ error: "Fehler beim Speichern", details: error.message }, { status: 500 });
     }
 
-    console.log("[API progress/save] Upsert result:", upsertResult);
-
-    // Verify: read back
-    const { data: verifyData, error: verifyError } = await supabaseServer
-      .from("user_progress")
-      .select("completed_lessons")
-      .eq("user_id", userId)
-      .single();
-
-    console.log("[API progress/save] Verify:", verifyData, verifyError);
-
-    return NextResponse.json({ success: true, verified: verifyData }, { status: 200 });
+    return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    console.error("Progress save error:", error);
     return NextResponse.json({ error: "Ein Fehler ist aufgetreten", details: message }, { status: 500 });
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function progressToRow(progress: any) {
+function progressToRow(progress: UserProgress) {
   return {
     userId: progress.userId,
     streak_current: progress.streak?.current ?? 0,

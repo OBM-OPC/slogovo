@@ -2,63 +2,108 @@ import { UserProgress, VocabularyProgress, DailyGoal } from "@/types";
 
 const PROGRESS_KEY = "slogovo-progress-v1";
 
-// ==== localStorage only (reliable, simple) ====
-
-export function saveProgressLocal(progress: UserProgress): void {
-  try {
-    localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress));
-    console.log("[Progress] Saved to localStorage, completedLessons:", progress.completedLessons.length);
-  } catch (error) {
-    console.warn("[Progress] localStorage save failed:", error);
-  }
+function canUseLocalStorage(): boolean {
+  return typeof window !== "undefined" && typeof window.localStorage !== "undefined";
 }
 
-export function loadProgressLocal(): UserProgress | null {
+function normalizeProgress(progress: Partial<UserProgress> & { userId?: string }, userId: string): UserProgress {
+  return {
+    ...createDefaultProgress(userId),
+    ...progress,
+    userId,
+    streak: { ...createDefaultProgress(userId).streak, ...(progress.streak ?? {}) },
+    completedLessons: Array.isArray(progress.completedLessons) ? progress.completedLessons : [],
+    completedModules: Array.isArray(progress.completedModules) ? progress.completedModules : [],
+    vocabularyProgress: progress.vocabularyProgress ?? {},
+    exerciseStats: {
+      ...createDefaultProgress(userId).exerciseStats,
+      ...(progress.exerciseStats ?? {}),
+    },
+    dailyStats: progress.dailyStats ?? {},
+    settings: { ...createDefaultProgress(userId).settings, ...(progress.settings ?? {}) },
+    achievements: Array.isArray(progress.achievements) ? progress.achievements : [],
+  };
+}
+
+function rowToProgress(row: Record<string, unknown> | null, fallbackUserId: string): UserProgress | null {
+  if (!row) return null;
+  const streak = row.streak as Partial<UserProgress["streak"]> | undefined;
+  const userId = String(row.user_id ?? row.userId ?? fallbackUserId);
+  return normalizeProgress(
+    {
+      userId,
+      streak: {
+        current: Number(row.streak_current ?? streak?.current ?? 0),
+        longest: Number(row.streak_longest ?? streak?.longest ?? 0),
+        lastStudyDate: (row.streak_last_study_date ?? streak?.lastStudyDate) as string | undefined,
+      },
+      completedLessons: row.completed_lessons as string[] | undefined,
+      completedModules: row.completed_modules as string[] | undefined,
+      vocabularyProgress: row.vocabulary_progress as UserProgress["vocabularyProgress"] | undefined,
+      exerciseStats: row.exercise_stats as UserProgress["exerciseStats"] | undefined,
+      dailyStats: row.daily_stats as UserProgress["dailyStats"] | undefined,
+      settings: row.settings as UserProgress["settings"] | undefined,
+      achievements: row.achievements as string[] | undefined,
+    },
+    userId
+  );
+}
+
+export function saveProgressLocal(progress: UserProgress): void {
+  if (!canUseLocalStorage()) return;
+  localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress));
+}
+
+export function loadProgressLocal(userId?: string): UserProgress | null {
+  if (!canUseLocalStorage()) return null;
   try {
     const raw = localStorage.getItem(PROGRESS_KEY);
-    if (!raw) {
-      console.log("[Progress] localStorage empty");
-      return null;
-    }
-    const parsed = JSON.parse(raw) as UserProgress;
-    console.log("[Progress] Loaded from localStorage, completedLessons:", parsed.completedLessons.length);
-    return parsed;
-  } catch (error) {
-    console.warn("[Progress] localStorage load failed:", error);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as Partial<UserProgress>;
+    return normalizeProgress(parsed, parsed.userId ?? userId ?? "local-user");
+  } catch {
     return null;
   }
 }
 
 export function clearProgressLocal(): void {
+  if (!canUseLocalStorage()) return;
+  localStorage.removeItem(PROGRESS_KEY);
+}
+
+export async function loadProgressFromSupabase(userId: string): Promise<UserProgress | null> {
   try {
-    localStorage.removeItem(PROGRESS_KEY);
-    console.log("[Progress] localStorage cleared");
+    const response = await fetch("/api/progress/load", { credentials: "include" });
+    if (!response.ok) return null;
+    const data = await response.json();
+    return rowToProgress(data.progress, userId);
   } catch {
-    // ignore
+    return null;
   }
 }
 
-// ==== No-op Supabase functions (for backward compat) ====
-
-export async function loadProgressFromSupabase(): Promise<UserProgress | null> {
-  console.log("[Progress] Supabase load skipped (using localStorage)");
-  return null;
-}
-
-export async function saveProgressToSupabase(): Promise<boolean> {
-  console.log("[Progress] Supabase save skipped (using localStorage)");
-  return true;
+export async function saveProgressToSupabase(progress: UserProgress): Promise<boolean> {
+  try {
+    const response = await fetch("/api/progress/save", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ progress }),
+    });
+    return response.ok;
+  } catch {
+    return false;
+  }
 }
 
 export async function createInitialProgress(userId: string): Promise<UserProgress> {
   const progress = createDefaultProgress(userId);
   saveProgressLocal(progress);
+  await saveProgressToSupabase(progress);
   return progress;
 }
 
-// ==== Helpers ====
-
-function createDefaultProgress(userId: string): UserProgress {
+export function createDefaultProgress(userId: string): UserProgress {
   return {
     userId,
     streak: { current: 0, longest: 0 },

@@ -34,21 +34,19 @@ export function LessonView({ lesson, moduleId, nextLessonId, context }: LessonVi
   const lessonNumber = context?.lessonIndex ?? 0;
   const totalLessons = context?.totalLessons ?? 0;
 
-  const handleExerciseComplete = () => {
-    console.log("[LessonView] Exercise complete:", exerciseIndex + 1, "of", lesson.exercises.length);
+  const markLessonComplete = async () => {
+    if (isCompleted) return;
+    await completeLesson(lesson.lessonId);
+    await addStudyTime(15, lesson.vocabulary.length);
+  };
+
+  const handleExerciseComplete = async () => {
     setExerciseScore((prev) => prev + 1);
     if (exerciseIndex < lesson.exercises.length - 1) {
       setExerciseIndex((prev) => prev + 1);
     } else {
-      console.log("[LessonView] Last exercise done, moving to summary");
       setSection("summary");
-      if (!isCompleted) {
-        console.log("[LessonView] Calling completeLesson:", lesson.lessonId);
-        completeLesson(lesson.lessonId);
-        addStudyTime(15, lesson.vocabulary.length);
-      } else {
-        console.log("[LessonView] Already completed, skipping");
-      }
+      await markLessonComplete();
     }
   };
 
@@ -123,13 +121,10 @@ export function LessonView({ lesson, moduleId, nextLessonId, context }: LessonVi
               </div>
             ))}
           </div>
-          <Button onClick={() => {
+          <Button onClick={async () => {
             if (lesson.exercises.length === 0) {
               setSection("summary");
-              if (!isCompleted) {
-                completeLesson(lesson.lessonId);
-                addStudyTime(15, lesson.vocabulary.length);
-              }
+              await markLessonComplete();
             } else {
               setSection("exercise");
             }
@@ -178,11 +173,7 @@ export function LessonView({ lesson, moduleId, nextLessonId, context }: LessonVi
           <div className="space-y-3">
             {!isCompleted && (
               <Button
-                onClick={() => {
-                  console.log("[LessonView] Manual complete:", lesson.lessonId);
-                  completeLesson(lesson.lessonId);
-                  addStudyTime(15, lesson.vocabulary.length);
-                }}
+                onClick={markLessonComplete}
                 fullWidth
               >
                 Als abgeschlossen markieren

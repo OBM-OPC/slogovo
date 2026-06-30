@@ -9,9 +9,18 @@ import { CheckCircle2, Circle, ArrowLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function ModulePage() {
-  const params = useParams();
-  const moduleId = params.modul as string;
+  const params = useParams<{ modul: string }>();
+  const moduleId = params?.modul;
   const progress = useProgressSafe();
+
+  if (!moduleId) {
+    return (
+      <main className="px-4 py-6">
+        <p className="text-muted">Modul nicht gefunden.</p>
+      </main>
+    );
+  }
+
   const moduleMeta = getModuleById(moduleId);
   const lessons = getLessonsByModule(moduleId);
 

@@ -14,7 +14,7 @@ function ResetPasswordContent() {
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const searchParams = useSearchParams();
-  const token = searchParams.get("token");
+  const token = searchParams?.get("token");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
