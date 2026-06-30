@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { hashPassword } from "@/lib/auth";
+import { supabase } from "@/lib/supabase";
 import { resetPasswordSchema } from "@/lib/validations";
 
 export async function POST(request: NextRequest) {
   try {
-    const { token, password } = await request.json();
+    const body = await request.json();
+
+    const { token, password } = body;
 
     if (!token) {
       return NextResponse.json(
@@ -14,38 +15,44 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const result = resetPasswordSchema.safeParse({ password, confirmPassword: password });
+    const result = resetPasswordSchema.safeParse({
+      password,
+      confirmPassword: password,
+    });
     if (!result.success) {
       return NextResponse.json(
-        { error: result.error.errors[0].message },
+        { error: result.error.issues[0].message },
         { status: 400 }
       );
     }
 
-    const user = await prisma.user.findFirst({
-      where: {
-        resetToken: token,
-        resetTokenExpiry: { gt: new Date() },
+    // Verify the token and update password with Supabase Auth
+    const { error } = await supabase.auth.verifyOtp({
+      token_hash: token,
+      type: "recovery",
+      options: {
+        redirectTo: `${process.env.NEXTAUTH_URL}/login`,
       },
     });
 
-    if (!user) {
+    if (error) {
       return NextResponse.json(
         { error: "Ungültiger oder abgelaufener Token" },
         { status: 400 }
       );
     }
 
-    const hashedPassword = await hashPassword(password);
-
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        password: hashedPassword,
-        resetToken: null,
-        resetTokenExpiry: null,
-      },
+    // Update password
+    const { error: updateError } = await supabase.auth.updateUser({
+      password,
     });
+
+    if (updateError) {
+      return NextResponse.json(
+        { error: updateError.message },
+        { status: 400 }
+      );
+    }
 
     return NextResponse.json(
       { message: "Passwort erfolgreich zurückgesetzt" },

@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { generateResetToken } from "@/lib/auth";
+import { supabase } from "@/lib/supabase";
 import { forgotPasswordSchema } from "@/lib/validations";
-import { sendPasswordResetEmail } from "@/lib/email";
 
 export async function POST(request: NextRequest) {
   try {
@@ -11,36 +9,26 @@ export async function POST(request: NextRequest) {
     const result = forgotPasswordSchema.safeParse(body);
     if (!result.success) {
       return NextResponse.json(
-        { error: result.error.errors[0].message },
+        { error: result.error.issues[0].message },
         { status: 400 }
       );
     }
 
     const { email } = result.data;
 
-    const user = await prisma.user.findUnique({
-      where: { email: email.toLowerCase() },
-    });
+    // Send password reset email via Supabase Auth
+    const { error } = await supabase.auth.resetPasswordForEmail(
+      email.toLowerCase(),
+      {
+        redirectTo: `${process.env.NEXTAUTH_URL}/reset-password`,
+      }
+    );
 
-    if (!user) {
-      // Don't reveal if user exists
-      return NextResponse.json(
-        { message: "Wenn ein Konto existiert, wurde eine E-Mail gesendet" },
-        { status: 200 }
-      );
+    if (error) {
+      console.error("Supabase reset error:", error);
     }
 
-    const resetToken = generateResetToken();
-    const resetTokenExpiry = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
-
-    await prisma.user.update({
-      where: { id: user.id },
-      data: { resetToken, resetTokenExpiry },
-    });
-
-    const resetUrl = `${process.env.NEXTAUTH_URL}/reset-password?token=${resetToken}`;
-    await sendPasswordResetEmail(user.email, resetUrl);
-
+    // Don't reveal if user exists
     return NextResponse.json(
       { message: "Wenn ein Konto existiert, wurde eine E-Mail gesendet" },
       { status: 200 }

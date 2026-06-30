@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { verifyPassword, generateToken } from "@/lib/auth";
+import { supabase } from "@/lib/supabase";
 import { loginSchema } from "@/lib/validations";
 import { cookies } from "next/headers";
 
@@ -11,40 +10,29 @@ export async function POST(request: NextRequest) {
     const result = loginSchema.safeParse(body);
     if (!result.success) {
       return NextResponse.json(
-        { error: result.error.errors[0].message },
+        { error: result.error.issues[0].message },
         { status: 400 }
       );
     }
 
     const { email, password } = result.data;
 
-    const user = await prisma.user.findUnique({
-      where: { email: email.toLowerCase() },
+    // Sign in with Supabase Auth
+    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+      email: email.toLowerCase(),
+      password,
     });
 
-    if (!user || !user.password) {
+    if (authError || !authData.session) {
       return NextResponse.json(
         { error: "Ungültige E-Mail-Adresse oder Passwort" },
         { status: 401 }
       );
     }
 
-    const isValid = await verifyPassword(password, user.password);
-    if (!isValid) {
-      return NextResponse.json(
-        { error: "Ungültige E-Mail-Adresse oder Passwort" },
-        { status: 401 }
-      );
-    }
-
-    const token = generateToken({
-      userId: user.id,
-      email: user.email,
-    });
-
-    // Set HTTP-only cookie
-    const cookieStore = cookies();
-    (await cookieStore).set("token", token, {
+    // Set HTTP-only cookie with the Supabase session
+    const cookieStore = await cookies();
+    cookieStore.set("sb-token", authData.session.access_token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
@@ -56,9 +44,9 @@ export async function POST(request: NextRequest) {
       {
         message: "Login erfolgreich",
         user: {
-          id: user.id,
-          email: user.email,
-          name: user.name,
+          id: authData.user?.id,
+          email: authData.user?.email,
+          name: authData.user?.user_metadata?.name || null,
         },
       },
       { status: 200 }

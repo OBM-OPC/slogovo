@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { hashPassword } from "@/lib/auth";
+import { supabase } from "@/lib/supabase";
 import { registerSchema } from "@/lib/validations";
 import { sendWelcomeEmail } from "@/lib/email";
 
@@ -11,16 +10,19 @@ export async function POST(request: NextRequest) {
     const result = registerSchema.safeParse(body);
     if (!result.success) {
       return NextResponse.json(
-        { error: result.error.errors[0].message },
+        { error: result.error.issues[0].message },
         { status: 400 }
       );
     }
 
     const { name, email, password } = result.data;
 
-    const existingUser = await prisma.user.findUnique({
-      where: { email: email.toLowerCase() },
-    });
+    // Check if user already exists
+    const { data: existingUser } = await supabase
+      .from("users")
+      .select("id")
+      .eq("email", email.toLowerCase())
+      .single();
 
     if (existingUser) {
       return NextResponse.json(
@@ -29,26 +31,35 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const hashedPassword = await hashPassword(password);
-
-    const user = await prisma.user.create({
-      data: {
-        email: email.toLowerCase(),
-        password: hashedPassword,
-        name: name || null,
+    // Create user with Supabase Auth
+    const { data: authData, error: authError } = await supabase.auth.signUp({
+      email: email.toLowerCase(),
+      password,
+      options: {
+        data: {
+          name: name || null,
+        },
       },
     });
 
+    if (authError) {
+      console.error("Auth error:", authError);
+      return NextResponse.json(
+        { error: authError.message },
+        { status: 400 }
+      );
+    }
+
     // Send welcome email (non-blocking)
-    sendWelcomeEmail(user.email, user.name || undefined).catch(console.error);
+    sendWelcomeEmail(email, name || undefined).catch(console.error);
 
     return NextResponse.json(
       {
         message: "Registrierung erfolgreich",
         user: {
-          id: user.id,
-          email: user.email,
-          name: user.name,
+          id: authData.user?.id,
+          email: email.toLowerCase(),
+          name: name || null,
         },
       },
       { status: 201 }

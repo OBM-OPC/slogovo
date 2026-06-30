@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { verifyToken } from "./lib/auth";
 
 const publicPaths = [
   "/",
@@ -12,9 +11,9 @@ const publicPaths = [
   "/api/auth/register",
   "/api/auth/forgot-password",
   "/api/auth/reset-password",
+  "/api/auth/logout",
   "/_next",
   "/favicon.ico",
-  "/api/auth/providers",
 ];
 
 export function middleware(request: NextRequest) {
@@ -29,8 +28,8 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Check for auth token
-  const token = request.cookies.get("token")?.value;
+  // Check for auth token (Supabase token)
+  const token = request.cookies.get("sb-token")?.value;
 
   if (!token) {
     // Redirect to login for protected routes
@@ -40,18 +39,9 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  // Verify token
-  const decoded = verifyToken<{ userId: string }>(token);
-  if (!decoded) {
-    if (pathname.startsWith("/api/")) {
-      return NextResponse.json({ error: "Invalid token" }, { status: 401 });
-    }
-    return NextResponse.redirect(new URL("/login", request.url));
-  }
-
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\.svg$).*)"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\.svg$).*))"],
 };
