@@ -1,6 +1,18 @@
 import { openDB, DBSchema, IDBPDatabase } from "idb";
-import { supabase } from "./supabase";
+import { createClient } from "@supabase/supabase-js";
 import { UserProgress, VocabularyProgress, DailyGoal } from "@/types";
+
+// Browser-side Supabase client with auth
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || "";
+
+const supabaseBrowser = createClient(supabaseUrl || "https://placeholder.supabase.co", supabaseKey || "placeholder", {
+  auth: {
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: true,
+  },
+});
 
 // ==== IndexedDB (local cache) ====
 
@@ -47,7 +59,9 @@ export async function clearProgressLocal(userId: string): Promise<void> {
 // ==== Supabase (source of truth) ====
 
 export async function loadProgressFromSupabase(userId: string): Promise<UserProgress | null> {
-  const { data, error } = await supabase
+  console.log("[Progress] Loading from Supabase for user:", userId);
+  
+  const { data, error } = await supabaseBrowser
     .from("user_progress")
     .select("*")
     .eq("user_id", userId)
@@ -55,19 +69,23 @@ export async function loadProgressFromSupabase(userId: string): Promise<UserProg
 
   if (error || !data) {
     if (error && error.code !== "PGRST116") {
-      // PGRST116 = no rows found
-      console.warn("Supabase load error:", error);
+      console.warn("[Progress] Supabase load error:", error);
+    } else {
+      console.log("[Progress] No data found in Supabase");
     }
     return null;
   }
 
+  console.log("[Progress] Loaded from Supabase:", data);
   return rowToProgress(data);
 }
 
 export async function saveProgressToSupabase(progress: UserProgress): Promise<boolean> {
+  console.log("[Progress] Saving to Supabase:", progress.userId);
+  
   const { userId, ...rest } = progressToRow(progress);
 
-  const { error } = await supabase
+  const { data, error } = await supabaseBrowser
     .from("user_progress")
     .upsert(
       {
@@ -76,17 +94,20 @@ export async function saveProgressToSupabase(progress: UserProgress): Promise<bo
         updated_at: new Date().toISOString(),
       },
       { onConflict: "user_id" }
-    );
+    )
+    .select();
 
   if (error) {
-    console.warn("Supabase save error:", error);
+    console.warn("[Progress] Supabase save error:", error);
     return false;
   }
 
+  console.log("[Progress] Saved successfully:", data);
   return true;
 }
 
 export async function createInitialProgress(userId: string): Promise<UserProgress> {
+  console.log("[Progress] Creating initial progress for:", userId);
   const progress = createDefaultProgress(userId);
   await saveProgressToSupabase(progress);
   await saveProgressLocal(progress);

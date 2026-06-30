@@ -66,8 +66,8 @@ function persist(updated: UserProgress): UserProgress {
   return updated;
 }
 
-// Debounced sync timer
-let syncTimeout: ReturnType<typeof setTimeout> | null = null;
+// Global sync timer — outside store to survive re-renders
+let syncTimer: ReturnType<typeof setTimeout> | null = null;
 
 export const useProgressStore = create<ProgressState>((set, get) => ({
   progress: null,
@@ -78,10 +78,13 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
   init: async (userId: string) => {
     if (get().initialized && get().userId === userId) return;
 
+    console.log("[Progress] Init for user:", userId);
+
     // Try Supabase first
     const fromSupabase = await loadProgressFromSupabase(userId);
 
     if (fromSupabase) {
+      console.log("[Progress] Loaded from Supabase");
       set({ progress: fromSupabase, initialized: true, userId });
       await saveProgressLocal(fromSupabase);
       return;
@@ -91,13 +94,14 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
     const fromLocal = await loadProgressLocal(userId);
 
     if (fromLocal) {
-      // Upload local data to Supabase
+      console.log("[Progress] Loaded from local cache, uploading to Supabase...");
       await saveProgressToSupabase(fromLocal);
       set({ progress: fromLocal, initialized: true, userId });
       return;
     }
 
     // No data anywhere — create fresh
+    console.log("[Progress] Creating fresh progress");
     const fresh = await createInitialProgress(userId);
     set({ progress: fresh, initialized: true, userId });
   },
@@ -106,9 +110,11 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
     const state = get();
     if (!state.progress || !state.userId || state.syncing) return;
 
+    console.log("[Progress] Manual sync...");
     set({ syncing: true });
-    await saveProgressToSupabase(state.progress);
+    const ok = await saveProgressToSupabase(state.progress);
     set({ syncing: false });
+    console.log("[Progress] Manual sync done:", ok);
   },
 
   completeLesson: async (lessonId: string) => {
@@ -125,7 +131,7 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
 
     await saveProgressLocal(updated);
     set({ progress: updated });
-    debouncedSync(get);
+    scheduleSync(state.userId, updated);
 
     if (updated.completedLessons.length > completedCountBefore) {
       triggerLevelUpConfetti();
@@ -145,7 +151,7 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
 
     await saveProgressLocal(updated);
     set({ progress: updated });
-    debouncedSync(get);
+    scheduleSync(state.userId, updated);
   },
 
   reviewVocabulary: async (wordId: string, known: boolean) => {
@@ -170,7 +176,7 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
 
     await saveProgressLocal(updated);
     set({ progress: updated });
-    debouncedSync(get);
+    scheduleSync(state.userId, updated);
   },
 
   reviewVocabularyWithDifficulty: async (wordId: string, rating: DifficultyRating) => {
@@ -195,7 +201,7 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
 
     await saveProgressLocal(updated);
     set({ progress: updated });
-    debouncedSync(get);
+    scheduleSync(state.userId, updated);
   },
 
   addExerciseResult: async (correct: boolean) => {
@@ -228,7 +234,7 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
 
     await saveProgressLocal(updated);
     set({ progress: updated });
-    debouncedSync(get);
+    scheduleSync(state.userId, updated);
   },
 
   addStudyTime: async (minutes: number, vocabulary = 0) => {
@@ -253,7 +259,7 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
 
     await saveProgressLocal(updated);
     set({ progress: updated });
-    debouncedSync(get);
+    scheduleSync(state.userId, updated);
 
     if (updated.streak.current > currentStreak && updated.streak.current > 0 && updated.streak.current % 7 === 0) {
       triggerConfetti({ scalar: 1 + updated.streak.current * 0.02 });
@@ -271,7 +277,7 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
 
     await saveProgressLocal(updated);
     set({ progress: updated });
-    debouncedSync(get);
+    scheduleSync(state.userId, updated);
   },
 
   unlockAchievement: async (achievementId: string) => {
@@ -286,7 +292,7 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
 
     await saveProgressLocal(updated);
     set({ progress: updated });
-    debouncedSync(get);
+    scheduleSync(state.userId, updated);
   },
 
   resetProgress: async () => {
@@ -304,15 +310,16 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
   },
 }));
 
-// Debounced sync: waits 2 seconds after last change, then uploads to Supabase
-function debouncedSync(get: () => ProgressState) {
-  if (syncTimeout) clearTimeout(syncTimeout);
-  syncTimeout = setTimeout(async () => {
-    const state = get();
-    if (state.progress && state.userId) {
-      await saveProgressToSupabase(state.progress);
-    }
-  }, 2000);
+// Schedule a sync with latest state captured
+function scheduleSync(userId: string | null, progress: UserProgress) {
+  if (!userId) return;
+  
+  if (syncTimer) clearTimeout(syncTimer);
+  syncTimer = setTimeout(async () => {
+    console.log("[Progress] Auto-syncing to Supabase...");
+    const ok = await saveProgressToSupabase(progress);
+    console.log("[Progress] Auto-sync done:", ok);
+  }, 3000);
 }
 
 function createDefaultProgress(userId: string) {
