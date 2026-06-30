@@ -56,18 +56,30 @@ export async function POST(request: NextRequest) {
       updated_at: new Date().toISOString(),
     };
 
-    console.log("[API progress/save] Saving for user:", userId, "data:", upsertData);
+    console.log("[API progress/save] Saving for user:", userId, "completed_lessons:", upsertData.completed_lessons);
 
-    const { error } = await supabaseServer
+    const { error, data: upsertResult } = await supabaseServer
       .from("user_progress")
-      .upsert(upsertData, { onConflict: "user_id" });
+      .upsert(upsertData, { onConflict: "user_id" })
+      .select();
 
     if (error) {
-      console.error("Progress save error:", error);
-      return NextResponse.json({ error: "Fehler beim Speichern" }, { status: 500 });
+      console.error("[API progress/save] Upsert error:", error);
+      return NextResponse.json({ error: "Fehler beim Speichern", details: error.message }, { status: 500 });
     }
 
-    return NextResponse.json({ success: true }, { status: 200 });
+    console.log("[API progress/save] Upsert result:", upsertResult);
+
+    // Verify: read back
+    const { data: verifyData, error: verifyError } = await supabaseServer
+      .from("user_progress")
+      .select("completed_lessons")
+      .eq("user_id", userId)
+      .single();
+
+    console.log("[API progress/save] Verify:", verifyData, verifyError);
+
+    return NextResponse.json({ success: true, verified: verifyData }, { status: 200 });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     console.error("Progress save error:", error);
