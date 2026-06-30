@@ -59,16 +59,16 @@ function ResetPasswordContent() {
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md mx-auto"
       >
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 border border-gray-100 dark:border-gray-700 text-center">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+        <div className="rounded-3xl bg-white p-8 shadow-card text-center">
+          <h2 className="text-2xl font-serif font-bold text-foreground mb-4">
             Ungültiger Link
           </h2>
-          <p className="text-gray-600 dark:text-gray-400 mb-6">
+          <p className="text-sm text-muted mb-6">
             Dieser Link ist ungültig oder abgelaufen. Bitte fordere einen neuen Link an.
           </p>
           <Link
             href="/forgot-password"
-            className="inline-block py-3 px-4 bg-[#009B77] hover:bg-[#007A5F] text-white font-semibold rounded-lg transition-colors duration-200"
+            className="btn-primary w-full rounded-2xl py-3.5 text-base"
           >
             Neuen Link anfordern
           </Link>
@@ -84,21 +84,21 @@ function ResetPasswordContent() {
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md mx-auto"
       >
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 border border-gray-100 dark:border-gray-700 text-center">
-          <div className="w-16 h-16 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="rounded-3xl bg-white p-8 shadow-card text-center">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-50">
+            <svg className="h-8 w-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+          <h2 className="text-2xl font-serif font-bold text-foreground mb-2">
             Passwort zurückgesetzt!
           </h2>
-          <p className="text-gray-600 dark:text-gray-400 mb-6">
-            Dein Passwort wurde erfolgreich zurückgesetzt. Du kannst dich jetzt mit deinem neuen Passwort anmelden.
+          <p className="text-sm text-muted mb-6">
+            Dein Passwort wurde erfolgreich zurückgesetzt. Du kannst dich jetzt anmelden.
           </p>
           <Link
             href="/login"
-            className="inline-block w-full py-3 px-4 bg-[#009B77] hover:bg-[#007A5F] text-white font-semibold rounded-lg transition-colors duration-200"
+            className="btn-primary w-full rounded-2xl py-3.5 text-base"
           >
             Zum Login
           </Link>
@@ -114,12 +114,12 @@ function ResetPasswordContent() {
       transition={{ duration: 0.5 }}
       className="w-full max-w-md mx-auto"
     >
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 border border-gray-100 dark:border-gray-700">
+      <div className="rounded-3xl bg-white p-8 shadow-card">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+          <h2 className="text-2xl font-serif font-bold text-foreground mb-1">
             Neues Passwort
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400">
+          </h2>
+          <p className="text-sm text-muted">
             Wähle ein neues Passwort für dein Konto
           </p>
         </div>
@@ -128,24 +128,24 @@ function ResetPasswordContent() {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-red-700 dark:text-red-400 text-sm"
+            className="mb-4 rounded-2xl bg-accent-50 p-4 text-sm text-accent"
           >
             {error}
           </motion.div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-foreground mb-2">
               Neues Passwort
             </label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-warm-400" />
               <input
                 type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-10 pr-12 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#009B77] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                className="input pl-11 pr-12"
                 placeholder="••••••••"
                 required
                 minLength={8}
@@ -153,27 +153,27 @@ function ResetPasswordContent() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-warm-400 hover:text-foreground transition-colors"
               >
-                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
               </button>
             </div>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            <p className="mt-1 text-xs text-muted">
               Mindestens 8 Zeichen, 1 Großbuchstabe, 1 Kleinbuchstabe, 1 Zahl
             </p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-foreground mb-2">
               Passwort bestätigen
             </label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-warm-400" />
               <input
                 type={showPassword ? "text" : "password"}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#009B77] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                className="input pl-11"
                 placeholder="••••••••"
                 required
               />
@@ -183,7 +183,7 @@ function ResetPasswordContent() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3 px-4 bg-[#009B77] hover:bg-[#007A5F] disabled:bg-gray-400 text-white font-semibold rounded-lg transition-colors duration-200"
+            className="btn-primary w-full rounded-2xl py-3.5 text-base"
           >
             {isLoading ? "Wird gespeichert..." : "Passwort speichern"}
           </button>
@@ -195,7 +195,7 @@ function ResetPasswordContent() {
 
 export default function ResetPasswordForm() {
   return (
-    <Suspense fallback={<div className="w-full max-w-md mx-auto p-8 text-center">Lade...</div>}>
+    <Suspense fallback={<div className="w-full max-w-md mx-auto p-8 text-center text-muted">Lade...</div>}>
       <ResetPasswordContent />
     </Suspense>
   );
