@@ -1,7 +1,30 @@
 import { openDB, DBSchema, IDBPDatabase } from "idb";
 import { UserProgress, VocabularyProgress, DailyGoal } from "@/types";
 
-// ==== IndexedDB (local cache) ====
+const PROGRESS_KEY = "slogovo-progress-v1";
+
+// ==== localStorage (primary, robust fallback) ====
+
+export function saveProgressLocalStorage(progress: UserProgress): void {
+  try {
+    localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress));
+  } catch (error) {
+    console.warn("[Progress] localStorage save failed:", error);
+  }
+}
+
+export function loadProgressLocalStorage(): UserProgress | null {
+  try {
+    const raw = localStorage.getItem(PROGRESS_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw) as UserProgress;
+  } catch (error) {
+    console.warn("[Progress] localStorage load failed:", error);
+    return null;
+  }
+}
+
+// ==== IndexedDB (secondary / legacy) ====
 
 interface ProgressDB extends DBSchema {
   progress: {
@@ -28,23 +51,52 @@ export function getProgressDB(): Promise<IDBPDatabase<ProgressDB>> {
   return dbPromise;
 }
 
-export async function saveProgressLocal(progress: UserProgress): Promise<void> {
+export async function saveProgressIndexedDB(progress: UserProgress): Promise<void> {
   const db = await getProgressDB();
   await db.put("progress", progress);
 }
 
-export async function loadProgressLocal(userId: string): Promise<UserProgress | undefined> {
+export async function loadProgressIndexedDB(userId: string): Promise<UserProgress | undefined> {
   const db = await getProgressDB();
   return db.get("progress", userId);
 }
 
 export async function clearProgressLocal(userId: string): Promise<void> {
-  const db = await getProgressDB();
-  await db.delete("progress", userId);
+  try {
+    localStorage.removeItem(PROGRESS_KEY);
+  } catch {
+    // ignore
+  }
+  try {
+    const db = await getProgressDB();
+    await db.delete("progress", userId);
+  } catch {
+    // ignore
+  }
+}
+
+// ==== Unified local save/load ====
+
+export async function saveProgressLocal(progress: UserProgress): Promise<void> {
+  saveProgressLocalStorage(progress);
+  try {
+    await saveProgressIndexedDB(progress);
+  } catch (error) {
+    console.warn("[Progress] IndexedDB save failed:", error);
+  }
+}
+
+export async function loadProgressLocal(userId: string): Promise<UserProgress | undefined> {
+  // Prefer localStorage (more reliable)
+  const fromStorage = loadProgressLocalStorage();
+  if (fromStorage && fromStorage.userId === userId) {
+    return fromStorage;
+  }
+  // Fallback to IndexedDB (legacy)
+  return loadProgressIndexedDB(userId);
 }
 
 // ==== Server-side API (source of truth) ====
-// Server reads httpOnly cookie, so we never expose tokens to browser JS.
 
 export async function loadProgressFromSupabase(): Promise<UserProgress | null> {
   try {
