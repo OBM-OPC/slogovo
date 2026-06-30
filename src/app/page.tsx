@@ -3,7 +3,7 @@ import { BookOpen, Brain, Trophy, Volume2 } from "lucide-react";
 
 export default function HomePage() {
   return (
-    <div class之前就in-h-screen bg-gradient-to-br from-[#009B77]/5 to-[#D62612]/5">
+    <div className="min-h-screen bg-gradient-to-br from-[#009B77]/5 to-[#D62612]/5">
       {/* Navigation */}
       <nav className="border-b border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
