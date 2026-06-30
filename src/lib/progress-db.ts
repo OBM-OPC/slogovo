@@ -52,11 +52,8 @@ export async function loadProgressFromSupabase(): Promise<UserProgress | null> {
     const response = await fetch("/api/progress/load");
     console.log("[Progress] /api/progress/load status:", response.status);
     if (!response.ok) {
-      if (response.status === 401) {
-        console.warn("[Progress] Load: not authenticated");
-      } else {
-        console.warn("[Progress] Load failed:", response.status);
-      }
+      const err = await response.json().catch(() => ({ error: "Unknown error" }));
+      console.warn("[Progress] Load failed:", response.status, err);
       return null;
     }
 
@@ -82,7 +79,8 @@ export async function saveProgressToSupabase(progress: UserProgress): Promise<bo
 
     console.log("[Progress] /api/progress/save status:", response.status);
     if (!response.ok) {
-      console.warn("[Progress] Save failed:", response.status);
+      const err = await response.json().catch(() => ({ error: "Unknown error" }));
+      console.warn("[Progress] Save failed:", response.status, err);
       return false;
     }
 

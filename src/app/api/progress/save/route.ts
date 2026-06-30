@@ -2,16 +2,17 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
 function getSupabaseServer() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || "",
-    process.env.SUPABASE_SERVICE_ROLE_KEY || "",
-    {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false,
-      },
-    }
-  );
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || "";
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
+  if (!url || !key) {
+    throw new Error(`Missing Supabase config: URL=${!!url}, KEY=${!!key}`);
+  }
+  return createClient(url, key, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+    },
+  });
 }
 
 function getSessionFromCookie(request: NextRequest) {
@@ -67,8 +68,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
     console.error("Progress save error:", error);
-    return NextResponse.json({ error: "Ein Fehler ist aufgetreten" }, { status: 500 });
+    return NextResponse.json({ error: "Ein Fehler ist aufgetreten", details: message }, { status: 500 });
   }
 }
 
