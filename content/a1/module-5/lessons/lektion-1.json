@@ -1,0 +1,53 @@
+{
+  "lessonId": "a1-modul-5-lektion-1",
+  "moduleId": "a1-modul-5",
+  "level": "A1",
+  "title": "Richtungen",
+  "duration": "15 min",
+  "introduction": "Lerne die Himmelsrichtungen und grundlegende Richtungsangaben.",
+  "summary": "Du kennst rechts, links, geradeaus sowie die vier Himmelsrichtungen.",
+  "vocabulary": [
+    { "id": "m5l1-1", "de": "links", "bg": "наляво", "bgLatin": "naljawo" },
+    { "id": "m5l1-2", "de": "rechts", "bg": "надясно", "bgLatin": "nadjasno" },
+    { "id": "m5l1-3", "de": "geradeaus", "bg": "направо", "bgLatin": "naprawo" },
+    { "id": "m5l1-4", "de": "zurück", "bg": "обратно", "bgLatin": "obratno" },
+    { "id": "m5l1-5", "de": "Norden", "bg": "север", "bgLatin": "sewer" },
+    { "id": "m5l1-6", "de": "Süden", "bg": "юг", "bgLatin": "jug" },
+    { "id": "m5l1-7", "de": "Osten", "bg": "изток", "bgLatin": "istok" },
+    { "id": "m5l1-8", "de": "Westen", "bg": "запад", "bgLatin": "sapad" }
+  ],
+  "grammar": {
+    "title": "Richtungen mit 'на-'",
+    "explanation": "Viele Richtungsangaben beginnen mit der Präposition 'на': наляво, надясно, направо.",
+    "examples": [
+      { "bg": "Завийте наляво.", "de": "Biegen Sie links ab.", "bgLatin": "Sawiite naljawo." },
+      { "bg": "Вървете направо.", "de": "Gehen Sie geradeaus.", "bgLatin": "Wrawete naprawo." }
+    ]
+  },
+  "exercises": [
+    {
+      "id": "m5l1-ex1",
+      "type": "matching",
+      "title": "Richtungen zuordnen",
+      "data": [
+        { "id": "p1", "de": "links", "bg": "наляво" },
+        { "id": "p2", "de": "rechts", "bg": "надясно" },
+        { "id": "p3", "de": "geradeaus", "bg": "направо" },
+        { "id": "p4", "de": "zurück", "bg": "обратно" }
+      ]
+    },
+    {
+      "id": "m5l1-ex2",
+      "type": "quiz",
+      "title": "Erkenne die Richtung",
+      "data": [
+        {
+          "id": "q1",
+          "question": "Was bedeutet 'надясно'?",
+          "options": ["links", "rechts", "geradeaus", "zurück"],
+          "correctOptionIndex": 1
+        }
+      ]
+    }
+  ]
+}

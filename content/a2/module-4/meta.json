@@ -1,0 +1,16 @@
+{
+  "moduleId": "a2-modul-4",
+  "level": "A2",
+  "title": "Gesundheit & Körper",
+  "description": "Gesundheit, Krankheit, Körperteile und Arztbesuche auf Bulgarisch.",
+  "order": 4,
+  "icon": "heart",
+  "requiredScore": 80,
+  "lessons": [
+    { "lessonId": "a2-modul-4-lektion-1", "title": "Körperteile", "duration": "20 min" },
+    { "lessonId": "a2-modul-4-lektion-2", "title": "Beim Arzt", "duration": "20 min" },
+    { "lessonId": "a2-modul-4-lektion-3", "title": "Im Krankenhaus", "duration": "20 min" },
+    { "lessonId": "a2-modul-4-lektion-4", "title": "Gesunde Lebensweise", "duration": "20 min" },
+    { "lessonId": "a2-modul-4-lektion-5", "title": "Unfälle & Notfälle", "duration": "20 min" }
+  ]
+}

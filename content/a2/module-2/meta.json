@@ -1,0 +1,16 @@
+{
+  "moduleId": "a2-modul-2",
+  "level": "A2",
+  "title": "Einkaufen & Restaurant",
+  "description": "Einkaufen gehen, Bestellungen aufgeben, Preise verhandeln und im Restaurant bestellen.",
+  "order": 2,
+  "icon": "shopping-bag",
+  "requiredScore": 80,
+  "lessons": [
+    { "lessonId": "a2-modul-2-lektion-1", "title": "Im Supermarkt", "duration": "20 min" },
+    { "lessonId": "a2-modul-2-lektion-2", "title": "Auf dem Markt", "duration": "20 min" },
+    { "lessonId": "a2-modul-2-lektion-3", "title": "Im Restaurant bestellen", "duration": "20 min" },
+    { "lessonId": "a2-modul-2-lektion-4", "title": "Zahlen & Trinkgeld", "duration": "20 min" },
+    { "lessonId": "a2-modul-2-lektion-5", "title": "Kleidung einkaufen", "duration": "20 min" }
+  ]
+}

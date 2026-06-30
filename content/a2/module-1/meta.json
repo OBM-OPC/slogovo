@@ -1,0 +1,16 @@
+{
+  "moduleId": "a2-modul-1",
+  "level": "A2",
+  "title": "Alltag & Routine",
+  "description": "Beschreibe deinen Tagesablauf, Gewohnheiten und regelmäßige Aktivitäten auf Bulgarisch.",
+  "order": 1,
+  "icon": "sun",
+  "requiredScore": 80,
+  "lessons": [
+    { "lessonId": "a2-modul-1-lektion-1", "title": "Der Tagesablauf", "duration": "20 min" },
+    { "lessonId": "a2-modul-1-lektion-2", "title": "Freizeitaktivitäten", "duration": "20 min" },
+    { "lessonId": "a2-modul-1-lektion-3", "title": "Wochentage & Uhrzeit", "duration": "20 min" },
+    { "lessonId": "a2-modul-1-lektion-4", "title": "Hausarbeit", "duration": "20 min" },
+    { "lessonId": "a2-modul-1-lektion-5", "title": "Wetter & Jahreszeiten", "duration": "20 min" }
+  ]
+}

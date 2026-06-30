@@ -1,0 +1,57 @@
+{
+  "lessonId": "a1-modul-3-lektion-2",
+  "moduleId": "a1-modul-3",
+  "level": "A1",
+  "title": "Zahlen 11–100",
+  "duration": "15 min",
+  "introduction": "Zahlen von 11 bis 100 sind regelmäßig aufgebaut. Lerne die Zehner und die Zusammensetzung.",
+  "summary": "Du kannst Zahlen bis 100 bilden und verstehen: 'двадесет и едно' = 21.",
+  "vocabulary": [
+    { "id": "m3l2-11", "de": "11", "bg": "единадесет", "bgLatin": "edinadeset" },
+    { "id": "m3l2-12", "de": "12", "bg": "дванадесет", "bgLatin": "dwanadeset" },
+    { "id": "m3l2-20", "de": "20", "bg": "двадесет", "bgLatin": "dwadeset" },
+    { "id": "m3l2-21", "de": "21", "bg": "двадесет и едно", "bgLatin": "dwadeset i edno" },
+    { "id": "m3l2-30", "de": "30", "bg": "тридесет", "bgLatin": "trideset" },
+    { "id": "m3l2-40", "de": "40", "bg": "четиридесет", "bgLatin": "tschetrideset" },
+    { "id": "m3l2-50", "de": "50", "bg": "петдесет", "bgLatin": "petdeset" },
+    { "id": "m3l2-60", "de": "60", "bg": "шестдесет", "bgLatin": "schestdeset" },
+    { "id": "m3l2-100", "de": "100", "bg": "сто", "bgLatin": "sto" }
+  ],
+  "grammar": {
+    "title": "Zusammensetzung der Zahlen",
+    "explanation": "Die Zahlen von 21 bis 99 werden mit 'и' (und) verbunden: двадесет и две = 22.",
+    "examples": [
+      { "bg": "двадесет и пет", "de": "25", "bgLatin": "dwadeset i pet" },
+      { "bg": "тридесет и три", "de": "33", "bgLatin": "trideset i tri" }
+    ]
+  },
+  "exercises": [
+    {
+      "id": "m3l2-ex1",
+      "type": "quiz",
+      "title": "Zahlen verstehen",
+      "data": [
+        {
+          "id": "q1",
+          "question": "Was bedeutet 'тридесет и пет'?",
+          "options": ["35", "53", "45", "15"],
+          "correctOptionIndex": 0
+        },
+        {
+          "id": "q2",
+          "question": "Wie heißt 42?",
+          "options": ["петдесет и две", "четиридесет и две", "четири и две", "двадесет и четири"],
+          "correctOptionIndex": 1
+        }
+      ]
+    },
+    {
+      "id": "m3l2-ex2",
+      "type": "fill-in",
+      "title": "Ergänze die Zahl",
+      "data": [
+        { "id": "f1", "parts": ["____", " и едно"], "answer": "двадесет", "answers": ["двадесет", "dwadeset"], "bg": "двадесет и едно", "de": "21" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "lessonId": "a1-modul-5-lektion-5",
+  "moduleId": "a1-modul-5",
+  "level": "A1",
+  "title": "Entfernungen",
+  "duration": "15 min",
+  "introduction": "Wie weit ist es? Lerne, nach Entfernungen und Dauer zu fragen.",
+  "summary": "Du kannst fragen, wie weit etwas ist und wie lange es dauert.",
+  "vocabulary": [
+    { "id": "m5l5-1", "de": "Wie weit ist es?", "bg": "Колко е далеч?", "bgLatin": "Kolko e dalets?" },
+    { "id": "m5l5-2", "de": "Wie lange dauert es?", "bg": "Колко време отнема?", "bgLatin": "Kolko wreme otnema?" },
+    { "id": "m5l5-3", "de": "der Kilometer", "bg": "километър", "bgLatin": "kilometar" },
+    { "id": "m5l5-4", "de": "die Minute", "bg": "минута", "bgLatin": "minuta" },
+    { "id": "m5l5-5", "de": "die Stunde", "bg": "час", "bgLatin": "tschass" },
+    { "id": "m5l5-6", "de": "nah", "bg": "близо", "bgLatin": "blizo" },
+    { "id": "m5l5-7", "de": "weit", "bg": "далеч", "bgLatin": "dalets" },
+    { "id": "m5l5-8", "de": "zu Fuß", "bg": "пеша", "bgLatin": "pescha" }
+  ],
+  "grammar": {
+    "title": "Entfernungen angeben",
+    "explanation": "'Колко е далеч?' fragt nach der Entfernung. Die Antwort nutzt Kilometer oder Minuten.",
+    "examples": [
+      { "bg": "Колко е далеч до центъра?", "de": "Wie weit ist es bis zur Mitte?", "bgLatin": "Kolko e dalets do zentara?" },
+      { "bg": "Десет минути пеша.", "de": "Zehn Minuten zu Fuß.", "bgLatin": "Deset minuti pescha." }
+    ]
+  },
+  "exercises": [
+    {
+      "id": "m5l5-ex1",
+      "type": "quiz",
+      "title": "Entfernungen",
+      "data": [
+        {
+          "id": "q1",
+          "question": "Was bedeutet 'близо'?",
+          "options": ["weit", "nah", "groß", "klein"],
+          "correctOptionIndex": 1
+        },
+        {
+          "id": "q2",
+          "question": "Wie fragt man 'Wie lange dauert es?'?",
+          "options": ["Колко е далеч?", "Колко време отнема?", "Къде е?", "Как е?"],
+          "correctOptionIndex": 1
+        }
+      ]
+    },
+    {
+      "id": "m5l5-ex2",
+      "type": "sentence-builder",
+      "title": "Baue die Antwort",
+      "data": [
+        { "id": "sb1", "words": ["Десет", "минути", "пеша."], "correctOrder": ["Десет", "минути", "пеша."], "de": "Zehn Minuten zu Fuß." }
+      ]
+    }
+  ]
+}

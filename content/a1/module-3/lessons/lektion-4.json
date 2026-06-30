@@ -1,0 +1,58 @@
+{
+  "lessonId": "a1-modul-3-lektion-4",
+  "moduleId": "a1-modul-3",
+  "level": "A1",
+  "title": "W-Fragen",
+  "duration": "15 min",
+  "introduction": "Mit W-Fragen kannst du nach Namen, Herkunft, Preisen und Dingen fragen.",
+  "summary": "Du kennst die wichtigsten Fragewörter: Какво? Кой? Къде? Колко? Защо? Кога?",
+  "vocabulary": [
+    { "id": "m3l4-1", "de": "Was?", "bg": "Какво?", "bgLatin": "Kakwo?" },
+    { "id": "m3l4-2", "de": "Wer?", "bg": "Кой?", "bgLatin": "Koj?" },
+    { "id": "m3l4-3", "de": "Wo?", "bg": "Къде?", "bgLatin": "Kade?" },
+    { "id": "m3l4-4", "de": "Wohin?", "bg": "Къде отивам?", "bgLatin": "Kade otiwam?" },
+    { "id": "m3l4-5", "de": "Wie viel?", "bg": "Колко?", "bgLatin": "Kolko?" },
+    { "id": "m3l4-6", "de": "Warum?", "bg": "Защо?", "bgLatin": "Sasto?" },
+    { "id": "m3l4-7", "de": "Wann?", "bg": "Кога?", "bgLatin": "Koga?" },
+    { "id": "m3l4-8", "de": "Wie?", "bg": "Как?", "bgLatin": "Kak?" }
+  ],
+  "grammar": {
+    "title": "W-Fragen bilden",
+    "explanation": "Das Fragewort steht am Satzanfang. Die Satzstellung ist sonst flexibel.",
+    "examples": [
+      { "bg": "Как се казваш?", "de": "Wie heißt du?", "bgLatin": "Kak se kaswasch?" },
+      { "bg": "Къде си?", "de": "Wo bist du?", "bgLatin": "Kade si?" },
+      { "bg": "Колко струва?", "de": "Wie viel kostet das?", "bgLatin": "Kolko struwa?" }
+    ]
+  },
+  "exercises": [
+    {
+      "id": "m3l4-ex1",
+      "type": "quiz",
+      "title": "W-Fragen erkennen",
+      "data": [
+        {
+          "id": "q1",
+          "question": "Wie fragt man 'Was?'",
+          "options": ["Кой?", "Какво?", "Къде?", "Колко?"],
+          "correctOptionIndex": 1
+        },
+        {
+          "id": "q2",
+          "question": "Was bedeutet 'Кога?'?",
+          "options": ["Warum?", "Wann?", "Wo?", "Wer?"],
+          "correctOptionIndex": 1
+        }
+      ]
+    },
+    {
+      "id": "m3l4-ex2",
+      "type": "fill-in",
+      "title": "Ergänze die Frage",
+      "data": [
+        { "id": "f1", "parts": ["____", " струва?"], "answer": "Колко", "answers": ["Колко", "Kolko"], "bg": "Колко струва?", "de": "Wie viel kostet das?" },
+        { "id": "f2", "parts": ["____", " си?"], "answer": "Къде", "answers": ["Къде", "Kade"], "bg": "Къде си?", "de": "Wo bist du?" }
+      ]
+    }
+  ]
+}

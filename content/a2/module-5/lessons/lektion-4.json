@@ -1,0 +1,147 @@
+{
+  "lessonId": "a2-modul-5-lektion-4",
+  "moduleId": "a2-modul-5",
+  "level": "A2",
+  "title": "Telefonieren",
+  "duration": "20 min",
+  "introduction": "Lerne Vokabeln zum Thema 'Telefonieren' auf Bulgarisch.",
+  "summary": "Du kannst jetzt über Telefonieren sprechen.",
+  "vocabulary": [
+    {
+      "id": "a2m5l4-1",
+      "de": "das Telefon",
+      "bg": "телефонът",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m5l4-2",
+      "de": "anrufen",
+      "bg": "обаждам се",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m5l4-3",
+      "de": "auflegen",
+      "bg": "затварям",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m5l4-4",
+      "de": "die Mailbox",
+      "bg": "гласовата поща",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m5l4-5",
+      "de": "verbinden",
+      "bg": "свързвам",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m5l4-6",
+      "de": "besetzt",
+      "bg": "зает",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m5l4-7",
+      "de": "der Anruf",
+      "bg": "обаждането",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m5l4-8",
+      "de": "das Handy",
+      "bg": "мобилният телефон",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m5l4-9",
+      "de": "die Nachricht",
+      "bg": "съобщението",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m5l4-10",
+      "de": "zurückrufen",
+      "bg": "връщам обаждане",
+      "bgLatin": ""
+    }
+  ],
+  "grammar": {
+    "title": "Höfliche Telefonformeln",
+    "explanation": "Wichtige grammatikalische Strukturen für das Thema 'Telefonieren'.",
+    "examples": [
+      {
+        "bg": "Ало, с кого говоря?",
+        "de": "Hallo, mit wem spreche ich?"
+      },
+      {
+        "bg": "Може ли да ме свържете с господин Иванов?",
+        "de": "Könnten Sie mich mit Herrn Iwanow verbinden?"
+      },
+      {
+        "bg": "Ще се обадя по-късно.",
+        "de": "Ich werde später zurückrufen."
+      }
+    ]
+  },
+  "exercises": [
+    {
+      "id": "a2m5l4-ex1",
+      "type": "quiz",
+      "title": "Wähle die richtige Übersetzung",
+      "data": [
+        {
+          "id": "q1",
+          "question": "Was bedeutet 'телефонът'?",
+          "options": [
+            "anrufen",
+            "auflegen",
+            "das Telefon",
+            "die Mailbox"
+          ],
+          "correctOptionIndex": 2
+        },
+        {
+          "id": "q2",
+          "question": "Wie sagt man 'anrufen'?",
+          "options": [
+            "телефонът",
+            "обаждам се",
+            "затварям",
+            "гласовата поща"
+          ],
+          "correctOptionIndex": 1
+        }
+      ]
+    },
+    {
+      "id": "a2m5l4-ex2",
+      "type": "matching",
+      "title": "Ordne die Vokabeln zu",
+      "data": [
+        {
+          "id": "p1",
+          "de": "das Telefon",
+          "bg": "телефонът"
+        },
+        {
+          "id": "p2",
+          "de": "anrufen",
+          "bg": "обаждам се"
+        },
+        {
+          "id": "p3",
+          "de": "auflegen",
+          "bg": "затварям"
+        },
+        {
+          "id": "p4",
+          "de": "die Mailbox",
+          "bg": "гласовата поща"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "lessonId": "a1-modul-1-lektion-4",
+  "moduleId": "a1-modul-1",
+  "level": "A1",
+  "title": "Abschiede",
+  "duration": "15 min",
+  "introduction": "Ein Gespräch endet mit einem freundlichen Abschied. Lerne die wichtigsten Verabschiedungen.",
+  "summary": "Du kannst dich mit 'Довиждане', 'Лека нощ' und 'До скоро' verabschieden.",
+  "vocabulary": [
+    { "id": "m1l4-1", "de": "Auf Wiedersehen", "bg": "Довиждане", "bgLatin": "Dowischdane" },
+    { "id": "m1l4-2", "de": "Gute Nacht", "bg": "Лека нощ", "bgLatin": "Leka noscht" },
+    { "id": "m1l4-3", "de": "Bis bald", "bg": "До скоро", "bgLatin": "Do skoro" },
+    { "id": "m1l4-4", "de": "Bis morgen", "bg": "До утре", "bgLatin": "Do utre" },
+    { "id": "m1l4-5", "de": "Schönen Tag noch", "bg": "Хубав ден", "bgLatin": "Chubaw den" },
+    { "id": "m1l4-6", "de": "Viel Glück", "bg": "Късмет", "bgLatin": "Kasmet" },
+    { "id": "m1l4-7", "de": "Tschüss", "bg": "Чао", "bgLatin": "Tschao" },
+    { "id": "m1l4-8", "de": "Wir sehen uns", "bg": "Ще се видим", "bgLatin": "Stsche se widim" }
+  ],
+  "grammar": {
+    "title": "Wann sagt man was?",
+    "explanation": "'Довиждане' ist die neutrale Verabschiedung. 'До скоро' verwendet man bei Freunden, 'Лека нощ' am Abend.",
+    "examples": [
+      { "bg": "Довиждане и хубав ден!", "de": "Auf Wiedersehen und einen schönen Tag!", "bgLatin": "Dowischdane i chubaw den!" },
+      { "bg": "До скоро, приятелю!", "de": "Bis bald, Freund!", "bgLatin": "Do skoro, prijatelju!" }
+    ]
+  },
+  "exercises": [
+    {
+      "id": "m1l4-ex1",
+      "type": "quiz",
+      "title": "Wähle die passende Verabschiedung",
+      "data": [
+        {
+          "id": "q1",
+          "question": "Abends vor dem Schlafengehen sagt man:",
+          "options": ["Довиждане", "Лека нощ", "До скоро", "Чао"],
+          "correctOptionIndex": 1
+        },
+        {
+          "id": "q2",
+          "question": "Was bedeutet 'До утре'?",
+          "options": ["Bis bald", "Bis morgen", "Bis später", "Auf Wiedersehen"],
+          "correctOptionIndex": 1
+        }
+      ]
+    },
+    {
+      "id": "m1l4-ex2",
+      "type": "fill-in",
+      "title": "Ergänze den Abschied",
+      "data": [
+        { "id": "f1", "parts": ["____", " и хубав ден!"], "answer": "Довиждане", "answers": ["Довиждане", "Dowischdane"], "bg": "Довиждане и хубав ден!", "de": "Auf Wiedersehen und einen schönen Tag!" }
+      ]
+    }
+  ]
+}

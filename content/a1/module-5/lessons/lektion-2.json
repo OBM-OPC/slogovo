@@ -1,0 +1,48 @@
+{
+  "lessonId": "a1-modul-5-lektion-2",
+  "moduleId": "a1-modul-5",
+  "level": "A1",
+  "title": "Orte in der Stadt",
+  "duration": "15 min",
+  "introduction": "Wichtige Orte in einer Stadt kennen und danach fragen.",
+  "summary": "Du kannst nach dem Bahnhof, der Bank, dem Krankenhaus und dem Supermarkt fragen.",
+  "vocabulary": [
+    { "id": "m5l2-1", "de": "der Bahnhof", "bg": "гара", "bgLatin": "gara" },
+    { "id": "m5l2-2", "de": "der Flughafen", "bg": "летище", "bgLatin": "letitsche" },
+    { "id": "m5l2-3", "de": "die Bank", "bg": "банка", "bgLatin": "banka" },
+    { "id": "m5l2-4", "de": "das Krankenhaus", "bg": "болница", "bgLatin": "bolniza" },
+    { "id": "m5l2-5", "de": "die Apotheke", "bg": "аптека", "bgLatin": "apteka" },
+    { "id": "m5l2-6", "de": "der Supermarkt", "bg": "супермаркет", "bgLatin": "supermarket" },
+    { "id": "m5l2-7", "de": "die Post", "bg": "поща", "bgLatin": "poschta" },
+    { "id": "m5l2-8", "de": "das Restaurant", "bg": "ресторант", "bgLatin": "restorant" }
+  ],
+  "grammar": {
+    "title": "Wo ist...?",
+    "explanation": "'Къде е...?' fragt nach dem Ort. Die Antwort beginnt oft mit 'Там' (dort) oder einer Richtung.",
+    "examples": [
+      { "bg": "Къде е гарата?", "de": "Wo ist der Bahnhof?", "bgLatin": "Kade e garata?" },
+      { "bg": "Къде е най-близката аптека?", "de": "Wo ist die nächste Apotheke?", "bgLatin": "Kade e naj-bliskata apteka?" }
+    ]
+  },
+  "exercises": [
+    {
+      "id": "m5l2-ex1",
+      "type": "fill-in",
+      "title": "Ergänze die Frage",
+      "data": [
+        { "id": "f1", "parts": ["____", " е гарата?"], "answer": "Къде", "answers": ["Къде", "Kade"], "bg": "Къде е гарата?", "de": "Wo ist der Bahnhof?" }
+      ]
+    },
+    {
+      "id": "m5l2-ex2",
+      "type": "matching",
+      "title": "Orte in der Stadt",
+      "data": [
+        { "id": "p1", "de": "Bahnhof", "bg": "гара" },
+        { "id": "p2", "de": "Flughafen", "bg": "летище" },
+        { "id": "p3", "de": "Bank", "bg": "банка" },
+        { "id": "p4", "de": "Apotheke", "bg": "аптека" }
+      ]
+    }
+  ]
+}

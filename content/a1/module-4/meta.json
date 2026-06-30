@@ -1,0 +1,16 @@
+{
+  "moduleId": "a1-modul-4",
+  "level": "A1",
+  "title": "Im Hotel",
+  "description": "Zimmer buchen, nach dem Weg fragen und Hotelangestellte verstehen.",
+  "order": 4,
+  "icon": "bed",
+  "requiredScore": 80,
+  "lessons": [
+    { "lessonId": "a1-modul-4-lektion-1", "title": "An der Rezeption", "duration": "15 min" },
+    { "lessonId": "a1-modul-4-lektion-2", "title": "Das Zimmer", "duration": "15 min" },
+    { "lessonId": "a1-modul-4-lektion-3", "title": "Buchung", "duration": "15 min" },
+    { "lessonId": "a1-modul-4-lektion-4", "title": "Probleme", "duration": "15 min" },
+    { "lessonId": "a1-modul-4-lektion-5", "title": "Check-out", "duration": "15 min" }
+  ]
+}

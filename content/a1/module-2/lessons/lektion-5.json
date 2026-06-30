@@ -1,0 +1,55 @@
+{
+  "lessonId": "a1-modul-2-lektion-5",
+  "moduleId": "a1-modul-2",
+  "level": "A1",
+  "title": "Speisekarte",
+  "duration": "15 min",
+  "introduction": "Typische bulgarische Gerichte und Zutaten auf der Speisekarte verstehen.",
+  "summary": "Du kennst Wörter für Fleischgerichte, Salate, Suppen und typische bulgarische Spezialitäten.",
+  "vocabulary": [
+    { "id": "m2l5-1", "de": " Shopska-Salat", "bg": "шопска салата", "bgLatin": "schopska salata" },
+    { "id": "m2l5-2", "de": "Tarator", "bg": "таратор", "bgLatin": "tarator" },
+    { "id": "m2l5-3", "de": "Banitza", "bg": "баница", "bgLatin": "baniza" },
+    { "id": "m2l5-4", "de": "Gegrilltes", "bg": "на скара", "bgLatin": "na skara" },
+    { "id": "m2l5-5", "de": "Käse", "bg": "сирене", "bgLatin": "sirene" },
+    { "id": "m2l5-6", "de": "Joghurt", "bg": "кисело мляко", "bgLatin": "kiselo mljako" },
+    { "id": "m2l5-7", "de": "Paprika", "bg": "чушка", "bgLatin": "tschuschka" },
+    { "id": "m2l5-8", "de": "Tomate", "bg": "домат", "bgLatin": "domat" },
+    { "id": "m2l5-9", "de": "Gurke", "bg": "краставица", "bgLatin": "krastawiza" },
+    { "id": "m2l5-10", "de": "Zwiebel", "bg": "лук", "bgLatin": "luk" }
+  ],
+  "grammar": {
+    "title": "Typische bulgarische Küche",
+    "explanation": "' Shopska salata' ist der bekannteste bulgarische Salat, bestehend aus Tomaten, Gurken, Paprika, Zwiebeln und Schafskäse.",
+    "examples": [
+      { "bg": "Искам шопска салата.", "de": "Ich möchte einen Shopska-Salat.", "bgLatin": "Iskam schopska salata." },
+      { "bg": "Баницата е вкусна.", "de": "Die Banitza ist lecker.", "bgLatin": "Banizata e wkusna." }
+    ]
+  },
+  "exercises": [
+    {
+      "id": "m2l5-ex1",
+      "type": "matching",
+      "title": "Typisch bulgarisch",
+      "data": [
+        { "id": "p1", "de": "Shopska-Salat", "bg": "шопска салата" },
+        { "id": "p2", "de": "Tarator", "bg": "таратор" },
+        { "id": "p3", "de": "Banitza", "bg": "баница" },
+        { "id": "p4", "de": "Käse", "bg": "сирене" }
+      ]
+    },
+    {
+      "id": "m2l5-ex2",
+      "type": "quiz",
+      "title": "Speisekarten-Quiz",
+      "data": [
+        {
+          "id": "q1",
+          "question": "Was ist 'кисело мляко'?",
+          "options": ["Käse", "Joghurt", "Suppe", "Brot"],
+          "correctOptionIndex": 1
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "moduleId": "a2-modul-5",
+  "level": "A2",
+  "title": "Arbeit & Beruf",
+  "description": "Berufe, Bewerbung, Bürokommunikation und Arbeitsalltag auf Bulgarisch.",
+  "order": 5,
+  "icon": "briefcase",
+  "requiredScore": 80,
+  "lessons": [
+    { "lessonId": "a2-modul-5-lektion-1", "title": "Berufe", "duration": "20 min" },
+    { "lessonId": "a2-modul-5-lektion-2", "title": "Bewerbung", "duration": "20 min" },
+    { "lessonId": "a2-modul-5-lektion-3", "title": "Im Büro", "duration": "20 min" },
+    { "lessonId": "a2-modul-5-lektion-4", "title": "Telefonieren", "duration": "20 min" },
+    { "lessonId": "a2-modul-5-lektion-5", "title": "Freizeit nach der Arbeit", "duration": "20 min" }
+  ]
+}

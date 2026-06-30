@@ -1,0 +1,16 @@
+{
+  "moduleId": "a1-modul-5",
+  "level": "A1",
+  "title": "Wegbeschreibung",
+  "description": "Ortsangaben, Richtungen und Wegbeschreibungen auf Bulgarisch verstehen.",
+  "order": 5,
+  "icon": "map-pin",
+  "requiredScore": 80,
+  "lessons": [
+    { "lessonId": "a1-modul-5-lektion-1", "title": "Richtungen", "duration": "15 min" },
+    { "lessonId": "a1-modul-5-lektion-2", "title": "Orte in der Stadt", "duration": "15 min" },
+    { "lessonId": "a1-modul-5-lektion-3", "title": "Wie komme ich zu...?", "duration": "15 min" },
+    { "lessonId": "a1-modul-5-lektion-4", "title": "Öffentliche Verkehrsmittel", "duration": "15 min" },
+    { "lessonId": "a1-modul-5-lektion-5", "title": "Entfernungen", "duration": "15 min" }
+  ]
+}

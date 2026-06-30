@@ -1,0 +1,143 @@
+{
+  "lessonId": "a2-modul-5-lektion-5",
+  "moduleId": "a2-modul-5",
+  "level": "A2",
+  "title": "Freizeit nach der Arbeit",
+  "duration": "20 min",
+  "introduction": "Lerne Vokabeln zum Thema 'Freizeit nach der Arbeit' auf Bulgarisch.",
+  "summary": "Du kannst jetzt über Freizeit nach der Arbeit sprechen.",
+  "vocabulary": [
+    {
+      "id": "a2m5l5-1",
+      "de": "nach der Arbeit",
+      "bg": "след работа",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m5l5-2",
+      "de": "die Party",
+      "bg": "партито",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m5l5-3",
+      "de": "das Konzert",
+      "bg": "концертът",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m5l5-4",
+      "de": "das Kino",
+      "bg": "киното",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m5l5-5",
+      "de": "das Theater",
+      "bg": "театърът",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m5l5-6",
+      "de": "das Museum",
+      "bg": "музеят",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m5l5-7",
+      "de": "treffen",
+      "bg": "срещам се",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m5l5-8",
+      "de": "entspannen",
+      "bg": "отпускам се",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m5l5-9",
+      "de": "die Einladung",
+      "bg": "поканата",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m5l5-10",
+      "de": "ablehnen",
+      "bg": "отказвам",
+      "bgLatin": ""
+    }
+  ],
+  "grammar": {
+    "title": "Nach + Dativ",
+    "explanation": "Wichtige grammatikalische Strukturen für das Thema 'Freizeit nach der Arbeit'.",
+    "examples": [
+      {
+        "bg": "След работа отивам в киното.",
+        "de": "Nach der Arbeit gehe ich ins Kino."
+      },
+      {
+        "bg": "След обяд имам среща.",
+        "de": "Nach dem Mittagessen habe ich ein Meeting."
+      }
+    ]
+  },
+  "exercises": [
+    {
+      "id": "a2m5l5-ex1",
+      "type": "quiz",
+      "title": "Wähle die richtige Übersetzung",
+      "data": [
+        {
+          "id": "q1",
+          "question": "Was bedeutet 'след работа'?",
+          "options": [
+            "die Party",
+            "das Konzert",
+            "nach der Arbeit",
+            "das Kino"
+          ],
+          "correctOptionIndex": 2
+        },
+        {
+          "id": "q2",
+          "question": "Wie sagt man 'die Party'?",
+          "options": [
+            "след работа",
+            "партито",
+            "концертът",
+            "киното"
+          ],
+          "correctOptionIndex": 1
+        }
+      ]
+    },
+    {
+      "id": "a2m5l5-ex2",
+      "type": "matching",
+      "title": "Ordne die Vokabeln zu",
+      "data": [
+        {
+          "id": "p1",
+          "de": "nach der Arbeit",
+          "bg": "след работа"
+        },
+        {
+          "id": "p2",
+          "de": "die Party",
+          "bg": "партито"
+        },
+        {
+          "id": "p3",
+          "de": "das Konzert",
+          "bg": "концертът"
+        },
+        {
+          "id": "p4",
+          "de": "das Kino",
+          "bg": "киното"
+        }
+      ]
+    }
+  ]
+}

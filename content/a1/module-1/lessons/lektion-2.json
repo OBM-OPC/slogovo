@@ -1,0 +1,47 @@
+{
+  "lessonId": "a1-modul-1-lektion-2",
+  "moduleId": "a1-modul-1",
+  "level": "A1",
+  "title": "Sich vorstellen",
+  "duration": "15 min",
+  "introduction": "Wie stelle ich mich vor? Lerne Name, Herkunft und die wichtigste Frage: 'Как се казваш?'",
+  "summary": "Du kannst dich vorstellen: 'Аз се казвам...' (Ich heiße...), 'Аз съм от...' (Ich bin aus...).",
+  "vocabulary": [
+    { "id": "m1l2-1", "de": "Ich heiße", "bg": "Аз се казвам", "bgLatin": "As se kaswam" },
+    { "id": "m1l2-2", "de": "Wie heißt du?", "bg": "Как се казваш?", "bgLatin": "Kak se kaswasch?" },
+    { "id": "m1l2-3", "de": "Ich bin", "bg": "Аз съм", "bgLatin": "As säm" },
+    { "id": "m1l2-4", "de": "aus", "bg": "от", "bgLatin": "ot" },
+    { "id": "m1l2-5", "de": "Deutschland", "bg": "Германия", "bgLatin": "Germanija" },
+    { "id": "m1l2-6", "de": "Österreich", "bg": "Австрия", "bgLatin": "Austria" },
+    { "id": "m1l2-7", "de": "die Schweiz", "bg": "Швейцария", "bgLatin": "Schweizarija" },
+    { "id": "m1l2-8", "de": "Bulgarien", "bg": "България", "bgLatin": "Balgariija" }
+  ],
+  "grammar": {
+    "title": "Das Verb 'sein' — съм",
+    "explanation": "Das bulgarische Verb für 'sein' wird im Präsens fast immer weggelassen. Man sagt 'Аз съм от Германия' oder einfach 'От Германия съм'.",
+    "examples": [
+      { "bg": "Аз съм от Германия.", "de": "Ich bin aus Deutschland.", "bgLatin": "As säm ot Germanija." },
+      { "bg": "Аз се казвам Мария.", "de": "Ich heiße Maria.", "bgLatin": "As se kaswam Marija." }
+    ]
+  },
+  "exercises": [
+    {
+      "id": "m1l2-ex1",
+      "type": "fill-in",
+      "title": "Ergänze das fehlende Wort",
+      "data": [
+        { "id": "f1", "parts": ["Аз ", "____", " от Германия."], "answer": "съм", "answers": ["съм", "som"], "bg": "Аз съм от Германия.", "de": "Ich bin aus Deutschland." },
+        { "id": "f2", "parts": ["Как се ", "____", "?"], "answer": "казваш", "answers": ["казваш", "kaswasch"], "bg": "Как се казваш?", "de": "Wie heißt du?" }
+      ]
+    },
+    {
+      "id": "m1l2-ex2",
+      "type": "sentence-builder",
+      "title": "Baue den Satz",
+      "data": [
+        { "id": "sb1", "words": ["Аз", "се", "казвам", "Петър."], "correctOrder": ["Аз", "се", "казвам", "Петър."], "de": "Ich heiße Peter." },
+        { "id": "sb2", "words": ["съм", "Аз", "от", "Австрия."], "correctOrder": ["Аз", "съм", "от", "Австрия."], "de": "Ich bin aus Österreich." }
+      ]
+    }
+  ]
+}

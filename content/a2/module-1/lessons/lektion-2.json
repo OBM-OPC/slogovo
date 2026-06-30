@@ -1,0 +1,64 @@
+{
+  "lessonId": "a2-modul-1-lektion-2",
+  "moduleId": "a2-modul-1",
+  "level": "A2",
+  "title": "Freizeitaktivitäten",
+  "duration": "20 min",
+  "introduction": "Lerne, über Hobbys und Freizeit zu sprechen. Was machst du gerne in deiner Freizeit?",
+  "summary": "Du kannst jetzt über Freizeitaktivitäten sprechen: Sport, Musik, Lesen, Kochen.",
+  "vocabulary": [
+    { "id": "a2m1l2-1", "de": "das Hobby", "bg": "хобито", "bgLatin": "chobito" },
+    { "id": "a2m1l2-2", "de": "Sport treiben", "bg": "спортувам", "bgLatin": "sportuwam" },
+    { "id": "a2m1l2-3", "de": "Musik hören", "bg": "слушам музика", "bgLatin": "sluscham musika" },
+    { "id": "a2m1l2-4", "de": "lesen", "bg": "чета", "bgLatin": "tsheta" },
+    { "id": "a2m1l2-5", "de": "kochen", "bg": "готвя", "bgLatin": "gotwja" },
+    { "id": "a2m1l2-6", "de": "spazieren gehen", "bg": "разхождам се", "bgLatin": "raschozhdam se" },
+    { "id": "a2m1l2-7", "de": "fotografieren", "bg": "снимам", "bgLatin": "snimam" },
+    { "id": "a2m1l2-8", "de": "malen", "bg": "рисувам", "bgLatin": "risuwam" },
+    { "id": "a2m1l2-9", "de": "tanzen", "bg": "танцувам", "bgLatin": "tantsuwam" },
+    { "id": "a2m1l2-10", "de": "schwimmen", "bg": "плувам", "bgLatin": "pluwam" },
+    { "id": "a2m1l2-11", "de": "das Buch", "bg": "книгата", "bgLatin": "knigata" },
+    { "id": "a2m1l2-12", "de": "die Musik", "bg": "музиката", "bgLatin": "musikata" }
+  ],
+  "grammar": {
+    "title": "Das Gerundium (деепричастие)",
+    "explanation": "Im Bulgarischen bildet man das Gerundium mit -йки oder -ейки. Es beschreibt eine Handlung, die gleichzeitig mit einer anderen stattfindet.",
+    "examples": [
+      { "bg": "Слушам музика, докато готвя.", "de": "Ich höre Musik, während ich koche.", "bgLatin": "Sluscham musika, dokato gotwja." },
+      { "bg": "Тя чете, лежейки на дивана.", "de": "Sie liest, während sie auf dem Sofa liegt.", "bgLatin": "Tja tsheta, lezheiki na diwana." },
+      { "bg": "Разхождам се, слушайки подкасти.", "de": "Ich gehe spazieren und höre dabei Podcasts.", "bgLatin": "Raschozhdam se, slushajki podkasti." }
+    ]
+  },
+  "exercises": [
+    {
+      "id": "a2m1l2-ex1",
+      "type": "quiz",
+      "title": "Wähle die richtige Übersetzung",
+      "data": [
+        {
+          "id": "q1",
+          "question": "Was bedeutet 'спортувам'?",
+          "options": ["Sport treiben", "lesen", "kochen", "tanzen"],
+          "correctOptionIndex": 0
+        },
+        {
+          "id": "q2",
+          "question": "Wie sagt man 'Ich male gerne'?",
+          "options": ["Обичам да спортувам.", "Обичам да рисувам.", "Обичам да танцувам.", "Обичам да чета."],
+          "correctOptionIndex": 1
+        }
+      ]
+    },
+    {
+      "id": "a2m1l2-ex2",
+      "type": "matching",
+      "title": "Ordne die Aktivitäten zu",
+      "data": [
+        { "id": "p1", "de": "schwimmen", "bg": "плувам" },
+        { "id": "p2", "de": "tanzen", "bg": "танцувам" },
+        { "id": "p3", "de": "fotografieren", "bg": "снимам" },
+        { "id": "p4", "de": "spazieren gehen", "bg": "разхождам се" }
+      ]
+    }
+  ]
+}

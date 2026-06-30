@@ -1,0 +1,16 @@
+{
+  "moduleId": "a1-modul-6",
+  "level": "A1",
+  "title": "Freizeit",
+  "description": "Hobbys, Wochentage, Uhrzeit und Freizeitaktivitäten auf Bulgarisch.",
+  "order": 6,
+  "icon": "smile",
+  "requiredScore": 80,
+  "lessons": [
+    { "lessonId": "a1-modul-6-lektion-1", "title": "Hobbys", "duration": "15 min" },
+    { "lessonId": "a1-modul-6-lektion-2", "title": "Wochentage", "duration": "15 min" },
+    { "lessonId": "a1-modul-6-lektion-3", "title": "Die Uhrzeit", "duration": "15 min" },
+    { "lessonId": "a1-modul-6-lektion-4", "title": "Wetter", "duration": "15 min" },
+    { "lessonId": "a1-modul-6-lektion-5", "title": "Pläne machen", "duration": "15 min" }
+  ]
+}

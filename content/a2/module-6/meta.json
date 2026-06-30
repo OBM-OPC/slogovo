@@ -1,0 +1,16 @@
+{
+  "moduleId": "a2-modul-6",
+  "level": "A2",
+  "title": "Beziehungen & Emotionen",
+  "description": "Familie, Freundschaft, Gefühle und Konfliktlösung auf Bulgarisch.",
+  "order": 6,
+  "icon": "users",
+  "requiredScore": 80,
+  "lessons": [
+    { "lessonId": "a2-modul-6-lektion-1", "title": "Familie & Verwandte", "duration": "20 min" },
+    { "lessonId": "a2-modul-6-lektion-2", "title": "Freundschaft", "duration": "20 min" },
+    { "lessonId": "a2-modul-6-lektion-3", "title": "Gefühle ausdrücken", "duration": "20 min" },
+    { "lessonId": "a2-modul-6-lektion-4", "title": "Liebe & Romantik", "duration": "20 min" },
+    { "lessonId": "a2-modul-6-lektion-5", "title": "Diskussionen & Konflikte", "duration": "20 min" }
+  ]
+}

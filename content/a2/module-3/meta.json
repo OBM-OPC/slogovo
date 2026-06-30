@@ -1,0 +1,16 @@
+{
+  "moduleId": "a2-modul-3",
+  "level": "A2",
+  "title": "Reisen & Transport",
+  "description": "Reisen, Transportmittel, Hotel und Wegbeschreibungen auf Bulgarisch.",
+  "order": 3,
+  "icon": "plane",
+  "requiredScore": 80,
+  "lessons": [
+    { "lessonId": "a2-modul-3-lektion-1", "title": "Am Flughafen", "duration": "20 min" },
+    { "lessonId": "a2-modul-3-lektion-2", "title": "Im Zug", "duration": "20 min" },
+    { "lessonId": "a2-modul-3-lektion-3", "title": "Das Hotel", "duration": "20 min" },
+    { "lessonId": "a2-modul-3-lektion-4", "title": "Städte erkunden", "duration": "20 min" },
+    { "lessonId": "a2-modul-3-lektion-5", "title": "Richtungen", "duration": "20 min" }
+  ]
+}

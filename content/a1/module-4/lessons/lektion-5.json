@@ -1,0 +1,57 @@
+{
+  "lessonId": "a1-modul-4-lektion-5",
+  "moduleId": "a1-modul-4",
+  "level": "A1",
+  "title": "Check-out",
+  "duration": "15 min",
+  "introduction": "Beim Abreisen muss man auschecken, die Rechnung begleichen und den Schlüssel abgeben.",
+  "summary": "Du kannst auschecken, nach der Rechnung fragen und den Schlüssel zurückgeben.",
+  "vocabulary": [
+    { "id": "m4l5-1", "de": "auschecken", "bg": "напускам", "bgLatin": "napuskam" },
+    { "id": "m4l5-2", "de": "die Rechnung", "bg": "сметка", "bgLatin": "smetka" },
+    { "id": "m4l5-3", "de": "bezahlen", "bg": "плащам", "bgLatin": "plaschtam" },
+    { "id": "m4l5-4", "de": "der Schlüssel zurückgeben", "bg": "връщам ключа", "bgLatin": "wraschtam kljutscha" },
+    { "id": "m4l5-5", "de": "auf Wiedersehen", "bg": "довиждане", "bgLatin": "dowischdane" },
+    { "id": "m4l5-6", "de": "War es schön?", "bg": "Беше ли приятно?", "bgLatin": "Besche li prijatno?" },
+    { "id": "m4l5-7", "de": "Sehr gut", "bg": "много добре", "bgLatin": "mnogo dobre" },
+    { "id": "m4l5-8", "de": "noch einmal", "bg": "пак", "bgLatin": "pak" }
+  ],
+  "grammar": {
+    "title": "Vergangenheit: беше",
+    "explanation": "'Беше' ist die Vergangenheitsform von 'съм' (sein) in der 3. Person Singular. 'Беше ли приятно?' bedeutet 'War es schön?'.",
+    "examples": [
+      { "bg": "Беше ли приятно?", "de": "War es schön?", "bgLatin": "Besche li prijatno?" },
+      { "bg": "Да, беше много добре.", "de": "Ja, es war sehr gut.", "bgLatin": "Da, besche mnogo dobre." }
+    ]
+  },
+  "exercises": [
+    {
+      "id": "m4l5-ex1",
+      "type": "quiz",
+      "title": "Check-out-Quiz",
+      "data": [
+        {
+          "id": "q1",
+          "question": "Was bedeutet 'напускам'?",
+          "options": ["bezahlen", "auschecken", "buchen", "frühstücken"],
+          "correctOptionIndex": 1
+        },
+        {
+          "id": "q2",
+          "question": "Wie fragt man 'War es schön?'?",
+          "options": ["Беше ли приятно?", "Колко струва?", "Имате ли стая?", "Как си?"],
+          "correctOptionIndex": 0
+        }
+      ]
+    },
+    {
+      "id": "m4l5-ex2",
+      "type": "sentence-builder",
+      "title": "Baue den Check-out-Satz",
+      "data": [
+        { "id": "sb1", "words": ["Искам", "да", "напусна", "стаята."], "correctOrder": ["Искам", "да", "напусна", "стаята."], "de": "Ich möchte das Zimmer verlassen." },
+        { "id": "sb2", "words": ["Моля", "сметката."], "correctOrder": ["Моля", "сметката."], "de": "Bitte die Rechnung." }
+      ]
+    }
+  ]
+}

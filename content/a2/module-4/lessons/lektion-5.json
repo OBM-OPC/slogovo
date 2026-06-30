@@ -1,0 +1,137 @@
+{
+  "lessonId": "a2-modul-4-lektion-5",
+  "moduleId": "a2-modul-4",
+  "level": "A2",
+  "title": "Unfälle & Notfälle",
+  "duration": "20 min",
+  "introduction": "Lerne Vokabeln zum Thema 'Unfälle & Notfälle' auf Bulgarisch.",
+  "summary": "Du kannst jetzt über Unfälle & Notfälle sprechen.",
+  "vocabulary": [
+    {
+      "id": "a2m4l5-1",
+      "de": "der Unfall",
+      "bg": "инцидентът",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m4l5-2",
+      "de": "verletzt",
+      "bg": "наранен",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m4l5-3",
+      "de": "die Erste Hilfe",
+      "bg": "първа помощ",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m4l5-4",
+      "de": "die Notrufnummer",
+      "bg": "номерът за спешни случаи",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m4l5-5",
+      "de": "brennen",
+      "bg": "горя",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m4l5-6",
+      "de": "rufen",
+      "bg": "викам",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m4l5-7",
+      "de": "helfen",
+      "bg": "помагам",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m4l5-8",
+      "de": "die Verbrennung",
+      "bg": "изгарянето",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m4l5-9",
+      "de": "die Schnittwunde",
+      "bg": "порезът",
+      "bgLatin": ""
+    }
+  ],
+  "grammar": {
+    "title": "Perfekt mit Reflexivverben",
+    "explanation": "Wichtige grammatikalische Strukturen für das Thema 'Unfälle & Notfälle'.",
+    "examples": [
+      {
+        "bg": "Съм се порязал.",
+        "de": "Ich habe mich geschnitten."
+      },
+      {
+        "bg": "Тя се е изгорила.",
+        "de": "Sie hat sich verbrannt."
+      }
+    ]
+  },
+  "exercises": [
+    {
+      "id": "a2m4l5-ex1",
+      "type": "quiz",
+      "title": "Wähle die richtige Übersetzung",
+      "data": [
+        {
+          "id": "q1",
+          "question": "Was bedeutet 'инцидентът'?",
+          "options": [
+            "verletzt",
+            "die Erste Hilfe",
+            "der Unfall",
+            "die Notrufnummer"
+          ],
+          "correctOptionIndex": 2
+        },
+        {
+          "id": "q2",
+          "question": "Wie sagt man 'verletzt'?",
+          "options": [
+            "инцидентът",
+            "наранен",
+            "първа помощ",
+            "номерът за спешни случаи"
+          ],
+          "correctOptionIndex": 1
+        }
+      ]
+    },
+    {
+      "id": "a2m4l5-ex2",
+      "type": "matching",
+      "title": "Ordne die Vokabeln zu",
+      "data": [
+        {
+          "id": "p1",
+          "de": "der Unfall",
+          "bg": "инцидентът"
+        },
+        {
+          "id": "p2",
+          "de": "verletzt",
+          "bg": "наранен"
+        },
+        {
+          "id": "p3",
+          "de": "die Erste Hilfe",
+          "bg": "първа помощ"
+        },
+        {
+          "id": "p4",
+          "de": "die Notrufnummer",
+          "bg": "номерът за спешни случаи"
+        }
+      ]
+    }
+  ]
+}

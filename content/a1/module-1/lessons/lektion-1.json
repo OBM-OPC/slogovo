@@ -1,0 +1,59 @@
+{
+  "lessonId": "a1-modul-1-lektion-1",
+  "moduleId": "a1-modul-1",
+  "level": "A1",
+  "title": "Grüße",
+  "duration": "15 min",
+  "introduction": "Lerne die wichtigsten Begrüßungen auf Bulgarisch. In Bulgarien ist eine freundliche Begrüßung der erste Schritt zu jedem Gespräch.",
+  "summary": "Du kannst dich nun mit 'Здравей' (informell) und 'Здравейте' (formell/mehrere Personen) begrüßen. 'Добър ден' nutzt man tagsüber.",
+  "vocabulary": [
+    { "id": "m1l1-1", "de": "Hallo", "bg": "Здравей", "bgLatin": "Sdrawej" },
+    { "id": "m1l1-2", "de": "Hallo (formell / Plural)", "bg": "Здравейте", "bgLatin": "Sdrawejte" },
+    { "id": "m1l1-3", "de": "Guten Tag", "bg": "Добър ден", "bgLatin": "Dobar den" },
+    { "id": "m1l1-4", "de": "Guten Morgen", "bg": "Добро утро", "bgLatin": "Dobro utro" },
+    { "id": "m1l1-5", "de": "Guten Abend", "bg": "Добър вечер", "bgLatin": "Dobar wetsche" },
+    { "id": "m1l1-6", "de": "Gute Nacht", "bg": "Лека нощ", "bgLatin": "Leka noscht" },
+    { "id": "m1l1-7", "de": "Willkommen", "bg": "Добре дошли", "bgLatin": "Dobre doschli" },
+    { "id": "m1l1-8", "de": "Auf Wiedersehen", "bg": "Довиждане", "bgLatin": "Dowischdane" }
+  ],
+  "grammar": {
+    "title": "Formell vs. Informell",
+    "explanation": "Auf Bulgarisch unterscheidet man zwischen informeller Anrede (Здравей) für Freunde/Familie und formeller/mehrzahliger Anrede (Здравейте).",
+    "examples": [
+      { "bg": "Здравей, Иван!", "de": "Hallo, Ivan!", "bgLatin": "Sdrawej, Iwan!" },
+      { "bg": "Здравейте, господине!", "de": "Guten Tag, Herr!", "bgLatin": "Sdrawejte, gospodine!" }
+    ]
+  },
+  "exercises": [
+    {
+      "id": "m1l1-ex1",
+      "type": "quiz",
+      "title": "Wähle die richtige Übersetzung",
+      "data": [
+        {
+          "id": "q1",
+          "question": "Wie heißt 'Guten Tag'?",
+          "options": ["Добър ден", "Добро утро", "Лека нощ", "Довиждане"],
+          "correctOptionIndex": 0
+        },
+        {
+          "id": "q2",
+          "question": "Was bedeutet 'Здравей'?",
+          "options": ["Gute Nacht", "Hallo", "Auf Wiedersehen", "Willkommen"],
+          "correctOptionIndex": 1
+        }
+      ]
+    },
+    {
+      "id": "m1l1-ex2",
+      "type": "matching",
+      "title": "Ordne die Paare zu",
+      "data": [
+        { "id": "p1", "de": "Guten Morgen", "bg": "Добро утро" },
+        { "id": "p2", "de": "Gute Nacht", "bg": "Лека нощ" },
+        { "id": "p3", "de": "Willkommen", "bg": "Добре дошли" },
+        { "id": "p4", "de": "Auf Wiedersehen", "bg": "Довиждане" }
+      ]
+    }
+  ]
+}

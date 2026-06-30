@@ -1,0 +1,46 @@
+{
+  "lessonId": "a1-modul-2-lektion-3",
+  "moduleId": "a1-modul-2",
+  "level": "A1",
+  "title": "Bestellen",
+  "duration": "15 min",
+  "introduction": "Lerne, im Restaurant höflich zu bestellen und nach Empfehlungen zu fragen.",
+  "summary": "Du kannst 'Искам...' (Ich möchte...) und 'Моля, дайте ми...' (Bitte geben Sie mir...) verwenden.",
+  "vocabulary": [
+    { "id": "m2l3-1", "de": "Ich möchte", "bg": "Искам", "bgLatin": "Iskam" },
+    { "id": "m2l3-2", "de": "Bitte geben Sie mir", "bg": "Моля, дайте ми", "bgLatin": "Molja, dajte mi" },
+    { "id": "m2l3-3", "de": "die Empfehlung", "bg": "препоръка", "bgLatin": "preporaka" },
+    { "id": "m2l3-4", "de": "das Menü", "bg": "меню", "bgLatin": "menju" },
+    { "id": "m2l3-5", "de": "Ich nehme", "bg": "Ще взема", "bgLatin": "Stsche wssema" },
+    { "id": "m2l3-6", "de": "das Gericht", "bg": "ястие", "bgLatin": "jastie" },
+    { "id": "m2l3-7", "de": "für mich", "bg": "за мен", "bgLatin": "sa men" },
+    { "id": "m2l3-8", "de": "für uns", "bg": "за нас", "bgLatin": "sa nas" }
+  ],
+  "grammar": {
+    "title": "Bestellungen formulieren",
+    "explanation": "'Искам' ist der direkte Weg, 'Моля, дайте ми' der höfliche Weg. Beide sind alltagstauglich.",
+    "examples": [
+      { "bg": "Искам една салата.", "de": "Ich möchte einen Salat.", "bgLatin": "Iskam edna salata." },
+      { "bg": "Моля, дайте ми менюто.", "de": "Bitte geben Sie mir die Speisekarte.", "bgLatin": "Molja, dajte mi menjuto." }
+    ]
+  },
+  "exercises": [
+    {
+      "id": "m2l3-ex1",
+      "type": "sentence-builder",
+      "title": "Baue die Bestellung",
+      "data": [
+        { "id": "sb1", "words": ["Искам", "една", "салата", "и", "вода."], "correctOrder": ["Искам", "една", "салата", "и", "вода."], "de": "Ich möchte einen Salat und Wasser." },
+        { "id": "sb2", "words": ["дайте", "Моля", "менюто", "ми."], "correctOrder": ["Моля", "дайте", "ми", "менюто."], "de": "Bitte geben Sie mir die Speisekarte." }
+      ]
+    },
+    {
+      "id": "m2l3-ex2",
+      "type": "fill-in",
+      "title": "Ergänze die Bestellung",
+      "data": [
+        { "id": "f1", "parts": ["____", " едно кафе, моля."], "answer": "Искам", "answers": ["Искам", "Iskam"], "bg": "Искам едно кафе, моля.", "de": "Ich möchte einen Kaffee, bitte." }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,131 @@
+{
+  "lessonId": "a2-modul-3-lektion-4",
+  "moduleId": "a2-modul-3",
+  "level": "A2",
+  "title": "Städte erkunden",
+  "duration": "20 min",
+  "introduction": "Lerne Vokabeln zum Thema 'Städte erkunden' auf Bulgarisch.",
+  "summary": "Du kannst jetzt über Städte erkunden sprechen.",
+  "vocabulary": [
+    {
+      "id": "a2m3l4-1",
+      "de": "die Sehenswürdigkeit",
+      "bg": "забележителността",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m3l4-2",
+      "de": "die Kirche",
+      "bg": "църквата",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m3l4-3",
+      "de": "das Museum",
+      "bg": "музеят",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m3l4-4",
+      "de": "die Altstadt",
+      "bg": "старият град",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m3l4-5",
+      "de": "der Strand",
+      "bg": "плажът",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m3l4-6",
+      "de": "der Berg",
+      "bg": "планината",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m3l4-7",
+      "de": "die Wanderung",
+      "bg": "разходката",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m3l4-8",
+      "de": "die Führung",
+      "bg": "екскурзоводът",
+      "bgLatin": ""
+    }
+  ],
+  "grammar": {
+    "title": "Präpositionen des Ortes",
+    "explanation": "Wichtige grammatikalische Strukturen für das Thema 'Städte erkunden'.",
+    "examples": [
+      {
+        "bg": "Той е в музея.",
+        "de": "Er ist im Museum."
+      },
+      {
+        "bg": "Те са на плажа.",
+        "de": "Sie sind am Strand."
+      }
+    ]
+  },
+  "exercises": [
+    {
+      "id": "a2m3l4-ex1",
+      "type": "quiz",
+      "title": "Wähle die richtige Übersetzung",
+      "data": [
+        {
+          "id": "q1",
+          "question": "Was bedeutet 'забележителността'?",
+          "options": [
+            "die Kirche",
+            "das Museum",
+            "die Sehenswürdigkeit",
+            "die Altstadt"
+          ],
+          "correctOptionIndex": 2
+        },
+        {
+          "id": "q2",
+          "question": "Wie sagt man 'die Kirche'?",
+          "options": [
+            "забележителността",
+            "църквата",
+            "музеят",
+            "старият град"
+          ],
+          "correctOptionIndex": 1
+        }
+      ]
+    },
+    {
+      "id": "a2m3l4-ex2",
+      "type": "matching",
+      "title": "Ordne die Vokabeln zu",
+      "data": [
+        {
+          "id": "p1",
+          "de": "die Sehenswürdigkeit",
+          "bg": "забележителността"
+        },
+        {
+          "id": "p2",
+          "de": "die Kirche",
+          "bg": "църквата"
+        },
+        {
+          "id": "p3",
+          "de": "das Museum",
+          "bg": "музеят"
+        },
+        {
+          "id": "p4",
+          "de": "die Altstadt",
+          "bg": "старият град"
+        }
+      ]
+    }
+  ]
+}

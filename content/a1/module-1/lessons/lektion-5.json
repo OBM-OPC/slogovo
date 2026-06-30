@@ -1,0 +1,57 @@
+{
+  "lessonId": "a1-modul-1-lektion-5",
+  "moduleId": "a1-modul-1",
+  "level": "A1",
+  "title": "Höflichkeit",
+  "duration": "15 min",
+  "introduction": "Höflichkeit öffnet Türen. Diese Lektion zeigt die wichtigsten Höflichkeitsfloskeln auf Bulgarisch.",
+  "summary": "Du kennst 'Моля' (Bitte), 'Благодаря' (Danke) und 'Извинете' (Entschuldigung).",
+  "vocabulary": [
+    { "id": "m1l5-1", "de": "Bitte", "bg": "Моля", "bgLatin": "Molja" },
+    { "id": "m1l5-2", "de": "Danke schön", "bg": "Благодаря много", "bgLatin": "Blagodarja mnogo" },
+    { "id": "m1l5-3", "de": "Entschuldigung", "bg": "Извинете", "bgLatin": "Iswinete" },
+    { "id": "m1l5-4", "de": "Kein Problem", "bg": "Няма проблем", "bgLatin": "Njama problem" },
+    { "id": "m1l5-5", "de": "Es tut mir leid", "bg": "Съжалявам", "bgLatin": "Saschalawjam" },
+    { "id": "m1l5-6", "de": "Gern geschehen", "bg": "Поля", "bgLatin": "Polja" },
+    { "id": "m1l5-7", "de": "Verzeihung", "bg": "Прошка", "bgLatin": "Proscha" },
+    { "id": "m1l5-8", "de": "Darf ich?", "bg": "Мога ли?", "bgLatin": "Moga li?" }
+  ],
+  "grammar": {
+    "title": "Bitte und Danke",
+    "explanation": "'Моля' bedeutet sowohl 'Bitte' als auch 'Bitte schön' / 'Gern geschehen'. Der Kontext zeigt die Bedeutung.",
+    "examples": [
+      { "bg": "— Благодаря! — Моля!", "de": "— Danke! — Bitte schön!", "bgLatin": "— Blagodarja! — Molja!" },
+      { "bg": "Моля, едно кафе.", "de": "Bitte, einen Kaffee.", "bgLatin": "Molja, edno kafe." }
+    ]
+  },
+  "exercises": [
+    {
+      "id": "m1l5-ex1",
+      "type": "quiz",
+      "title": "Wähle die Übersetzung",
+      "data": [
+        {
+          "id": "q1",
+          "question": "Was bedeutet 'Извинете'?",
+          "options": ["Danke", "Bitte", "Entschuldigung", "Gern geschehen"],
+          "correctOptionIndex": 2
+        },
+        {
+          "id": "q2",
+          "question": "Wie sagt man 'Danke schön'?",
+          "options": ["Благодаря много", "Моля", "Няма проблем", "Съжалявам"],
+          "correctOptionIndex": 0
+        }
+      ]
+    },
+    {
+      "id": "m1l5-ex2",
+      "type": "sentence-builder",
+      "title": "Baue die Höflichkeitsformel",
+      "data": [
+        { "id": "sb1", "words": ["Благодаря", "много", "за", "помощта."], "correctOrder": ["Благодаря", "много", "за", "помощта."], "de": "Vielen Dank für die Hilfe." },
+        { "id": "sb2", "words": ["Извинете", "можете", "да", "помогнете", "ли?"], "correctOrder": ["Извинете", "можете", "ли", "да", "помогнете?"], "de": "Entschuldigung, können Sie helfen?" }
+      ]
+    }
+  ]
+}

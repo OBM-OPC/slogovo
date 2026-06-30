@@ -1,0 +1,62 @@
+{
+  "lessonId": "a1-modul-2-lektion-1",
+  "moduleId": "a1-modul-2",
+  "level": "A1",
+  "title": "Essen & Trinken",
+  "duration": "15 min",
+  "introduction": "Grundwortschatz für Essen und Getränke – das A und O im Restaurant.",
+  "summary": "Du kennst Wörter für Wasser, Brot, Kaffee, Tee, Fleisch, Gemüse und Obst.",
+  "vocabulary": [
+    { "id": "m2l1-1", "de": "Wasser", "bg": "вода", "bgLatin": "woda" },
+    { "id": "m2l1-2", "de": "Brot", "bg": "хляб", "bgLatin": "chljab" },
+    { "id": "m2l1-3", "de": "Kaffee", "bg": "кафе", "bgLatin": "kafe" },
+    { "id": "m2l1-4", "de": "Tee", "bg": "чай", "bgLatin": "tschaj" },
+    { "id": "m2l1-5", "de": "Fleisch", "bg": "месо", "bgLatin": "meso" },
+    { "id": "m2l1-6", "de": "Gemüse", "bg": "зеленчук", "bgLatin": "selentschuk" },
+    { "id": "m2l1-7", "de": "Obst", "bg": "плод", "bgLatin": "plod" },
+    { "id": "m2l1-8", "de": "Suppe", "bg": "супа", "bgLatin": "supa" },
+    { "id": "m2l1-9", "de": "Salat", "bg": "салата", "bgLatin": "salata" },
+    { "id": "m2l1-10", "de": "Bier", "bg": "бира", "bgLatin": "bira" }
+  ],
+  "grammar": {
+    "title": "Unbestimmter Artikel 'ein/eine'",
+    "explanation": "Im Bulgarischen gibt es keinen unbestimmten Artikel. 'Едно кафе' bedeutet wörtlich 'ein Kaffee', aber das Wort 'едно' wird oft weggelassen.",
+    "examples": [
+      { "bg": "Искам кафе.", "de": "Ich möchte einen Kaffee.", "bgLatin": "Iskam kafe." },
+      { "bg": "Една вода, моля.", "de": "Ein Wasser, bitte.", "bgLatin": "Edna woda, molja." }
+    ]
+  },
+  "exercises": [
+    {
+      "id": "m2l1-ex1",
+      "type": "matching",
+      "title": "Ordne Essen und Trinken zu",
+      "data": [
+        { "id": "p1", "de": "Wasser", "bg": "вода" },
+        { "id": "p2", "de": "Brot", "bg": "хляб" },
+        { "id": "p3", "de": "Kaffee", "bg": "кафе" },
+        { "id": "p4", "de": "Salat", "bg": "салата" },
+        { "id": "p5", "de": "Bier", "bg": "бира" }
+      ]
+    },
+    {
+      "id": "m2l1-ex2",
+      "type": "quiz",
+      "title": "Was passt zusammen?",
+      "data": [
+        {
+          "id": "q1",
+          "question": "Was bedeutet 'чай'?",
+          "options": ["Kaffee", "Tee", "Bier", "Wasser"],
+          "correctOptionIndex": 1
+        },
+        {
+          "id": "q2",
+          "question": "Wie heißt 'Brot'?",
+          "options": ["хляб", "супа", "месо", "плод"],
+          "correctOptionIndex": 0
+        }
+      ]
+    }
+  ]
+}

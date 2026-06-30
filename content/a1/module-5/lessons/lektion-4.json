@@ -1,0 +1,48 @@
+{
+  "lessonId": "a1-modul-5-lektion-4",
+  "moduleId": "a1-modul-5",
+  "level": "A1",
+  "title": "Öffentliche Verkehrsmittel",
+  "duration": "15 min",
+  "introduction": "Bus, Bahn, Taxi: So kommst du in Bulgarien von A nach B.",
+  "summary": "Du kannst nach der Haltestelle, der Fahrkarte und dem Fahrplan fragen.",
+  "vocabulary": [
+    { "id": "m5l4-1", "de": "der Bus", "bg": "автобус", "bgLatin": "awtobus" },
+    { "id": "m5l4-2", "de": "die Straßenbahn", "bg": "трамвай", "bgLatin": "tramwaj" },
+    { "id": "m5l4-3", "de": "die U-Bahn", "bg": "метро", "bgLatin": "metro" },
+    { "id": "m5l4-4", "de": "das Taxi", "bg": "такси", "bgLatin": "taksi" },
+    { "id": "m5l4-5", "de": "die Haltestelle", "bg": "спирка", "bgLatin": "spirkа" },
+    { "id": "m5l4-6", "de": "die Fahrkarte", "bg": "билет", "bgLatin": "bilet" },
+    { "id": "m5l4-7", "de": "der Fahrplan", "bg": "разписание", "bgLatin": "razpisanie" },
+    { "id": "m5l4-8", "de": "einsteigen", "bg": "качвам се", "bgLatin": "katschwam se" }
+  ],
+  "grammar": {
+    "title": "Reflexiv: качвам се",
+    "explanation": "'Се' ist das Reflexivpronomen. 'Качвам се' bedeutet 'ich steige ein'.",
+    "examples": [
+      { "bg": "Качвам се в автобуса.", "de": "Ich steige in den Bus ein.", "bgLatin": "Katschwam se w awtobusa." },
+      { "bg": "Слизам на следващата спирка.", "de": "Ich steige an der nächsten Haltestelle aus.", "bgLatin": "Slisam na sledwaschtata spirkа." }
+    ]
+  },
+  "exercises": [
+    {
+      "id": "m5l4-ex1",
+      "type": "matching",
+      "title": "Verkehrsmittel",
+      "data": [
+        { "id": "p1", "de": "Bus", "bg": "автобус" },
+        { "id": "p2", "de": "U-Bahn", "bg": "метро" },
+        { "id": "p3", "de": "Taxi", "bg": "такси" },
+        { "id": "p4", "de": "Fahrkarte", "bg": "билет" }
+      ]
+    },
+    {
+      "id": "m5l4-ex2",
+      "type": "fill-in",
+      "title": "Ergänze",
+      "data": [
+        { "id": "f1", "parts": ["Качвам ", "____", " в автобуса."], "answer": "се", "answers": ["се", "se"], "bg": "Качвам се в автобуса.", "de": "Ich steige in den Bus ein." }
+      ]
+    }
+  ]
+}

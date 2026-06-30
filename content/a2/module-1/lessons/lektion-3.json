@@ -1,0 +1,64 @@
+{
+  "lessonId": "a2-modul-1-lektion-3",
+  "moduleId": "a2-modul-1",
+  "level": "A2",
+  "title": "Wochentage & Uhrzeit",
+  "duration": "20 min",
+  "introduction": "Lerne die Wochentage auf Bulgarisch und wie man die Uhrzeit angibt.",
+  "summary": "Du kannst jetzt die Uhrzeit und die Wochentage auf Bulgarisch benennen.",
+  "vocabulary": [
+    { "id": "a2m1l3-1", "de": "Montag", "bg": "понеделник", "bgLatin": "ponedelnik" },
+    { "id": "a2m1l3-2", "de": "Dienstag", "bg": "вторник", "bgLatin": "wtornik" },
+    { "id": "a2m1l3-3", "de": "Mittwoch", "bg": "сряда", "bgLatin": "sriada" },
+    { "id": "a2m1l3-4", "de": "Donnerstag", "bg": "четвъртък", "bgLatin": "tschetwertek" },
+    { "id": "a2m1l3-5", "de": "Freitag", "bg": "петък", "bgLatin": "petek" },
+    { "id": "a2m1l3-6", "de": "Samstag", "bg": "събота", "bgLatin": "subota" },
+    { "id": "a2m1l3-7", "de": "Sonntag", "bg": "неделя", "bgLatin": "nedelja" },
+    { "id": "a2m1l3-8", "de": "die Uhr", "bg": "часовникът", "bgLatin": "tschasownikat" },
+    { "id": "a2m1l3-9", "de": "viertel nach", "bg": "и петнадесет", "bgLatin": "i petnadeset" },
+    { "id": "a2m1l3-10", "de": "halb", "bg": "и половина", "bgLatin": "i polowina" },
+    { "id": "a2m1l3-11", "de": "die Minute", "bg": "минутата", "bgLatin": "minutata" },
+    { "id": "a2m1l3-12", "de": "die Stunde", "bg": "часът", "bgLatin": "tschassat" }
+  ],
+  "grammar": {
+    "title": "Uhrzeit auf Bulgarisch",
+    "explanation": "Die Uhrzeit wird mit 'час' (Uhr/Stunde) angegeben. 'В момента' bedeutet 'im Moment'. Bei halben Stunden sagt man 'и половина', bei Viertel 'и петнадесет' oder 'без петнадесет'.",
+    "examples": [
+      { "bg": "Сега е девет часа.", "de": "Es ist jetzt neun Uhr.", "bgLatin": "Sega e dewet tschasa." },
+      { "bg": "Десет и половина.", "de": "Halb elf.", "bgLatin": "Deset i polowina." },
+      { "bg": "Без петнадесет дванадесет.", "de": "Viertel vor zwölf.", "bgLatin": "Bes petnadeset dwanadeset." }
+    ]
+  },
+  "exercises": [
+    {
+      "id": "a2m1l3-ex1",
+      "type": "quiz",
+      "title": "Wähle den richtigen Wochentag",
+      "data": [
+        {
+          "id": "q1",
+          "question": "Welcher Tag kommt nach Dienstag?",
+          "options": ["понеделник", "сряда", "четвъртък", "петък"],
+          "correctOptionIndex": 1
+        },
+        {
+          "id": "q2",
+          "question": "Was bedeutet 'събота'?",
+          "options": ["Sonntag", "Samstag", "Freitag", "Montag"],
+          "correctOptionIndex": 1
+        }
+      ]
+    },
+    {
+      "id": "a2m1l3-ex2",
+      "type": "matching",
+      "title": "Ordne die Wochentage zu",
+      "data": [
+        { "id": "p1", "de": "Montag", "bg": "понеделник" },
+        { "id": "p2", "de": "Mittwoch", "bg": "сряда" },
+        { "id": "p3", "de": "Freitag", "bg": "петък" },
+        { "id": "p4", "de": "Sonntag", "bg": "неделя" }
+      ]
+    }
+  ]
+}

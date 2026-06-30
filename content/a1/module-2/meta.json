@@ -1,0 +1,16 @@
+{
+  "moduleId": "a1-modul-2",
+  "level": "A1",
+  "title": "Im Restaurant",
+  "description": "Essen, Trinken und Bestellungen: Bulgarisch für den Restaurantbesuch und das Café.",
+  "order": 2,
+  "icon": "utensils",
+  "requiredScore": 80,
+  "lessons": [
+    { "lessonId": "a1-modul-2-lektion-1", "title": "Essen & Trinken", "duration": "15 min" },
+    { "lessonId": "a1-modul-2-lektion-2", "title": "Im Café", "duration": "15 min" },
+    { "lessonId": "a1-modul-2-lektion-3", "title": "Bestellen", "duration": "15 min" },
+    { "lessonId": "a1-modul-2-lektion-4", "title": "Die Rechnung", "duration": "15 min" },
+    { "lessonId": "a1-modul-2-lektion-5", "title": "Speisekarte", "duration": "15 min" }
+  ]
+}

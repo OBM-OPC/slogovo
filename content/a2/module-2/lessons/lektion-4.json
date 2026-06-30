@@ -1,0 +1,131 @@
+{
+  "lessonId": "a2-modul-2-lektion-4",
+  "moduleId": "a2-modul-2",
+  "level": "A2",
+  "title": "Zahlen & Trinkgeld",
+  "duration": "20 min",
+  "introduction": "Lerne Vokabeln zum Thema 'Zahlen & Trinkgeld' auf Bulgarisch.",
+  "summary": "Du kannst jetzt über Zahlen & Trinkgeld sprechen.",
+  "vocabulary": [
+    {
+      "id": "a2m2l4-1",
+      "de": "zahlen",
+      "bg": "плащам",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m2l4-2",
+      "de": "das Bargeld",
+      "bg": "парите в брой",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m2l4-3",
+      "de": "die Karte",
+      "bg": "картата",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m2l4-4",
+      "de": "das Trinkgeld",
+      "bg": "бакшишът",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m2l4-5",
+      "de": "die Wechselstube",
+      "bg": "обменното бюро",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m2l4-6",
+      "de": "der Kurs",
+      "bg": "курсът",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m2l4-7",
+      "de": "die Quittung",
+      "bg": "касовата бележка",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m2l4-8",
+      "de": "das Rückgeld",
+      "bg": "рестото",
+      "bgLatin": ""
+    }
+  ],
+  "grammar": {
+    "title": "Konditional",
+    "explanation": "Wichtige grammatikalische Strukturen für das Thema 'Zahlen & Trinkgeld'.",
+    "examples": [
+      {
+        "bg": "Бих платил с карта.",
+        "de": "Ich würde mit Karte zahlen."
+      },
+      {
+        "bg": "Може ли рестото, моля?",
+        "de": "Könnte ich das Wechselgeld haben, bitte?"
+      }
+    ]
+  },
+  "exercises": [
+    {
+      "id": "a2m2l4-ex1",
+      "type": "quiz",
+      "title": "Wähle die richtige Übersetzung",
+      "data": [
+        {
+          "id": "q1",
+          "question": "Was bedeutet 'плащам'?",
+          "options": [
+            "das Bargeld",
+            "die Karte",
+            "zahlen",
+            "das Trinkgeld"
+          ],
+          "correctOptionIndex": 2
+        },
+        {
+          "id": "q2",
+          "question": "Wie sagt man 'das Bargeld'?",
+          "options": [
+            "плащам",
+            "парите в брой",
+            "картата",
+            "бакшишът"
+          ],
+          "correctOptionIndex": 1
+        }
+      ]
+    },
+    {
+      "id": "a2m2l4-ex2",
+      "type": "matching",
+      "title": "Ordne die Vokabeln zu",
+      "data": [
+        {
+          "id": "p1",
+          "de": "zahlen",
+          "bg": "плащам"
+        },
+        {
+          "id": "p2",
+          "de": "das Bargeld",
+          "bg": "парите в брой"
+        },
+        {
+          "id": "p3",
+          "de": "die Karte",
+          "bg": "картата"
+        },
+        {
+          "id": "p4",
+          "de": "das Trinkgeld",
+          "bg": "бакшишът"
+        }
+      ]
+    }
+  ]
+}

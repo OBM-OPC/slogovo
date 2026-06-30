@@ -1,0 +1,16 @@
+{
+  "moduleId": "a1-modul-3",
+  "level": "A1",
+  "title": "Zahlen & Farben",
+  "description": "Zahlen von 0 bis 100, Grundfarben und erste W-Fragen auf Bulgarisch.",
+  "order": 3,
+  "icon": "palette",
+  "requiredScore": 80,
+  "lessons": [
+    { "lessonId": "a1-modul-3-lektion-1", "title": "Zahlen 0–10", "duration": "15 min" },
+    { "lessonId": "a1-modul-3-lektion-2", "title": "Zahlen 11–100", "duration": "15 min" },
+    { "lessonId": "a1-modul-3-lektion-3", "title": "Grundfarben", "duration": "15 min" },
+    { "lessonId": "a1-modul-3-lektion-4", "title": "W-Fragen", "duration": "15 min" },
+    { "lessonId": "a1-modul-3-lektion-5", "title": "Im Geschäft", "duration": "15 min" }
+  ]
+}

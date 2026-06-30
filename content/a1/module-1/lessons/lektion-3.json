@@ -1,0 +1,59 @@
+{
+  "lessonId": "a1-modul-1-lektion-3",
+  "moduleId": "a1-modul-1",
+  "level": "A1",
+  "title": "Wie geht es dir?",
+  "duration": "15 min",
+  "introduction": "Nach der Begrüßung fragt man oft nach dem Befinden. Diese Lektion zeigt die gängigen Fragen und Antworten.",
+  "summary": "Du kennst nun 'Как си?' (Wie geht es dir?) und Antworten wie 'Добре съм' oder 'Благодаря'.",
+  "vocabulary": [
+    { "id": "m1l3-1", "de": "Wie geht es dir?", "bg": "Как си?", "bgLatin": "Kak si?" },
+    { "id": "m1l3-2", "de": "Mir geht es gut.", "bg": "Добре съм.", "bgLatin": "Dobre säm." },
+    { "id": "m1l3-3", "de": "Danke", "bg": "Благодаря", "bgLatin": "Blagodarja" },
+    { "id": "m1l3-4", "de": "Bitte", "bg": "Моля", "bgLatin": "Molja" },
+    { "id": "m1l3-5", "de": "schlecht", "bg": "лошо", "bgLatin": "loscho" },
+    { "id": "m1l3-6", "de": "so lala", "bg": "така така", "bgLatin": "taka taka" },
+    { "id": "m1l3-7", "de": "Und du?", "bg": "А ти?", "bgLatin": "A ti?" },
+    { "id": "m1l3-8", "de": "Auch", "bg": "също", "bgLatin": "sasto" }
+  ],
+  "grammar": {
+    "title": "Kurze Antworten",
+    "explanation": "Im Alltag antwortet man oft nur mit einem Wort. 'Добре' bedeutet 'gut' und reicht als Antwort.",
+    "examples": [
+      { "bg": "— Как си? — Добре, благодаря.", "de": "— Wie geht es dir? — Gut, danke.", "bgLatin": "— Kak si? — Dobre, blagodarja." },
+      { "bg": "— А ти? — Също.", "de": "— Und du? — Auch.", "bgLatin": "— A ti? — Sasto." }
+    ]
+  },
+  "exercises": [
+    {
+      "id": "m1l3-ex1",
+      "type": "quiz",
+      "title": "Wähle die richtige Antwort",
+      "data": [
+        {
+          "id": "q1",
+          "question": "Wie fragt man 'Wie geht es dir?'",
+          "options": ["Как си?", "Как се казваш?", "Откъде си?", "Колко си?"],
+          "correctOptionIndex": 0
+        },
+        {
+          "id": "q2",
+          "question": "Was bedeutet 'Благодаря'?",
+          "options": ["Bitte", "Danke", "Guten Tag", "Auf Wiedersehen"],
+          "correctOptionIndex": 1
+        }
+      ]
+    },
+    {
+      "id": "m1l3-ex2",
+      "type": "matching",
+      "title": "Ordne zu",
+      "data": [
+        { "id": "p1", "de": "Mir geht es gut.", "bg": "Добре съм." },
+        { "id": "p2", "de": "Bitte", "bg": "Моля" },
+        { "id": "p3", "de": "schlecht", "bg": "лошо" },
+        { "id": "p4", "de": "Und du?", "bg": "А ти?" }
+      ]
+    }
+  ]
+}

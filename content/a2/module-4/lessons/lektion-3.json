@@ -1,0 +1,131 @@
+{
+  "lessonId": "a2-modul-4-lektion-3",
+  "moduleId": "a2-modul-4",
+  "level": "A2",
+  "title": "Im Krankenhaus",
+  "duration": "20 min",
+  "introduction": "Lerne Vokabeln zum Thema 'Im Krankenhaus' auf Bulgarisch.",
+  "summary": "Du kannst jetzt über Im Krankenhaus sprechen.",
+  "vocabulary": [
+    {
+      "id": "a2m4l3-1",
+      "de": "die Notaufnahme",
+      "bg": "спешното отделение",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m4l3-2",
+      "de": "der Operationssaal",
+      "bg": "операционната",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m4l3-3",
+      "de": "der Verband",
+      "bg": "превръзката",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m4l3-4",
+      "de": "die Untersuchung",
+      "bg": "прегледът",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m4l3-5",
+      "de": "das Röntgenbild",
+      "bg": "рентгеновата снимка",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m4l3-6",
+      "de": "die Blutprobe",
+      "bg": "кръвната проба",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m4l3-7",
+      "de": "der Krankenwagen",
+      "bg": "линейката",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m4l3-8",
+      "de": "die Versicherung",
+      "bg": "застраховката",
+      "bgLatin": ""
+    }
+  ],
+  "grammar": {
+    "title": "Perfekt",
+    "explanation": "Wichtige grammatikalische Strukturen für das Thema 'Im Krankenhaus'.",
+    "examples": [
+      {
+        "bg": "Съм се наранил.",
+        "de": "Ich habe mich verletzt."
+      },
+      {
+        "bg": "Бил съм в болница.",
+        "de": "Ich war im Krankenhaus."
+      }
+    ]
+  },
+  "exercises": [
+    {
+      "id": "a2m4l3-ex1",
+      "type": "quiz",
+      "title": "Wähle die richtige Übersetzung",
+      "data": [
+        {
+          "id": "q1",
+          "question": "Was bedeutet 'спешното отделение'?",
+          "options": [
+            "der Operationssaal",
+            "der Verband",
+            "die Notaufnahme",
+            "die Untersuchung"
+          ],
+          "correctOptionIndex": 2
+        },
+        {
+          "id": "q2",
+          "question": "Wie sagt man 'der Operationssaal'?",
+          "options": [
+            "спешното отделение",
+            "операционната",
+            "превръзката",
+            "прегледът"
+          ],
+          "correctOptionIndex": 1
+        }
+      ]
+    },
+    {
+      "id": "a2m4l3-ex2",
+      "type": "matching",
+      "title": "Ordne die Vokabeln zu",
+      "data": [
+        {
+          "id": "p1",
+          "de": "die Notaufnahme",
+          "bg": "спешното отделение"
+        },
+        {
+          "id": "p2",
+          "de": "der Operationssaal",
+          "bg": "операционната"
+        },
+        {
+          "id": "p3",
+          "de": "der Verband",
+          "bg": "превръзката"
+        },
+        {
+          "id": "p4",
+          "de": "die Untersuchung",
+          "bg": "прегледът"
+        }
+      ]
+    }
+  ]
+}

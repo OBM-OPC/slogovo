@@ -1,0 +1,57 @@
+{
+  "lessonId": "a1-modul-3-lektion-5",
+  "moduleId": "a1-modul-3",
+  "level": "A1",
+  "title": "Im Geschäft",
+  "duration": "15 min",
+  "introduction": "Einkaufen auf Bulgarisch: nach Preis fragen, Größen und Farben benennen, bezahlen.",
+  "summary": "Du kannst im Geschäft nach dem Preis fragen, Farben und Mengen angeben und höflich bezahlen.",
+  "vocabulary": [
+    { "id": "m3l5-1", "de": "das Geschäft", "bg": "магазин", "bgLatin": "magasin" },
+    { "id": "m3l5-2", "de": "kaufen", "bg": "купувам", "bgLatin": "kupuwam" },
+    { "id": "m3l5-3", "de": "zu teuer", "bg": "скъпо", "bgLatin": "skapo" },
+    { "id": "m3l5-4", "de": "billig", "bg": "евтино", "bgLatin": "ewtino" },
+    { "id": "m3l5-5", "de": "die Größe", "bg": "размер", "bgLatin": "razmer" },
+    { "id": "m3l5-6", "de": "die Menge", "bg": "количество", "bgLatin": "kolitschestwo" },
+    { "id": "m3l5-7", "de": "Ich suche", "bg": "Търся", "bgLatin": "Tarsja" },
+    { "id": "m3l5-8", "de": "Haben Sie...?", "bg": "Имате ли...?", "bgLatin": "Imate li...?" }
+  ],
+  "grammar": {
+    "title": "Höfliche Fragen im Geschäft",
+    "explanation": "'Имате ли...?' ist die höfliche Frageform. 'Търся...' sagt, wonach man sucht.",
+    "examples": [
+      { "bg": "Търся синя риза.", "de": "Ich suche ein blaues Hemd.", "bgLatin": "Tarsja sinija riza." },
+      { "bg": "Имате ли по-евтино?", "de": "Haben Sie etwas Billigeres?", "bgLatin": "Imate li po-ewtino?" }
+    ]
+  },
+  "exercises": [
+    {
+      "id": "m3l5-ex1",
+      "type": "sentence-builder",
+      "title": "Im Geschäft",
+      "data": [
+        { "id": "sb1", "words": ["Търся", "червена", "тениска."], "correctOrder": ["Търся", "червена", "тениска."], "de": "Ich suche ein rotes T-Shirt." },
+        { "id": "sb2", "words": ["Имате", "ли", "по-голям", "размер?"], "correctOrder": ["Имате", "ли", "по-голям", "размер?"], "de": "Haben Sie eine größere Größe?" }
+      ]
+    },
+    {
+      "id": "m3l5-ex2",
+      "type": "quiz",
+      "title": "Shopping-Quiz",
+      "data": [
+        {
+          "id": "q1",
+          "question": "Was bedeutet 'евтино'?",
+          "options": ["teuer", "billig", "groß", "klein"],
+          "correctOptionIndex": 1
+        },
+        {
+          "id": "q2",
+          "question": "Wie fragt man höflich 'Haben Sie...?'",
+          "options": ["Искам ли...", "Имате ли...", "Колко е...", "Къде е..."],
+          "correctOptionIndex": 1
+        }
+      ]
+    }
+  ]
+}

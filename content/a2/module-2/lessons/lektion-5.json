@@ -1,0 +1,137 @@
+{
+  "lessonId": "a2-modul-2-lektion-5",
+  "moduleId": "a2-modul-2",
+  "level": "A2",
+  "title": "Kleidung einkaufen",
+  "duration": "20 min",
+  "introduction": "Lerne Vokabeln zum Thema 'Kleidung einkaufen' auf Bulgarisch.",
+  "summary": "Du kannst jetzt über Kleidung einkaufen sprechen.",
+  "vocabulary": [
+    {
+      "id": "a2m2l5-1",
+      "de": "das Hemd",
+      "bg": "ризата",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m2l5-2",
+      "de": "die Hose",
+      "bg": "панталонът",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m2l5-3",
+      "de": "das Kleid",
+      "bg": "роклята",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m2l5-4",
+      "de": "der Schuh",
+      "bg": "обувката",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m2l5-5",
+      "de": "die Größe",
+      "bg": "размерът",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m2l5-6",
+      "de": "die Farbe",
+      "bg": "цветът",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m2l5-7",
+      "de": "passen",
+      "bg": "пасва",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m2l5-8",
+      "de": "umtauschen",
+      "bg": "връщам",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m2l5-9",
+      "de": "die Umkleide",
+      "bg": "пробната",
+      "bgLatin": ""
+    }
+  ],
+  "grammar": {
+    "title": "Adjektivdeklination",
+    "explanation": "Wichtige grammatikalische Strukturen für das Thema 'Kleidung einkaufen'.",
+    "examples": [
+      {
+        "bg": "Тази риза е червена.",
+        "de": "Dieses Hemd ist rot."
+      },
+      {
+        "bg": "Искам сините обувки.",
+        "de": "Ich möchte die blauen Schuhe."
+      }
+    ]
+  },
+  "exercises": [
+    {
+      "id": "a2m2l5-ex1",
+      "type": "quiz",
+      "title": "Wähle die richtige Übersetzung",
+      "data": [
+        {
+          "id": "q1",
+          "question": "Was bedeutet 'ризата'?",
+          "options": [
+            "die Hose",
+            "das Kleid",
+            "das Hemd",
+            "der Schuh"
+          ],
+          "correctOptionIndex": 2
+        },
+        {
+          "id": "q2",
+          "question": "Wie sagt man 'die Hose'?",
+          "options": [
+            "ризата",
+            "панталонът",
+            "роклята",
+            "обувката"
+          ],
+          "correctOptionIndex": 1
+        }
+      ]
+    },
+    {
+      "id": "a2m2l5-ex2",
+      "type": "matching",
+      "title": "Ordne die Vokabeln zu",
+      "data": [
+        {
+          "id": "p1",
+          "de": "das Hemd",
+          "bg": "ризата"
+        },
+        {
+          "id": "p2",
+          "de": "die Hose",
+          "bg": "панталонът"
+        },
+        {
+          "id": "p3",
+          "de": "das Kleid",
+          "bg": "роклята"
+        },
+        {
+          "id": "p4",
+          "de": "der Schuh",
+          "bg": "обувката"
+        }
+      ]
+    }
+  ]
+}

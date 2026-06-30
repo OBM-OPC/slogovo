@@ -1,0 +1,159 @@
+{
+  "lessonId": "a2-modul-6-lektion-3",
+  "moduleId": "a2-modul-6",
+  "level": "A2",
+  "title": "Gefühle ausdrücken",
+  "duration": "20 min",
+  "introduction": "Lerne Vokabeln zum Thema 'Gefühle ausdrücken' auf Bulgarisch.",
+  "summary": "Du kannst jetzt über Gefühle ausdrücken sprechen.",
+  "vocabulary": [
+    {
+      "id": "a2m6l3-1",
+      "de": "glücklich",
+      "bg": "щастлив",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m6l3-2",
+      "de": "traurig",
+      "bg": "тъжен",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m6l3-3",
+      "de": "wütend",
+      "bg": "ядосан",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m6l3-4",
+      "de": "ängstlich",
+      "bg": "страхлив",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m6l3-5",
+      "de": "aufgeregt",
+      "bg": "вълнуван",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m6l3-6",
+      "de": "gelangweilt",
+      "bg": "отегчен",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m6l3-7",
+      "de": "stolz",
+      "bg": "горд",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m6l3-8",
+      "de": "eifersüchtig",
+      "bg": "ревнив",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m6l3-9",
+      "de": "entspannt",
+      "bg": "спокоен",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m6l3-10",
+      "de": "nervös",
+      "bg": "нервен",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m6l3-11",
+      "de": "erschöpft",
+      "bg": "изтощен",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m6l3-12",
+      "de": "überrascht",
+      "bg": "изненадан",
+      "bgLatin": ""
+    }
+  ],
+  "grammar": {
+    "title": "Emotionen mit Reflexivpronomen",
+    "explanation": "Wichtige grammatikalische Strukturen für das Thema 'Gefühle ausdrücken'.",
+    "examples": [
+      {
+        "bg": "Радвам се да те видя!",
+        "de": "Ich freue mich, dich zu sehen!"
+      },
+      {
+        "bg": "Срамувам се.",
+        "de": "Ich schäme mich."
+      },
+      {
+        "bg": "Страхувам се от кучета.",
+        "de": "Ich habe Angst vor Hunden."
+      }
+    ]
+  },
+  "exercises": [
+    {
+      "id": "a2m6l3-ex1",
+      "type": "quiz",
+      "title": "Wähle die richtige Übersetzung",
+      "data": [
+        {
+          "id": "q1",
+          "question": "Was bedeutet 'щастлив'?",
+          "options": [
+            "traurig",
+            "wütend",
+            "glücklich",
+            "ängstlich"
+          ],
+          "correctOptionIndex": 2
+        },
+        {
+          "id": "q2",
+          "question": "Wie sagt man 'traurig'?",
+          "options": [
+            "щастлив",
+            "тъжен",
+            "ядосан",
+            "страхлив"
+          ],
+          "correctOptionIndex": 1
+        }
+      ]
+    },
+    {
+      "id": "a2m6l3-ex2",
+      "type": "matching",
+      "title": "Ordne die Vokabeln zu",
+      "data": [
+        {
+          "id": "p1",
+          "de": "glücklich",
+          "bg": "щастлив"
+        },
+        {
+          "id": "p2",
+          "de": "traurig",
+          "bg": "тъжен"
+        },
+        {
+          "id": "p3",
+          "de": "wütend",
+          "bg": "ядосан"
+        },
+        {
+          "id": "p4",
+          "de": "ängstlich",
+          "bg": "страхлив"
+        }
+      ]
+    }
+  ]
+}

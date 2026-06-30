@@ -1,0 +1,93 @@
+{
+  "lessonId": "a2-modul-1-lektion-1",
+  "moduleId": "a2-modul-1",
+  "level": "A2",
+  "title": "Der Tagesablauf",
+  "duration": "20 min",
+  "introduction": "Lerne, deinen typischen Tag auf Bulgarisch zu beschreiben. Von der Morgenroutine bis zum Abendprogramm.",
+  "summary": "Du kannst jetzt deinen Tagesablauf beschreiben: Aufstehen, Frühstücken, Arbeiten, Schlafengehen.",
+  "vocabulary": [
+    { "id": "a2m1l1-1", "de": "aufstehen", "bg": "ставам", "bgLatin": "stawam" },
+    { "id": "a2m1l1-2", "de": "frühstücken", "bg": "закусвам", "bgLatin": "sakuswam" },
+    { "id": "a2m1l1-3", "de": "zubereiten", "bg": "приготвям", "bgLatin": "prigotwjam" },
+    { "id": "a2m1l1-4", "de": "zur Arbeit gehen", "bg": "отивам на работа", "bgLatin": "otiwan na rabota" },
+    { "id": "a2m1l1-5", "de": "zu Mittag essen", "bg": "обядвам", "bgLatin": "obedwam" },
+    { "id": "a2m1l1-6", "de": "nach Hause kommen", "bg": "прибирам се", "bgLatin": "pribiram se" },
+    { "id": "a2m1l1-7", "de": "Fernsehen schauen", "bg": "гледам телевизия", "bgLatin": "gledam telewisija" },
+    { "id": "a2m1l1-8", "de": "schlafen gehen", "bg": "лягам си", "bgLatin": "ljagam si" },
+    { "id": "a2m1l1-9", "de": "der Wecker", "bg": "будилникът", "bgLatin": "budilnikat" },
+    { "id": "a2m1l1-10", "de": "morgens", "bg": "сутрин", "bgLatin": "sutrin" },
+    { "id": "a2m1l1-11", "de": "mittags", "bg": "обед", "bgLatin": "obed" },
+    { "id": "a2m1l1-12", "de": "abends", "bg": "вечер", "bgLatin": "wetschet" }
+  ],
+  "grammar": {
+    "title": "Reflexive Verben",
+    "explanation": "Viele Verben im Bulgarischen sind reflexiv und enden auf -се oder -си. Das bedeutet, dass die Handlung auf das Subjekt zurückwirkt.",
+    "examples": [
+      { "bg": "Събуждам се в седем.", "de": "Ich wache um sieben auf.", "bgLatin": "Sabuzhdam se w sedem." },
+      { "bg": "Къпя се сутрин.", "de": "Ich dusche mich morgens.", "bgLatin": "Kapja se sutrin." },
+      { "bg": "Лягам си рано.", "de": "Ich gehe früh schlafen.", "bgLatin": "Ljagam si rano." }
+    ]
+  },
+  "exercises": [
+    {
+      "id": "a2m1l1-ex1",
+      "type": "quiz",
+      "title": "Ordne die Aktivitäten der Uhrzeit zu",
+      "data": [
+        {
+          "id": "q1",
+          "question": "Was macht man morgens zuerst?",
+          "options": ["лягам си", "ставам", "обядвам", "гледам телевизия"],
+          "correctOptionIndex": 1
+        },
+        {
+          "id": "q2",
+          "question": "Was bedeutet 'обядвам'?",
+          "options": ["frühstücken", "zu Mittag essen", "schlafen gehen", "aufstehen"],
+          "correctOptionIndex": 1
+        },
+        {
+          "id": "q3",
+          "question": "Welches Wort bedeutet 'abends'?",
+          "options": ["сутрин", "обед", "вечер", "нощ"],
+          "correctOptionIndex": 2
+        }
+      ]
+    },
+    {
+      "id": "a2m1l1-ex2",
+      "type": "matching",
+      "title": "Ordne die Tageszeiten zu",
+      "data": [
+        { "id": "p1", "de": "morgens", "bg": "сутрин" },
+        { "id": "p2", "de": "mittags", "bg": "обед" },
+        { "id": "p3", "de": "abends", "bg": "вечер" },
+        { "id": "p4", "de": "nachts", "bg": "нощем" }
+      ]
+    },
+    {
+      "id": "a2m1l1-ex3",
+      "type": "fill-in",
+      "title": "Ergänze das fehlende Verb",
+      "data": [
+        {
+          "id": "f1",
+          "parts": ["Аз ", "____", " в седем."],
+          "answer": "ставам",
+          "answers": ["ставам", "ставам си"],
+          "bg": "Аз ставам в седем.",
+          "de": "Ich stehe um sieben auf."
+        },
+        {
+          "id": "f2",
+          "parts": ["Ние ", "____", " сутрин."],
+          "answer": "закусваме",
+          "answers": ["закусваме"],
+          "bg": "Ние закусваме сутрин.",
+          "de": "Wir frühstücken morgens."
+        }
+      ]
+    }
+  ]
+}

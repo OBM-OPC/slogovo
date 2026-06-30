@@ -1,0 +1,56 @@
+{
+  "lessonId": "a1-modul-2-lektion-4",
+  "moduleId": "a1-modul-2",
+  "level": "A1",
+  "title": "Die Rechnung",
+  "duration": "15 min",
+  "introduction": "Wie fragt man nach der Rechnung? Und wie bezahlt man in Bulgarien?",
+  "summary": "Du kannst nach der Rechnung fragen, nach dem Preis fragen und Trinkgeld regeln.",
+  "vocabulary": [
+    { "id": "m2l4-1", "de": "Die Rechnung, bitte", "bg": "Сметката, моля", "bgLatin": "Smetkata, molja" },
+    { "id": "m2l4-2", "de": "Wie viel kostet das?", "bg": "Колко струва?", "bgLatin": "Kolko struwa?" },
+    { "id": "m2l4-3", "de": "der Preis", "bg": "цена", "bgLatin": "zena" },
+    { "id": "m2l4-4", "de": "das Trinkgeld", "bg": "бакшиш", "bgLatin": "baksisch" },
+    { "id": "m2l4-5", "de": "bar", "bg": "в брой", "bgLatin": "w broj" },
+    { "id": "m2l4-6", "de": "mit Karte", "bg": "с карта", "bgLatin": "s karta" },
+    { "id": "m2l4-7", "de": "Ich bezahle", "bg": "Плащам", "bgLatin": "Plaschtam" },
+    { "id": "m2l4-8", "de": "zusammen", "bg": "заедно", "bgLatin": "saedno" }
+  ],
+  "grammar": {
+    "title": "Fragen nach dem Preis",
+    "explanation": "'Колко струва?' fragt nach dem Preis eines einzelnen Dings. Für die Rechnung nutzt man 'Сметката, моля'.",
+    "examples": [
+      { "bg": "Колко струва кафето?", "de": "Wie viel kostet der Kaffee?", "bgLatin": "Kolko struwa kafeto?" },
+      { "bg": "Плащам в брой.", "de": "Ich bezahle bar.", "bgLatin": "Plaschtam w broj." }
+    ]
+  },
+  "exercises": [
+    {
+      "id": "m2l4-ex1",
+      "type": "quiz",
+      "title": "Rechnung und Bezahlung",
+      "data": [
+        {
+          "id": "q1",
+          "question": "Wie fragt man nach der Rechnung?",
+          "options": ["Колко струва?", "Сметката, моля", "Искам меню", "До виждане"],
+          "correctOptionIndex": 1
+        },
+        {
+          "id": "q2",
+          "question": "Was bedeutet 'в брой'?",
+          "options": ["mit Karte", "bar", "zusammen", "Trinkgeld"],
+          "correctOptionIndex": 1
+        }
+      ]
+    },
+    {
+      "id": "m2l4-ex2",
+      "type": "fill-in",
+      "title": "Ergänze",
+      "data": [
+        { "id": "f1", "parts": ["____", " струва кафето?"], "answer": "Колко", "answers": ["Колко", "Kolko"], "bg": "Колко струва кафето?", "de": "Wie viel kostet der Kaffee?" }
+      ]
+    }
+  ]
+}

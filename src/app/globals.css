@@ -3,21 +3,77 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #F5F7FA;
+  --foreground: #1A1A2E;
+  --primary: #009B77;
+  --accent: #D62612;
+  --card: #FFFFFF;
+  --muted: #6B7280;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  html {
+    @apply antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: "Inter", "Noto Sans", "Noto Sans Cyrillic", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  /* Ensure Cyrillic characters render with a safe fallback */
+  :lang(bg),
+  .bg-text {
+    font-family: "Noto Sans", "Noto Sans Cyrillic", "Inter", system-ui, sans-serif;
+  }
+
+  /* Hide scrollbar but keep functionality */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary/30 active:scale-[0.98];
+  }
+
+  .btn-primary {
+    @apply btn bg-primary text-white hover:bg-primary-600;
+  }
+
+  .btn-accent {
+    @apply btn bg-accent text-white hover:bg-accent-600;
+  }
+
+  .btn-outline {
+    @apply btn border-2 border-primary text-primary hover:bg-primary-50;
+  }
+
+  .btn-ghost {
+    @apply btn text-muted hover:bg-gray-100;
+  }
+
+  .card {
+    @apply rounded-2xl bg-card p-5 shadow-sm;
+  }
+
+  .input {
+    @apply w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-foreground placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20;
+  }
+
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .safe-top {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
 }
 
 @layer utilities {

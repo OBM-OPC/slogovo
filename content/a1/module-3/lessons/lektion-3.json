@@ -1,0 +1,61 @@
+{
+  "lessonId": "a1-modul-3-lektion-3",
+  "moduleId": "a1-modul-3",
+  "level": "A1",
+  "title": "Grundfarben",
+  "duration": "15 min",
+  "introduction": "Farben helfen beim Beschreiben von Dingen. Lerne die wichtigsten Farben auf Bulgarisch.",
+  "summary": "Du kennst die Grundfarben und kannst einfache Beschreibungen wie 'Червена кола' machen.",
+  "vocabulary": [
+    { "id": "m3l3-1", "de": "rot", "bg": "червен", "bgLatin": "tscherwen" },
+    { "id": "m3l3-2", "de": "blau", "bg": "син", "bgLatin": "sin" },
+    { "id": "m3l3-3", "de": "grün", "bg": "зелен", "bgLatin": "selen" },
+    { "id": "m3l3-4", "de": "gelb", "bg": "жълт", "bgLatin": "schalt" },
+    { "id": "m3l3-5", "de": "schwarz", "bg": "черен", "bgLatin": "tschelen" },
+    { "id": "m3l3-6", "de": "weiß", "bg": "бял", "bgLatin": "bjal" },
+    { "id": "m3l3-7", "de": "grau", "bg": "сив", "bgLatin": "siw" },
+    { "id": "m3l3-8", "de": "braun", "bg": "кафяв", "bgLatin": "kafjaw" },
+    { "id": "m3l3-9", "de": "rosa", "bg": "розов", "bgLatin": "rosow" },
+    { "id": "m3l3-10", "de": "orange", "bg": "оранжев", "bgLatin": "oranschew" }
+  ],
+  "grammar": {
+    "title": "Farben passen sich an",
+    "explanation": "Bulgarische Adjektive ändern ihre Endung nach Geschlecht und Zahl des zugehörigen Nomens. Im Kurs lernst du zuerst die männliche Form.",
+    "examples": [
+      { "bg": "Червен автобус.", "de": "Ein roter Bus.", "bgLatin": "Tschewen awtobus." },
+      { "bg": "Синя къща.", "de": "Ein blaues Haus.", "bgLatin": "Sinja kastscha." }
+    ]
+  },
+  "exercises": [
+    {
+      "id": "m3l3-ex1",
+      "type": "matching",
+      "title": "Farben zuordnen",
+      "data": [
+        { "id": "p1", "de": "rot", "bg": "червен" },
+        { "id": "p2", "de": "blau", "bg": "син" },
+        { "id": "p3", "de": "grün", "bg": "зелен" },
+        { "id": "p4", "de": "gelb", "bg": "жълт" }
+      ]
+    },
+    {
+      "id": "m3l3-ex2",
+      "type": "quiz",
+      "title": "Farben erkennen",
+      "data": [
+        {
+          "id": "q1",
+          "question": "Was bedeutet 'бял'?",
+          "options": ["schwarz", "weiß", "grau", "braun"],
+          "correctOptionIndex": 1
+        },
+        {
+          "id": "q2",
+          "question": "Wie heißt 'rot'?",
+          "options": ["син", "зелен", "червен", "жълт"],
+          "correctOptionIndex": 2
+        }
+      ]
+    }
+  ]
+}

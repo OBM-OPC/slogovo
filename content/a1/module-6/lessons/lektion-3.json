@@ -1,0 +1,56 @@
+{
+  "lessonId": "a1-modul-6-lektion-3",
+  "moduleId": "a1-modul-6",
+  "level": "A1",
+  "title": "Die Uhrzeit",
+  "duration": "15 min",
+  "introduction": "Lerne, die Uhrzeit auf Bulgarisch zu sagen und zu fragen.",
+  "summary": "Du kannst die Uhrzeit angeben: 'Колко е часът?' und 'Три и половина'.",
+  "vocabulary": [
+    { "id": "m6l3-1", "de": "Wie spät ist es?", "bg": "Колко е часът?", "bgLatin": "Kolko e tschasat?" },
+    { "id": "m6l3-2", "de": "die Uhr", "bg": "час", "bgLatin": "tschass" },
+    { "id": "m6l3-3", "de": "die Minute", "bg": "минута", "bgLatin": "minuta" },
+    { "id": "m6l3-4", "de": "halb", "bg": "и половина", "bgLatin": "i polowina" },
+    { "id": "m6l3-5", "de": "Viertel", "bg": "и четвърт", "bgLatin": "i tschewtart" },
+    { "id": "m6l3-6", "de": "morgens", "bg": "сутрин", "bgLatin": "sutrin" },
+    { "id": "m6l3-7", "de": "mittags", "bg": "обед", "bgLatin": "obed" },
+    { "id": "m6l3-8", "de": "abends", "bg": "вечер", "bgLatin": "wetsche" }
+  ],
+  "grammar": {
+    "title": "Uhrzeit ausdrücken",
+    "explanation": "'И половина' bedeutet 'halb'. 'Десет и половина' = 10:30. 'Без четвърт единадесет' = 10:45.",
+    "examples": [
+      { "bg": "Три и половина.", "de": "Halb vier.", "bgLatin": "Tri i polowina." },
+      { "bg": "Девет без десет.", "de": "Zehn vor neun.", "bgLatin": "Dewet bes deset." }
+    ]
+  },
+  "exercises": [
+    {
+      "id": "m6l3-ex1",
+      "type": "quiz",
+      "title": "Uhrzeit verstehen",
+      "data": [
+        {
+          "id": "q1",
+          "question": "Was bedeutet 'Три и половина'?",
+          "options": ["3:00", "3:30", "2:30", "4:30"],
+          "correctOptionIndex": 1
+        },
+        {
+          "id": "q2",
+          "question": "Wie fragt man 'Wie spät ist es?'?",
+          "options": ["Колко е часът?", "Къде е часът?", "Как е часът?", "Кога е часът?"],
+          "correctOptionIndex": 0
+        }
+      ]
+    },
+    {
+      "id": "m6l3-ex2",
+      "type": "fill-in",
+      "title": "Ergänze",
+      "data": [
+        { "id": "f1", "parts": ["Колко ", "____", " часът?"], "answer": "е", "answers": ["е", "e"], "bg": "Колко е часът?", "de": "Wie spät ist es?" }
+      ]
+    }
+  ]
+}

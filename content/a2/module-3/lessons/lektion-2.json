@@ -1,0 +1,137 @@
+{
+  "lessonId": "a2-modul-3-lektion-2",
+  "moduleId": "a2-modul-3",
+  "level": "A2",
+  "title": "Im Zug",
+  "duration": "20 min",
+  "introduction": "Lerne Vokabeln zum Thema 'Im Zug' auf Bulgarisch.",
+  "summary": "Du kannst jetzt über Im Zug sprechen.",
+  "vocabulary": [
+    {
+      "id": "a2m3l2-1",
+      "de": "der Zug",
+      "bg": "влакът",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m3l2-2",
+      "de": "der Bahnhof",
+      "bg": "гарата",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m3l2-3",
+      "de": "der Wagen",
+      "bg": "вагонът",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m3l2-4",
+      "de": "der Platz",
+      "bg": "мястото",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m3l2-5",
+      "de": "der Schaffner",
+      "bg": "кондукторът",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m3l2-6",
+      "de": "die Fahrkarte",
+      "bg": "билетът",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m3l2-7",
+      "de": "umsteigen",
+      "bg": "прекачвам се",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m3l2-8",
+      "de": "die Ankunft",
+      "bg": "пристигането",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m3l2-9",
+      "de": "die Abfahrt",
+      "bg": "тръгването",
+      "bgLatin": ""
+    }
+  ],
+  "grammar": {
+    "title": "Uhrzeit mit Transport",
+    "explanation": "Wichtige grammatikalische Strukturen für das Thema 'Im Zug'.",
+    "examples": [
+      {
+        "bg": "Влакът тръгва в девет.",
+        "de": "Der Zug fährt um neun ab."
+      },
+      {
+        "bg": "Ще пристигнем на обед.",
+        "de": "Wir werden mittags ankommen."
+      }
+    ]
+  },
+  "exercises": [
+    {
+      "id": "a2m3l2-ex1",
+      "type": "quiz",
+      "title": "Wähle die richtige Übersetzung",
+      "data": [
+        {
+          "id": "q1",
+          "question": "Was bedeutet 'влакът'?",
+          "options": [
+            "der Bahnhof",
+            "der Wagen",
+            "der Zug",
+            "der Platz"
+          ],
+          "correctOptionIndex": 2
+        },
+        {
+          "id": "q2",
+          "question": "Wie sagt man 'der Bahnhof'?",
+          "options": [
+            "влакът",
+            "гарата",
+            "вагонът",
+            "мястото"
+          ],
+          "correctOptionIndex": 1
+        }
+      ]
+    },
+    {
+      "id": "a2m3l2-ex2",
+      "type": "matching",
+      "title": "Ordne die Vokabeln zu",
+      "data": [
+        {
+          "id": "p1",
+          "de": "der Zug",
+          "bg": "влакът"
+        },
+        {
+          "id": "p2",
+          "de": "der Bahnhof",
+          "bg": "гарата"
+        },
+        {
+          "id": "p3",
+          "de": "der Wagen",
+          "bg": "вагонът"
+        },
+        {
+          "id": "p4",
+          "de": "der Platz",
+          "bg": "мястото"
+        }
+      ]
+    }
+  ]
+}

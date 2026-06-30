@@ -1,0 +1,57 @@
+{
+  "lessonId": "a1-modul-6-lektion-5",
+  "moduleId": "a1-modul-6",
+  "level": "A1",
+  "title": "Pläne machen",
+  "duration": "15 min",
+  "introduction": "Wie verabredet man sich und macht Pläne auf Bulgarisch?",
+  "summary": "Du kannst nach der Uhrzeit fragen, Vorschläge machen und zusagen oder absagen.",
+  "vocabulary": [
+    { "id": "m6l5-1", "de": "sich treffen", "bg": "срещам се", "bgLatin": "sreschtam se" },
+    { "id": "m6l5-2", "de": "Wann hast du Zeit?", "bg": "Кога си свободен?", "bgLatin": "Koga si swoboden?" },
+    { "id": "m6l5-3", "de": "Ich habe Zeit", "bg": "Свободен съм", "bgLatin": "Swoboden säm" },
+    { "id": "m6l5-4", "de": "Es passt", "bg": "Подхожда ми", "bgLatin": "Podchoschda mi" },
+    { "id": "m6l5-5", "de": "Es passt nicht", "bg": "Не ми подхожда", "bgLatin": "Ne mi podchoschda" },
+    { "id": "m6l5-6", "de": "Vorschlag", "bg": "предложение", "bgLatin": "predloshenie" },
+    { "id": "m6l5-7", "de": "zusagen", "bg": "приемам", "bgLatin": "priemam" },
+    { "id": "m6l5-8", "de": "absagen", "bg": "отказвам", "bgLatin": "otkaswam" }
+  ],
+  "grammar": {
+    "title": "Verabredungen",
+    "explanation": "'Да се срещнем' bedeutet 'Lass uns uns treffen'. 'В...' gibt Uhrzeit oder Tag an.",
+    "examples": [
+      { "bg": "Да се срещнем в събота.", "de": "Lass uns am Samstag treffen.", "bgLatin": "Da se sreschtmem w sabota." },
+      { "bg": "В колко часа?", "de": "Um wie viel Uhr?", "bgLatin": "W kolko tschassa?" }
+    ]
+  },
+  "exercises": [
+    {
+      "id": "m6l5-ex1",
+      "type": "quiz",
+      "title": "Pläne machen",
+      "data": [
+        {
+          "id": "q1",
+          "question": "Was bedeutet 'Кога си свободен?'?",
+          "options": ["Wie geht es dir?", "Wann hast du Zeit?", "Wo bist du?", "Was machst du?"],
+          "correctOptionIndex": 1
+        },
+        {
+          "id": "q2",
+          "question": "Wie fragt man 'Um wie viel Uhr?'?",
+          "options": ["Колко е часът?", "В колко часа?", "Кога е?", "Къде е?"],
+          "correctOptionIndex": 1
+        }
+      ]
+    },
+    {
+      "id": "m6l5-ex2",
+      "type": "sentence-builder",
+      "title": "Baue den Vorschlag",
+      "data": [
+        { "id": "sb1", "words": ["Да", "се", "срещнем", "в", "събота."], "correctOrder": ["Да", "се", "срещнем", "в", "събота."], "de": "Lass uns am Samstag treffen." },
+        { "id": "sb2", "words": ["В", "колко", "часа?"], "correctOrder": ["В", "колко", "часа?"], "de": "Um wie viel Uhr?" }
+      ]
+    }
+  ]
+}

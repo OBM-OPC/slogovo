@@ -1,0 +1,155 @@
+{
+  "lessonId": "a2-modul-4-lektion-1",
+  "moduleId": "a2-modul-4",
+  "level": "A2",
+  "title": "Körperteile",
+  "duration": "20 min",
+  "introduction": "Lerne Vokabeln zum Thema 'Körperteile' auf Bulgarisch.",
+  "summary": "Du kannst jetzt über Körperteile sprechen.",
+  "vocabulary": [
+    {
+      "id": "a2m4l1-1",
+      "de": "der Kopf",
+      "bg": "главата",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m4l1-2",
+      "de": "das Auge",
+      "bg": "окото",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m4l1-3",
+      "de": "das Ohr",
+      "bg": "ухото",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m4l1-4",
+      "de": "die Nase",
+      "bg": "носът",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m4l1-5",
+      "de": "der Mund",
+      "bg": "устата",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m4l1-6",
+      "de": "der Hals",
+      "bg": "гърлото",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m4l1-7",
+      "de": "die Hand",
+      "bg": "ръката",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m4l1-8",
+      "de": "der Fuß",
+      "bg": "кракът",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m4l1-9",
+      "de": "der Bauch",
+      "bg": "коремът",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m4l1-10",
+      "de": "der Rücken",
+      "bg": "гърбът",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m4l1-11",
+      "de": "das Herz",
+      "bg": "сърцето",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m4l1-12",
+      "de": "der Zahn",
+      "bg": "зъбът",
+      "bgLatin": ""
+    }
+  ],
+  "grammar": {
+    "title": "Possessivpronomen",
+    "explanation": "Wichtige grammatikalische Strukturen für das Thema 'Körperteile'.",
+    "examples": [
+      {
+        "bg": "Това е моята ръка.",
+        "de": "Das ist meine Hand."
+      },
+      {
+        "bg": "Боли ме главата.",
+        "de": "Mein Kopf tut weh."
+      }
+    ]
+  },
+  "exercises": [
+    {
+      "id": "a2m4l1-ex1",
+      "type": "quiz",
+      "title": "Wähle die richtige Übersetzung",
+      "data": [
+        {
+          "id": "q1",
+          "question": "Was bedeutet 'главата'?",
+          "options": [
+            "das Auge",
+            "das Ohr",
+            "der Kopf",
+            "die Nase"
+          ],
+          "correctOptionIndex": 2
+        },
+        {
+          "id": "q2",
+          "question": "Wie sagt man 'das Auge'?",
+          "options": [
+            "главата",
+            "окото",
+            "ухото",
+            "носът"
+          ],
+          "correctOptionIndex": 1
+        }
+      ]
+    },
+    {
+      "id": "a2m4l1-ex2",
+      "type": "matching",
+      "title": "Ordne die Vokabeln zu",
+      "data": [
+        {
+          "id": "p1",
+          "de": "der Kopf",
+          "bg": "главата"
+        },
+        {
+          "id": "p2",
+          "de": "das Auge",
+          "bg": "окото"
+        },
+        {
+          "id": "p3",
+          "de": "das Ohr",
+          "bg": "ухото"
+        },
+        {
+          "id": "p4",
+          "de": "die Nase",
+          "bg": "носът"
+        }
+      ]
+    }
+  ]
+}

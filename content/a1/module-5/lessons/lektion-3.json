@@ -1,0 +1,51 @@
+{
+  "lessonId": "a1-modul-5-lektion-3",
+  "moduleId": "a1-modul-5",
+  "level": "A1",
+  "title": "Wie komme ich zu...?",
+  "duration": "15 min",
+  "introduction": "Lerne, nach dem Weg zu fragen und Wegbeschreibungen zu verstehen.",
+  "summary": "Du kannst fragen 'Как да стигна до...?' und einfache Wegbeschreibungen verstehen.",
+  "vocabulary": [
+    { "id": "m5l3-1", "de": "Wie komme ich zu...?", "bg": "Как да стигна до...?", "bgLatin": "Kak da stigna do...?" },
+    { "id": "m5l3-2", "de": "an der Ecke", "bg": "на ъгъла", "bgLatin": "na agala" },
+    { "id": "m5l3-3", "de": "die Straße", "bg": "улица", "bgLatin": "uliza" },
+    { "id": "m5l3-4", "de": "die Ampel", "bg": "светофар", "bgLatin": "swetofar" },
+    { "id": "m5l3-5", "de": "der Kreisverkehr", "bg": "кръгово", "bgLatin": "kragowo" },
+    { "id": "m5l3-6", "de": "gegenüber", "bg": "срещу", "bgLatin": "sreschtu" },
+    { "id": "m5l3-7", "de": "neben", "bg": "до", "bgLatin": "do" },
+    { "id": "m5l3-8", "de": "hinter", "bg": "зад", "bgLatin": "sad" }
+  ],
+  "grammar": {
+    "title": "Präpositionen des Ortes",
+    "explanation": "'До' bedeutet 'zu/nach', 'срещу' bedeutet 'gegenüber', 'зад' bedeutet 'hinter'.",
+    "examples": [
+      { "bg": "Завийте наляво на ъгъла.", "de": "Biegen Sie an der Ecke links ab.", "bgLatin": "Sawiite naljawo na agala." },
+      { "bg": "То е срещу банката.", "de": "Es ist gegenüber der Bank.", "bgLatin": "To e sreschtu bankata." }
+    ]
+  },
+  "exercises": [
+    {
+      "id": "m5l3-ex1",
+      "type": "sentence-builder",
+      "title": "Baue die Wegbeschreibung",
+      "data": [
+        { "id": "sb1", "words": ["Как", "да", "стигна", "до", "гарата?"], "correctOrder": ["Как", "да", "стигна", "до", "гарата?"], "de": "Wie komme ich zum Bahnhof?" },
+        { "id": "sb2", "words": ["Завийте", "надясно", "на", "ъгъла."], "correctOrder": ["Завийте", "надясно", "на", "ъгъла."], "de": "Biegen Sie an der Ecke rechts ab." }
+      ]
+    },
+    {
+      "id": "m5l3-ex2",
+      "type": "quiz",
+      "title": "Wegbeschreibung-Quiz",
+      "data": [
+        {
+          "id": "q1",
+          "question": "Was bedeutet 'срещу'?",
+          "options": ["neben", "gegenüber", "hinter", "an"],
+          "correctOptionIndex": 1
+        }
+      ]
+    }
+  ]
+}

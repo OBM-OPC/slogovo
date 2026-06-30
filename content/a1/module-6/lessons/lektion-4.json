@@ -1,0 +1,48 @@
+{
+  "lessonId": "a1-modul-6-lektion-4",
+  "moduleId": "a1-modul-6",
+  "level": "A1",
+  "title": "Wetter",
+  "duration": "15 min",
+  "introduction": "Lerne Wetterbegriffe und wie du nach dem Wetter fragst.",
+  "summary": "Du kannst das Wetter beschreiben und nach der Temperatur fragen.",
+  "vocabulary": [
+    { "id": "m6l4-1", "de": "das Wetter", "bg": "времето", "bgLatin": "wremeto" },
+    { "id": "m6l4-2", "de": "sonnig", "bg": "слънчево", "bgLatin": "slantschewo" },
+    { "id": "m6l4-3", "de": "wolkig", "bg": "облачно", "bgLatin": "oblatschno" },
+    { "id": "m6l4-4", "de": "regnerisch", "bg": "дъждовно", "bgLatin": "dastadowno" },
+    { "id": "m6l4-5", "de": "kalt", "bg": "студено", "bgLatin": "studeno" },
+    { "id": "m6l4-6", "de": "warm", "bg": "топло", "bgLatin": "toplo" },
+    { "id": "m6l4-7", "de": "heiß", "bg": "горещо", "bgLatin": "goreschtо" },
+    { "id": "m6l4-8", "de": "windig", "bg": "ветровито", "bgLatin": "wetrowito" }
+  ],
+  "grammar": {
+    "title": "Wetterbeschreibung",
+    "explanation": "'Времето е...' bedeutet 'Das Wetter ist...'. Im Bulgarischen wird das Wetter oft als neutrales Pronomen behandelt.",
+    "examples": [
+      { "bg": "Времето е слънчево.", "de": "Das Wetter ist sonnig.", "bgLatin": "Wremeto e slantschewo." },
+      { "bg": "Днес е студено.", "de": "Heute ist es kalt.", "bgLatin": "Dnes e studeno." }
+    ]
+  },
+  "exercises": [
+    {
+      "id": "m6l4-ex1",
+      "type": "matching",
+      "title": "Wetter zuordnen",
+      "data": [
+        { "id": "p1", "de": "sonnig", "bg": "слънчево" },
+        { "id": "p2", "de": "regnerisch", "bg": "дъждовно" },
+        { "id": "p3", "de": "warm", "bg": "топло" },
+        { "id": "p4", "de": "kalt", "bg": "студено" }
+      ]
+    },
+    {
+      "id": "m6l4-ex2",
+      "type": "fill-in",
+      "title": "Ergänze",
+      "data": [
+        { "id": "f1", "parts": ["Времето ", "____", " слънчево."], "answer": "е", "answers": ["е", "e"], "bg": "Времето е слънчево.", "de": "Das Wetter ist sonnig." }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "lessonId": "a1-modul-3-lektion-1",
+  "moduleId": "a1-modul-3",
+  "level": "A1",
+  "title": "Zahlen 0–10",
+  "duration": "15 min",
+  "introduction": "Zahlen sind unverzichtbar im Alltag. Lerne die Zahlen von 0 bis 10 auf Bulgarisch.",
+  "summary": "Du kannst die Zahlen 0–10 zählen, schreiben und aussprechen.",
+  "vocabulary": [
+    { "id": "m3l1-0", "de": "0", "bg": "нула", "bgLatin": "nula" },
+    { "id": "m3l1-1", "de": "1", "bg": "едно", "bgLatin": "edno" },
+    { "id": "m3l1-2", "de": "2", "bg": "две", "bgLatin": "dwe" },
+    { "id": "m3l1-3", "de": "3", "bg": "три", "bgLatin": "tri" },
+    { "id": "m3l1-4", "de": "4", "bg": "четири", "bgLatin": "tschetiri" },
+    { "id": "m3l1-5", "de": "5", "bg": "пет", "bgLatin": "pet" },
+    { "id": "m3l1-6", "de": "6", "bg": "шест", "bgLatin": "schest" },
+    { "id": "m3l1-7", "de": "7", "bg": "седем", "bgLatin": "sedem" },
+    { "id": "m3l1-8", "de": "8", "bg": "осем", "bgLatin": "osem" },
+    { "id": "m3l1-9", "de": "9", "bg": "девет", "bgLatin": "dewet" },
+    { "id": "m3l1-10", "de": "10", "bg": "десет", "bgLatin": "deset" }
+  ],
+  "grammar": {
+    "title": "Zahlen als Adjektive",
+    "explanation": "Bulgarische Zahlen ändern sich je nach Geschlecht des Zählworts. Für neutrale Dinge nutzt man 'едно'.",
+    "examples": [
+      { "bg": "Едно кафе.", "de": "Ein Kaffee.", "bgLatin": "Edno kafe." },
+      { "bg": "Две води.", "de": "Zwei Wasser.", "bgLatin": "Dwe wodi." }
+    ]
+  },
+  "exercises": [
+    {
+      "id": "m3l1-ex1",
+      "type": "quiz",
+      "title": "Zahl erkennen",
+      "data": [
+        {
+          "id": "q1",
+          "question": "Wie heißt die Zahl 7?",
+          "options": ["шест", "седем", "осем", "девет"],
+          "correctOptionIndex": 1
+        },
+        {
+          "id": "q2",
+          "question": "Was bedeutet 'десет'?",
+          "options": ["5", "8", "10", "3"],
+          "correctOptionIndex": 2
+        }
+      ]
+    },
+    {
+      "id": "m3l1-ex2",
+      "type": "matching",
+      "title": "Zahlen zuordnen",
+      "data": [
+        { "id": "p1", "de": "3", "bg": "три" },
+        { "id": "p2", "de": "5", "bg": "пет" },
+        { "id": "p3", "de": "8", "bg": "осем" },
+        { "id": "p4", "de": "10", "bg": "десет" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "moduleId": "a1-modul-1",
+  "level": "A1",
+  "title": "Hallo & Abschiede",
+  "description": "Die ersten Wörter auf Bulgarisch: Begrüßungen, Vorstellungen und Höflichkeitsformen.",
+  "order": 1,
+  "icon": "handshake",
+  "requiredScore": 80,
+  "lessons": [
+    { "lessonId": "a1-modul-1-lektion-1", "title": "Grüße", "duration": "15 min" },
+    { "lessonId": "a1-modul-1-lektion-2", "title": "Sich vorstellen", "duration": "15 min" },
+    { "lessonId": "a1-modul-1-lektion-3", "title": "Wie geht es dir?", "duration": "15 min" },
+    { "lessonId": "a1-modul-1-lektion-4", "title": "Abschiede", "duration": "15 min" },
+    { "lessonId": "a1-modul-1-lektion-5", "title": "Höflichkeit", "duration": "15 min" }
+  ]
+}

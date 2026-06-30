@@ -1,0 +1,65 @@
+{
+  "lessonId": "a2-modul-1-lektion-4",
+  "moduleId": "a2-modul-1",
+  "level": "A2",
+  "title": "Hausarbeit",
+  "duration": "20 min",
+  "introduction": "Lerne Vokabeln rund um die Hausarbeit und wie man beschreibt, was man zu Hause macht.",
+  "summary": "Du kannst jetzt Hausarbeiten beschreiben: putzen, waschen, aufräumen, einkaufen.",
+  "vocabulary": [
+    { "id": "a2m1l4-1", "de": "putzen", "bg": "чистя", "bgLatin": "tschistja" },
+    { "id": "a2m1l4-2", "de": "waschen", "bg": "пера", "bgLatin": "pera" },
+    { "id": "a2m1l4-3", "de": "aufräumen", "bg": "подреждам", "bgLatin": "podreschdam" },
+    { "id": "a2m1l4-4", "de": "einkaufen gehen", "bg": "пазарувам", "bgLatin": "pazaruwam" },
+    { "id": "a2m1l4-5", "de": "kochen", "bg": "готвя", "bgLatin": "gotwja" },
+    { "id": "a2m1l4-6", "de": "staubsaugen", "bg": "прахосмукам", "bgLatin": "prachosmukam" },
+    { "id": "a2m1l4-7", "de": "das Geschirr spülen", "bg": "мия чиниите", "bgLatin": "mija tschinijte" },
+    { "id": "a2m1l4-8", "de": "die Wäsche bügeln", "bg": "гладя", "bgLatin": "gladja" },
+    { "id": "a2m1l4-9", "de": "die Blumen gießen", "bg": "поливам цветята", "bgLatin": "poliwam tswetjata" },
+    { "id": "a2m1l4-10", "de": "den Müll rausbringen", "bg": "изнасям боклука", "bgLatin": "isnasjam bokluka" }
+  ],
+  "grammar": {
+    "title": "Konjugation im Präsens",
+    "explanation": "Die Konjugation im Präsens folgt festen Mustern. Die Endungen sind: -м, -ш, -Ø (er/sie/es), -ме, -те, -ят/-ат.",
+    "examples": [
+      { "bg": "Аз чистя.", "de": "Ich putze.", "bgLatin": "As tschistja." },
+      { "bg": "Ти чистиш.", "de": "Du putzt.", "bgLatin": "Ti tschistisch." },
+      { "bg": "Тя чисти.", "de": "Sie putzt.", "bgLatin": "Tja tschisti." },
+      { "bg": "Ние чистим.", "de": "Wir putzen.", "bgLatin": "Nie tschistim." },
+      { "bg": "Вие чистите.", "de": "Ihr putzt.", "bgLatin": "Wie tschistite." },
+      { "bg": "Те чистят.", "de": "Sie putzen.", "bgLatin": "Te tschistjat." }
+    ]
+  },
+  "exercises": [
+    {
+      "id": "a2m1l4-ex1",
+      "type": "quiz",
+      "title": "Wähle die richtige Konjugation",
+      "data": [
+        {
+          "id": "q1",
+          "question": "Wie heißt 'Ihr putzt'?",
+          "options": ["Вие чистим.", "Вие чистите.", "Вие чистят.", "Вие чистя."],
+          "correctOptionIndex": 1
+        },
+        {
+          "id": "q2",
+          "question": "Was bedeutet 'готвя'?",
+          "options": ["putzen", "kochen", "waschen", "aufräumen"],
+          "correctOptionIndex": 1
+        }
+      ]
+    },
+    {
+      "id": "a2m1l4-ex2",
+      "type": "matching",
+      "title": "Ordne die Hausarbeiten zu",
+      "data": [
+        { "id": "p1", "de": "staubsaugen", "bg": "прахосмукам" },
+        { "id": "p2", "de": "das Geschirr spülen", "bg": "мия чиниите" },
+        { "id": "p3", "de": "einkaufen gehen", "bg": "пазарувам" },
+        { "id": "p4", "de": "die Wäsche bügeln", "bg": "гладя" }
+      ]
+    }
+  ]
+}

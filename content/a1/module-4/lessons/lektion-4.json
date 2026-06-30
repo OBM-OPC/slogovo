@@ -1,0 +1,49 @@
+{
+  "lessonId": "a1-modul-4-lektion-4",
+  "moduleId": "a1-modul-4",
+  "level": "A1",
+  "title": "Probleme",
+  "duration": "15 min",
+  "introduction": "Wie meldet man ein Problem im Zimmer höflich und deutlich?",
+  "summary": "Du kannst sagen, was nicht funktioniert, und um Hilfe bitten.",
+  "vocabulary": [
+    { "id": "m4l4-1", "de": "Es funktioniert nicht", "bg": "Не работи", "bgLatin": "Ne raboti" },
+    { "id": "m4l4-2", "de": "kaputt", "bg": "повредено", "bgLatin": "powredeno" },
+    { "id": "m4l4-3", "de": "kalt", "bg": "студено", "bgLatin": "studeno" },
+    { "id": "m4l4-4", "de": "laut", "bg": "шумно", "bgLatin": "schumno" },
+    { "id": "m4l4-5", "de": "die Heizung", "bg": "отопление", "bgLatin": "otoplenie" },
+    { "id": "m4l4-6", "de": "das Licht", "bg": "светлина", "bgLatin": "swetlina" },
+    { "id": "m4l4-7", "de": "Hilfe", "bg": "помощ", "bgLatin": "pomoscht" },
+    { "id": "m4l4-8", "de": "reparieren", "bg": "поправям", "bgLatin": "poprawjam" }
+  ],
+  "grammar": {
+    "title": "Negation",
+    "explanation": "'Не' ist die allgemeine Verneinung. 'Не работи' bedeutet 'Es funktioniert nicht'.",
+    "examples": [
+      { "bg": "Не работи климатикът.", "de": "Die Klimaanlage funktioniert nicht.", "bgLatin": "Ne raboti klimatikat." },
+      { "bg": "В стаята е студено.", "de": "Im Zimmer ist es kalt.", "bgLatin": "W stajata e studeno." }
+    ]
+  },
+  "exercises": [
+    {
+      "id": "m4l4-ex1",
+      "type": "fill-in",
+      "title": "Ergänze das Problem",
+      "data": [
+        { "id": "f1", "parts": ["____", " работи климатикът."], "answer": "Не", "answers": ["Не", "Ne"], "bg": "Не работи климатикът.", "de": "Die Klimaanlage funktioniert nicht." },
+        { "id": "f2", "parts": ["В стаята е ", "____", "."], "answer": "студено", "answers": ["студено", "studeno"], "bg": "В стаята е студено.", "de": "Im Zimmer ist es kalt." }
+      ]
+    },
+    {
+      "id": "m4l4-ex2",
+      "type": "matching",
+      "title": "Ordne Probleme zu",
+      "data": [
+        { "id": "p1", "de": "kalt", "bg": "студено" },
+        { "id": "p2", "de": "laut", "bg": "шумно" },
+        { "id": "p3", "de": "kaputt", "bg": "повредено" },
+        { "id": "p4", "de": "Hilfe", "bg": "помощ" }
+      ]
+    }
+  ]
+}

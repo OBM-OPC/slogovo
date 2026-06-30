@@ -1,0 +1,56 @@
+{
+  "lessonId": "a1-modul-4-lektion-3",
+  "moduleId": "a1-modul-4",
+  "level": "A1",
+  "title": "Buchung",
+  "duration": "15 min",
+  "introduction": "Wie bucht man ein Zimmer auf Bulgarisch? Lerne Tage, Daten und Zimmerwünsche.",
+  "summary": "Du kannst nach Verfügbarkeit fragen, Tage nennen und ein Zimmer buchen.",
+  "vocabulary": [
+    { "id": "m4l3-1", "de": "frei", "bg": "свободен", "bgLatin": "swoboden" },
+    { "id": "m4l3-2", "de": "belegt", "bg": "зает", "bgLatin": "saet" },
+    { "id": "m4l3-3", "de": "ein Zimmer buchen", "bg": "резервирам стая", "bgLatin": "reserwiram staja" },
+    { "id": "m4l3-4", "de": "für zwei Nächte", "bg": "за две нощувки", "bgLatin": "sa dwe noschtuwki" },
+    { "id": "m4l3-5", "de": "für eine Woche", "bg": "за една седмица", "bgLatin": "sa edna sedmiza" },
+    { "id": "m4l3-6", "de": "Doppelzimmer", "bg": "двойна стая", "bgLatin": "dwina staja" },
+    { "id": "m4l3-7", "de": "Einzelzimmer", "bg": "единична стая", "bgLatin": "edinitschna staja" },
+    { "id": "m4l3-8", "de": "Nacht", "bg": "нощувка", "bgLatin": "noschtuwka" }
+  ],
+  "grammar": {
+    "title": "Zeitangaben",
+    "explanation": "'За' bedeutet 'für' und wird mit Zeitangaben verwendet. 'Една нощувка' = eine Übernachtung.",
+    "examples": [
+      { "bg": "Искам да резервирам стая за две нощувки.", "de": "Ich möchte ein Zimmer für zwei Nächte buchen.", "bgLatin": "Iskam da reserwiram staja sa dwe noschtuwki." },
+      { "bg": "Имате ли свободна стая?", "de": "Haben Sie ein Zimmer frei?", "bgLatin": "Imate li swobodna staja?" }
+    ]
+  },
+  "exercises": [
+    {
+      "id": "m4l3-ex1",
+      "type": "quiz",
+      "title": "Buchungsquiz",
+      "data": [
+        {
+          "id": "q1",
+          "question": "Was bedeutet 'свободен'?",
+          "options": ["frei", "belegt", "teuer", "billig"],
+          "correctOptionIndex": 0
+        },
+        {
+          "id": "q2",
+          "question": "Wie sagt man 'Doppelzimmer'?",
+          "options": ["единична стая", "двойна стая", "свободна стая", "заета стая"],
+          "correctOptionIndex": 1
+        }
+      ]
+    },
+    {
+      "id": "m4l3-ex2",
+      "type": "sentence-builder",
+      "title": "Baue die Buchung",
+      "data": [
+        { "id": "sb1", "words": ["Искам", "да", "резервирам", "стая", "за", "три", "нощувки."], "correctOrder": ["Искам", "да", "резервирам", "стая", "за", "три", "нощувки."], "de": "Ich möchte ein Zimmer für drei Nächte buchen." }
+      ]
+    }
+  ]
+}

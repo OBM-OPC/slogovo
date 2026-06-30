@@ -1,0 +1,48 @@
+{
+  "lessonId": "a1-modul-4-lektion-2",
+  "moduleId": "a1-modul-4",
+  "level": "A1",
+  "title": "Das Zimmer",
+  "duration": "15 min",
+  "introduction": "Lerne Wörter rund ums Hotelzimmer und wie du nach Ausstattung fragst.",
+  "summary": "Du kannst nach WLAN, Dusche, Fernseher und Klimaanlage fragen.",
+  "vocabulary": [
+    { "id": "m4l2-1", "de": "das Bett", "bg": "легло", "bgLatin": "leglo" },
+    { "id": "m4l2-2", "de": "die Dusche", "bg": "душ", "bgLatin": "dusch" },
+    { "id": "m4l2-3", "de": "die Toilette", "bg": "тоалетна", "bgLatin": "toaletna" },
+    { "id": "m4l2-4", "de": "das Fenster", "bg": "прозорец", "bgLatin": "prozorez" },
+    { "id": "m4l2-5", "de": "der Balkon", "bg": "балкон", "bgLatin": "balkon" },
+    { "id": "m4l2-6", "de": "WLAN", "bg": "интернет", "bgLatin": "internet" },
+    { "id": "m4l2-7", "de": "die Klimaanlage", "bg": "климатик", "bgLatin": "klimatik" },
+    { "id": "m4l2-8", "de": "der Fernseher", "bg": "телевизор", "bgLatin": "telewisor" }
+  ],
+  "grammar": {
+    "title": "Gibt es...?",
+    "explanation": "Mit 'Има ли...?' fragt man, ob etwas vorhanden ist. Die Antwort ist 'Да, има.' oder 'Не, няма.'.",
+    "examples": [
+      { "bg": "Има ли интернет в стаята?", "de": "Gibt es WLAN im Zimmer?", "bgLatin": "Ima li internet w stajata?" },
+      { "bg": "Има ли балкон?", "de": "Gibt es einen Balkon?", "bgLatin": "Ima li balkon?" }
+    ]
+  },
+  "exercises": [
+    {
+      "id": "m4l2-ex1",
+      "type": "matching",
+      "title": "Ordne das Zimmer zu",
+      "data": [
+        { "id": "p1", "de": "Bett", "bg": "легло" },
+        { "id": "p2", "de": "Dusche", "bg": "душ" },
+        { "id": "p3", "de": "Fenster", "bg": "прозорец" },
+        { "id": "p4", "de": "Balkon", "bg": "балкон" }
+      ]
+    },
+    {
+      "id": "m4l2-ex2",
+      "type": "fill-in",
+      "title": "Ergänze",
+      "data": [
+        { "id": "f1", "parts": ["____", " ли интернет в стаята?"], "answer": "Има", "answers": ["Има", "Ima"], "bg": "Има ли интернет в стаята?", "de": "Gibt es WLAN im Zimmer?" }
+      ]
+    }
+  ]
+}

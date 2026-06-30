@@ -1,0 +1,48 @@
+{
+  "lessonId": "a1-modul-6-lektion-1",
+  "moduleId": "a1-modul-6",
+  "level": "A1",
+  "title": "Hobbys",
+  "duration": "15 min",
+  "introduction": "Erzähle, was du in deiner Freizeit gerne tust.",
+  "summary": "Du kannst deine Hobbys beschreiben und fragen, was andere gerne machen.",
+  "vocabulary": [
+    { "id": "m6l1-1", "de": "das Hobby", "bg": "хоби", "bgLatin": "chobi" },
+    { "id": "m6l1-2", "de": "lesen", "bg": "чета", "bgLatin": "tscheta" },
+    { "id": "m6l1-3", "de": "Sport treiben", "bg": "спортувам", "bgLatin": "sportuwam" },
+    { "id": "m6l1-4", "de": "musizieren", "bg": "свиря", "bgLatin": "swirja" },
+    { "id": "m6l1-5", "de": "kochen", "bg": "готвя", "bgLatin": "gotwja" },
+    { "id": "m6l1-6", "de": "reisen", "bg": "пътувам", "bgLatin": "patuwam" },
+    { "id": "m6l1-7", "de": "Fahrrad fahren", "bg": "карам колело", "bgLatin": "karam kolelo" },
+    { "id": "m6l1-8", "de": "wandern", "bg": "ходя на планина", "bgLatin": "chodja na planina" }
+  ],
+  "grammar": {
+    "title": "Ich mag / Ich mache gerne",
+    "explanation": "'Обичам да...' bedeutet 'Ich mache gerne...' oder 'Ich liebe es, ...'. Dahinter folgt ein Verb im Konjunktiv.",
+    "examples": [
+      { "bg": "Обичам да чета.", "de": "Ich lese gerne.", "bgLatin": "Obitscham da tscheta." },
+      { "bg": "Обичам да спортувам.", "de": "Ich treibe gerne Sport.", "bgLatin": "Obitscham da sportuwam." }
+    ]
+  },
+  "exercises": [
+    {
+      "id": "m6l1-ex1",
+      "type": "matching",
+      "title": "Hobbys zuordnen",
+      "data": [
+        { "id": "p1", "de": "lesen", "bg": "чета" },
+        { "id": "p2", "de": "Sport treiben", "bg": "спортувам" },
+        { "id": "p3", "de": "kochen", "bg": "готвя" },
+        { "id": "p4", "de": "reisen", "bg": "пътувам" }
+      ]
+    },
+    {
+      "id": "m6l1-ex2",
+      "type": "fill-in",
+      "title": "Ergänze",
+      "data": [
+        { "id": "f1", "parts": ["Обичам ", "____", " чета."], "answer": "да", "answers": ["да", "da"], "bg": "Обичам да чета.", "de": "Ich lese gerne." }
+      ]
+    }
+  ]
+}

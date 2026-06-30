@@ -1,0 +1,143 @@
+{
+  "lessonId": "a2-modul-5-lektion-3",
+  "moduleId": "a2-modul-5",
+  "level": "A2",
+  "title": "Im Büro",
+  "duration": "20 min",
+  "introduction": "Lerne Vokabeln zum Thema 'Im Büro' auf Bulgarisch.",
+  "summary": "Du kannst jetzt über Im Büro sprechen.",
+  "vocabulary": [
+    {
+      "id": "a2m5l3-1",
+      "de": "das Büro",
+      "bg": "офисът",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m5l3-2",
+      "de": "der Computer",
+      "bg": "компютърът",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m5l3-3",
+      "de": "das Meeting",
+      "bg": "срещата",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m5l3-4",
+      "de": "die E-Mail",
+      "bg": "имейлът",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m5l3-5",
+      "de": "der Kollege",
+      "bg": "колегата",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m5l3-6",
+      "de": "der Chef",
+      "bg": "шефът",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m5l3-7",
+      "de": "die Deadline",
+      "bg": "крайният срок",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m5l3-8",
+      "de": "der Urlaub",
+      "bg": "отпуската",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m5l3-9",
+      "de": "krank",
+      "bg": "болен",
+      "bgLatin": ""
+    },
+    {
+      "id": "a2m5l3-10",
+      "de": "die Pause",
+      "bg": "почивката",
+      "bgLatin": ""
+    }
+  ],
+  "grammar": {
+    "title": "Reflexive Verben im Beruf",
+    "explanation": "Wichtige grammatikalische Strukturen für das Thema 'Im Büro'.",
+    "examples": [
+      {
+        "bg": "Срещам се с клиенти.",
+        "de": "Ich treffe mich mit Kunden."
+      },
+      {
+        "bg": "Обаждам се на колегите.",
+        "de": "Ich rufe die Kollegen an."
+      }
+    ]
+  },
+  "exercises": [
+    {
+      "id": "a2m5l3-ex1",
+      "type": "quiz",
+      "title": "Wähle die richtige Übersetzung",
+      "data": [
+        {
+          "id": "q1",
+          "question": "Was bedeutet 'офисът'?",
+          "options": [
+            "der Computer",
+            "das Meeting",
+            "das Büro",
+            "die E-Mail"
+          ],
+          "correctOptionIndex": 2
+        },
+        {
+          "id": "q2",
+          "question": "Wie sagt man 'der Computer'?",
+          "options": [
+            "офисът",
+            "компютърът",
+            "срещата",
+            "имейлът"
+          ],
+          "correctOptionIndex": 1
+        }
+      ]
+    },
+    {
+      "id": "a2m5l3-ex2",
+      "type": "matching",
+      "title": "Ordne die Vokabeln zu",
+      "data": [
+        {
+          "id": "p1",
+          "de": "das Büro",
+          "bg": "офисът"
+        },
+        {
+          "id": "p2",
+          "de": "der Computer",
+          "bg": "компютърът"
+        },
+        {
+          "id": "p3",
+          "de": "das Meeting",
+          "bg": "срещата"
+        },
+        {
+          "id": "p4",
+          "de": "die E-Mail",
+          "bg": "имейлът"
+        }
+      ]
+    }
+  ]
+}
