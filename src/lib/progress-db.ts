@@ -1,9 +1,61 @@
-import { openDB, DBSchema, IDBPDatabase } from "idb";
+import { createClient } from "@supabase/supabase-js";
 import { UserProgress, VocabularyProgress, DailyGoal } from "@/types";
 
-const PROGRESS_KEY = "slogovo-progress-v1";
+const PROGRESS_KEY = "slogov…s-v1";
 
-// ==== localStorage (primary, robust fallback) ====
+// ==== Browser-side Supabase client ====
+
+let supabaseBrowser: ReturnType<typeof createClient> | null = null;
+
+function getSupabaseBrowser() {
+  if (typeof window === "undefined") return null;
+  if (!supabaseBrowser) {
+    supabaseBrowser = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+      process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || "",
+      {
+        auth: {
+          autoRefreshToken: true,
+          persistSession: true,
+          detectSessionInUrl: false,
+        },
+      }
+    );
+  }
+  return supabaseBrowser;
+}
+
+function getCookie(name: string): string | null {
+  if (typeof document === "undefined") return null;
+  const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
+  if (!match) return null;
+  try {
+    return decodeURIComponent(match[2]);
+  } catch {
+    return match[2];
+  }
+}
+
+async function restoreSession() {
+  const raw = getCookie("sb-token");
+  if (!raw) return false;
+  try {
+    const tokens = JSON.parse(raw);
+    const sb = getSupabaseBrowser();
+    if (sb && tokens.access_token) {
+      await sb.auth.setSession({
+        access_token: tokens.access_token,
+        refresh_token: tokens.refresh_token,
+      });
+      return true;
+    }
+  } catch {
+    // ignore
+  }
+  return false;
+}
+
+// ==== localStorage ====
 
 export function saveProgressLocalStorage(progress: UserProgress): void {
   try {
@@ -24,124 +76,103 @@ export function loadProgressLocalStorage(): UserProgress | null {
   }
 }
 
-// ==== IndexedDB (secondary / legacy) ====
+// ==== Unified local save/load ====
 
-interface ProgressDB extends DBSchema {
-  progress: {
-    key: string; // userId
-    value: UserProgress;
-  };
+export async function saveProgressLocal(progress: UserProgress): Promise<void> {
+  saveProgressLocalStorage(progress);
 }
 
-const DB_NAME = "slogovo-progress";
-const DB_VERSION = 1;
-
-let dbPromise: Promise<IDBPDatabase<ProgressDB>> | null = null;
-
-export function getProgressDB(): Promise<IDBPDatabase<ProgressDB>> {
-  if (!dbPromise) {
-    dbPromise = openDB<ProgressDB>(DB_NAME, DB_VERSION, {
-      upgrade(db) {
-        if (!db.objectStoreNames.contains("progress")) {
-          db.createObjectStore("progress", { keyPath: "userId" });
-        }
-      },
-    });
-  }
-  return dbPromise;
+export async function loadProgressLocal(): Promise<UserProgress | undefined> {
+  const fromStorage = loadProgressLocalStorage();
+  return fromStorage ?? undefined;
 }
 
-export async function saveProgressIndexedDB(progress: UserProgress): Promise<void> {
-  const db = await getProgressDB();
-  await db.put("progress", progress);
-}
-
-export async function loadProgressIndexedDB(userId: string): Promise<UserProgress | undefined> {
-  const db = await getProgressDB();
-  return db.get("progress", userId);
-}
-
-export async function clearProgressLocal(userId: string): Promise<void> {
+export async function clearProgressLocal(): Promise<void> {
   try {
     localStorage.removeItem(PROGRESS_KEY);
   } catch {
     // ignore
   }
-  try {
-    const db = await getProgressDB();
-    await db.delete("progress", userId);
-  } catch {
-    // ignore
-  }
 }
 
-// ==== Unified local save/load ====
-
-export async function saveProgressLocal(progress: UserProgress): Promise<void> {
-  saveProgressLocalStorage(progress);
-  try {
-    await saveProgressIndexedDB(progress);
-  } catch (error) {
-    console.warn("[Progress] IndexedDB save failed:", error);
-  }
-}
-
-export async function loadProgressLocal(userId: string): Promise<UserProgress | undefined> {
-  // Prefer localStorage (more reliable)
-  const fromStorage = loadProgressLocalStorage();
-  if (fromStorage && fromStorage.userId === userId) {
-    return fromStorage;
-  }
-  // Fallback to IndexedDB (legacy)
-  return loadProgressIndexedDB(userId);
-}
-
-// ==== Server-side API (source of truth) ====
+// ==== Supabase direct (browser-side) ====
 
 export async function loadProgressFromSupabase(): Promise<UserProgress | null> {
-  try {
-    console.log("[Progress] Calling /api/progress/load");
-    const response = await fetch("/api/progress/load");
-    console.log("[Progress] /api/progress/load status:", response.status);
-    if (!response.ok) {
-      const err = await response.json().catch(() => ({ error: "Unknown error" }));
-      console.warn("[Progress] Load failed:", response.status, err);
-      return null;
-    }
+  const sb = getSupabaseBrowser();
+  if (!sb) return null;
 
-    const { progress } = await response.json();
-    console.log("[Progress] Loaded raw data:", progress);
-    console.log("[Progress] Loaded:", progress ? "data found" : "no data");
-    if (!progress) return null;
-
-    return rowToProgress(progress);
-  } catch (error) {
-    console.warn("[Progress] Load error:", error);
+  const authed = await restoreSession();
+  if (!authed) {
+    console.warn("[Progress] No session token found");
     return null;
   }
+
+  const { data: { user } } = await sb.auth.getUser();
+  if (!user) {
+    console.warn("[Progress] Not authenticated");
+    return null;
+  }
+
+  const { data, error } = await sb
+    .from("user_progress")
+    .select("*")
+    .eq("user_id", user.id)
+    .single();
+
+  if (error || !data) {
+    if (error && error.code !== "PGRST116") {
+      console.warn("[Progress] Supabase load error:", error);
+    }
+    return null;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  console.log("[Progress] Loaded from Supabase:", (data as any).completed_lessons);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return rowToProgress(data as any);
 }
 
 export async function saveProgressToSupabase(progress: UserProgress): Promise<boolean> {
-  try {
-    console.log("[Progress] Calling /api/progress/save");
-    const response = await fetch("/api/progress/save", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ progress }),
-    });
+  const sb = getSupabaseBrowser();
+  if (!sb) return false;
 
-    console.log("[Progress] /api/progress/save status:", response.status);
-    if (!response.ok) {
-      const err = await response.json().catch(() => ({ error: "Unknown error" }));
-      console.warn("[Progress] Save failed:", response.status, err);
-      return false;
-    }
-
-    return true;
-  } catch (error) {
-    console.warn("[Progress] Save error:", error);
+  const authed = await restoreSession();
+  if (!authed) {
+    console.warn("[Progress] No session token for save");
     return false;
   }
+
+  const { data: { user } } = await sb.auth.getUser();
+  if (!user) {
+    console.warn("[Progress] Not authenticated for save");
+    return false;
+  }
+
+  const row = progressToRow(progress);
+
+  console.log("[Progress] Saving to Supabase:", row.completed_lessons);
+
+  const { error } = await sb
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .from("user_progress" as any)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .upsert(
+      {
+        user_id: user.id,
+        ...row,
+        updated_at: new Date().toISOString(),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } as any,
+      { onConflict: "user_id" }
+    );
+
+  if (error) {
+    console.warn("[Progress] Supabase save error:", error);
+    return false;
+  }
+
+  console.log("[Progress] Saved to Supabase successfully");
+  return true;
 }
 
 export async function createInitialProgress(userId: string): Promise<UserProgress> {
@@ -193,6 +224,21 @@ function rowToProgress(row: any): UserProgress {
       speechRate: 0.9,
     },
     achievements: row.achievements ?? [],
+  };
+}
+
+function progressToRow(progress: UserProgress) {
+  return {
+    streak_current: progress.streak.current,
+    streak_longest: progress.streak.longest,
+    streak_last_study_date: progress.streak.lastStudyDate ?? null,
+    completed_lessons: progress.completedLessons,
+    completed_modules: progress.completedModules,
+    vocabulary_progress: progress.vocabularyProgress,
+    exercise_stats: progress.exerciseStats,
+    daily_stats: progress.dailyStats,
+    settings: progress.settings,
+    achievements: progress.achievements,
   };
 }
 

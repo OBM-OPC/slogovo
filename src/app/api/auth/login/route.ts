@@ -48,6 +48,18 @@ export async function POST(request: NextRequest) {
       path: "/",
     });
 
+    // Also set a non-httpOnly cookie for browser-side Supabase client
+    response.cookies.set("sb-token", JSON.stringify({
+      access_token: authData.session.access_token,
+      refresh_token: authData.session.refresh_token,
+    }), {
+      httpOnly: false,
+      secure: true,
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 7,
+      path: "/",
+    });
+
     return response;
   } catch (error) {
     console.error("Login error:", error);

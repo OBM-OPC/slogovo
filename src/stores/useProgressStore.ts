@@ -87,7 +87,7 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
     const fromSupabase = await loadProgressFromSupabase();
 
     // Also check localStorage
-    const fromLocal = await loadProgressLocal(userId);
+    const fromLocal = await loadProgressLocal();
 
     // Merge: prefer Supabase, but keep local if Supabase is empty
     let finalProgress: UserProgress | null = null;
