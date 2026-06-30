@@ -1,0 +1,38 @@
+"use client";
+
+import { useProgressStore } from "@/stores/useProgressStore";
+import { UserProgress } from "@/types";
+
+const emptyProgress: UserProgress = {
+  userId: "",
+  streak: { current: 0, longest: 0 },
+  completedLessons: [],
+  completedModules: [],
+  vocabularyProgress: {},
+  exerciseStats: { total: 0, correct: 0, wrong: 0, consecutiveCorrect: 0 },
+  dailyStats: {},
+  settings: {
+    dailyGoal: "medium",
+    ttsEnabled: true,
+    showLatin: true,
+    speechRate: 0.9,
+  },
+  achievements: [],
+};
+
+/**
+ * Safe progress hook — never returns null.
+ * Returns empty progress while loading, then real data.
+ */
+export function useProgressSafe(): UserProgress {
+  const progress = useProgressStore((state) => state.progress);
+  return progress ?? emptyProgress;
+}
+
+export function useProgressInitialized(): boolean {
+  return useProgressStore((state) => state.initialized);
+}
+
+export function useProgressSyncing(): boolean {
+  return useProgressStore((state) => state.syncing);
+}

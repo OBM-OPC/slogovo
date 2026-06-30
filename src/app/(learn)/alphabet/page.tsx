@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useProgressStore } from "@/stores/useProgressStore";
+import { useProgressSafe } from "@/hooks/useProgressSafe";
 import { Button } from "@/components/ui/Button";
 import { SpeakButton } from "@/components/ui/SpeakButton";
 import { ArrowLeft, ArrowRight } from "lucide-react";
@@ -41,7 +41,7 @@ const alphabet = [
 ];
 
 export default function AlphabetPage() {
-  const progress = useProgressStore((state) => state.progress);
+  const progress = useProgressSafe();
   const [index, setIndex] = useState(0);
   const [showDetails, setShowDetails] = useState(false);
 

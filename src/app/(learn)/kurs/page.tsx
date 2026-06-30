@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useProgressStore } from "@/stores/useProgressStore";
+import { useProgressSafe } from "@/hooks/useProgressSafe";
 import { getAllModules, getLessonsByModule } from "@/lib/content";
 import { ModuleMeta } from "@/types";
 import { ProgressBar } from "@/components/ui/ProgressBar";
@@ -9,7 +9,7 @@ import { Lock, CheckCircle2, Circle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 function ModuleCard({ module, isUnlocked, nextLessonId }: { module: ModuleMeta; isUnlocked: boolean; nextLessonId?: string }) {
-  const progress = useProgressStore((state) => state.progress);
+  const progress = useProgressSafe();
   const lessons = getLessonsByModule(module.moduleId);
   const completedCount = lessons.filter((l) =>
     progress.completedLessons.includes(l.lessonId)
@@ -98,7 +98,7 @@ function ModuleCard({ module, isUnlocked, nextLessonId }: { module: ModuleMeta; 
 }
 
 export default function CoursePage() {
-  const progress = useProgressStore((state) => state.progress);
+  const progress = useProgressSafe();
   const modules = getAllModules().sort((a, b) => a.order - b.order);
 
   // Group modules by level

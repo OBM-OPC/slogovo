@@ -1,5 +1,6 @@
 "use client";
 
+import { useProgressSafe } from "@/hooks/useProgressSafe";
 import { useProgressStore } from "@/stores/useProgressStore";
 import { getAllModules, getAllVocabulary } from "@/lib/content";
 import { ProgressBar } from "@/components/ui/ProgressBar";
@@ -7,7 +8,7 @@ import { Flame, BookOpen, Brain, Award, Clock, RotateCcw } from "lucide-react";
 import { todayISO } from "@/lib/utils";
 
 export default function ProgressPage() {
-  const progress = useProgressStore((state) => state.progress);
+  const progress = useProgressSafe();
   const resetProgress = useProgressStore((state) => state.resetProgress);
   const modules = getAllModules();
   const totalLessons = modules.flatMap((m) => m.lessons).length;

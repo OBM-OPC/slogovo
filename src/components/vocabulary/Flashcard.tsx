@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { VocabularyItem } from "@/types";
+import { useProgressSafe } from "@/hooks/useProgressSafe";
 import { useProgressStore } from "@/stores/useProgressStore";
 import { Button } from "@/components/ui/Button";
 import { SpeakButton } from "@/components/ui/SpeakButton";
@@ -15,7 +16,7 @@ interface FlashcardProps {
 }
 
 export function Flashcard({ words }: FlashcardProps) {
-  const progress = useProgressStore((state) => state.progress);
+  const progress = useProgressSafe();
   const reviewVocabulary = useProgressStore((state) => state.reviewVocabulary);
 
   const [index, setIndex] = useState(0);

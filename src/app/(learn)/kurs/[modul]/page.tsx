@@ -2,7 +2,7 @@
 
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { useProgressStore } from "@/stores/useProgressStore";
+import { useProgressSafe } from "@/hooks/useProgressSafe";
 import { getLessonsByModule, getModuleById } from "@/lib/content";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { CheckCircle2, Circle, ArrowLeft, ChevronRight } from "lucide-react";
@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 export default function ModulePage() {
   const params = useParams();
   const moduleId = params.modul as string;
-  const progress = useProgressStore((state) => state.progress);
+  const progress = useProgressSafe();
   const moduleMeta = getModuleById(moduleId);
   const lessons = getLessonsByModule(moduleId);
 

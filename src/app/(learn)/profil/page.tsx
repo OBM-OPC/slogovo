@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuth } from "@/hooks/useAuth";
-import { useProgressStore } from "@/stores/useProgressStore";
+import { useProgressSafe } from "@/hooks/useProgressSafe";
 import { getAllModules } from "@/lib/content";
 import { ACHIEVEMENTS } from "@/lib/achievements";
 import { Flame, BookOpen, Trophy, CheckCircle2, Lock, LogOut } from "lucide-react";
@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 
 export default function ProfilPage() {
   const { user, logout } = useAuth();
-  const progress = useProgressStore((state) => state.progress);
+  const progress = useProgressSafe();
   const modules = getAllModules();
   const allLessons = modules.flatMap((m) => m.lessons);
   const completed = progress.completedLessons.length;
@@ -117,7 +117,7 @@ export default function ProfilPage() {
 
       {/* Logout */}
       <button
-        onClick={() => logout()}
+        onClick={() => { logout(); }}
         className="flex w-full items-center justify-center gap-2 rounded-3xl border-2 border-accent-100 bg-white px-5 py-4 text-accent shadow-card transition-all duration-200 hover:bg-accent-50 hover:shadow-card-hover"
       >
         <LogOut className="h-4 w-4" />

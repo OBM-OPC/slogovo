@@ -1,6 +1,12 @@
 import { create } from "zustand";
 import { UserProgress, Streak, DifficultyRating } from "@/types";
-import { loadProgress, saveProgress, createDefaultProgress } from "@/lib/db";
+import {
+  loadProgressFromSupabase,
+  saveProgressToSupabase,
+  loadProgressLocal,
+  saveProgressLocal,
+  createInitialProgress,
+} from "@/lib/progress-db";
 import { todayISO } from "@/lib/utils";
 import { reviewWord, reviewWordWithDifficulty } from "@/lib/spaced-repetition";
 import { checkAchievements } from "@/lib/achievements";
@@ -8,9 +14,11 @@ import { vibrateCorrect, vibrateWrong } from "@/lib/haptics";
 import { triggerConfetti, triggerLevelUpConfetti } from "@/lib/confetti";
 
 interface ProgressState {
-  progress: UserProgress;
+  progress: UserProgress | null;
   initialized: boolean;
-  init: () => Promise<void>;
+  syncing: boolean;
+  userId: string | null;
+  init: (userId: string) => Promise<void>;
   completeLesson: (lessonId: string) => Promise<void>;
   completeModule: (moduleId: string) => Promise<void>;
   reviewVocabulary: (wordId: string, known: boolean) => Promise<void>;
@@ -20,6 +28,7 @@ interface ProgressState {
   updateSettings: (settings: Partial<UserProgress["settings"]>) => Promise<void>;
   unlockAchievement: (achievementId: string) => Promise<void>;
   resetProgress: () => Promise<void>;
+  syncNow: () => Promise<void>;
 }
 
 function updateStreak(progress: UserProgress): Streak {
@@ -57,27 +66,67 @@ function persist(updated: UserProgress): UserProgress {
   return updated;
 }
 
-export const useProgressStore = create<ProgressState>((set, get) => ({
-  progress: createDefaultProgress(),
-  initialized: false,
+// Debounced sync timer
+let syncTimeout: ReturnType<typeof setTimeout> | null = null;
 
-  init: async () => {
-    if (get().initialized) return;
-    const loaded = await loadProgress();
-    set({ progress: loaded, initialized: true });
+export const useProgressStore = create<ProgressState>((set, get) => ({
+  progress: null,
+  initialized: false,
+  syncing: false,
+  userId: null,
+
+  init: async (userId: string) => {
+    if (get().initialized && get().userId === userId) return;
+
+    // Try Supabase first
+    const fromSupabase = await loadProgressFromSupabase(userId);
+
+    if (fromSupabase) {
+      set({ progress: fromSupabase, initialized: true, userId });
+      await saveProgressLocal(fromSupabase);
+      return;
+    }
+
+    // Fallback to local cache
+    const fromLocal = await loadProgressLocal(userId);
+
+    if (fromLocal) {
+      // Upload local data to Supabase
+      await saveProgressToSupabase(fromLocal);
+      set({ progress: fromLocal, initialized: true, userId });
+      return;
+    }
+
+    // No data anywhere — create fresh
+    const fresh = await createInitialProgress(userId);
+    set({ progress: fresh, initialized: true, userId });
+  },
+
+  syncNow: async () => {
+    const state = get();
+    if (!state.progress || !state.userId || state.syncing) return;
+
+    set({ syncing: true });
+    await saveProgressToSupabase(state.progress);
+    set({ syncing: false });
   },
 
   completeLesson: async (lessonId: string) => {
     const state = get();
+    if (!state.progress) return;
     if (state.progress.completedLessons.includes(lessonId)) return;
+
     const completedCountBefore = state.progress.completedLessons.length;
     const updated = persist({
       ...state.progress,
       completedLessons: [...state.progress.completedLessons, lessonId],
       streak: updateStreak(state.progress),
     });
-    await saveProgress(updated);
+
+    await saveProgressLocal(updated);
     set({ progress: updated });
+    debouncedSync(get);
+
     if (updated.completedLessons.length > completedCountBefore) {
       triggerLevelUpConfetti();
     }
@@ -85,18 +134,24 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
 
   completeModule: async (moduleId: string) => {
     const state = get();
+    if (!state.progress) return;
     if (state.progress.completedModules.includes(moduleId)) return;
+
     const updated = persist({
       ...state.progress,
       completedModules: [...state.progress.completedModules, moduleId],
       streak: updateStreak(state.progress),
     });
-    await saveProgress(updated);
+
+    await saveProgressLocal(updated);
     set({ progress: updated });
+    debouncedSync(get);
   },
 
   reviewVocabulary: async (wordId: string, known: boolean) => {
     const state = get();
+    if (!state.progress) return;
+
     const existing = state.progress.vocabularyProgress[wordId] || {
       status: "new",
       timesCorrect: 0,
@@ -104,6 +159,7 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
       intervalIndex: 0,
       easeFactor: 2.5,
     };
+
     const updated = {
       ...state.progress,
       vocabularyProgress: {
@@ -111,12 +167,16 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
         [wordId]: reviewWord(existing, known),
       },
     };
-    await saveProgress(updated);
+
+    await saveProgressLocal(updated);
     set({ progress: updated });
+    debouncedSync(get);
   },
 
   reviewVocabularyWithDifficulty: async (wordId: string, rating: DifficultyRating) => {
     const state = get();
+    if (!state.progress) return;
+
     const existing = state.progress.vocabularyProgress[wordId] || {
       status: "new",
       timesCorrect: 0,
@@ -124,6 +184,7 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
       intervalIndex: 0,
       easeFactor: 2.5,
     };
+
     const updated = {
       ...state.progress,
       vocabularyProgress: {
@@ -131,14 +192,20 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
         [wordId]: reviewWordWithDifficulty(existing, rating),
       },
     };
-    await saveProgress(updated);
+
+    await saveProgressLocal(updated);
     set({ progress: updated });
+    debouncedSync(get);
   },
 
   addExerciseResult: async (correct: boolean) => {
     const state = get();
+    if (!state.progress) return;
+
     const stats = state.progress.exerciseStats;
-    const currentConsecutive = correct ? (state.progress.exerciseStats.consecutiveCorrect ?? 0) + 1 : 0;
+    const currentConsecutive = correct
+      ? (state.progress.exerciseStats.consecutiveCorrect ?? 0) + 1
+      : 0;
 
     if (correct) {
       vibrateCorrect(currentConsecutive);
@@ -158,15 +225,20 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
         consecutiveCorrect: currentConsecutive,
       },
     });
-    await saveProgress(updated);
+
+    await saveProgressLocal(updated);
     set({ progress: updated });
+    debouncedSync(get);
   },
 
   addStudyTime: async (minutes: number, vocabulary = 0) => {
     const state = get();
+    if (!state.progress) return;
+
     const today = todayISO();
     const todayStats = state.progress.dailyStats[today] || { minutes: 0, vocabulary: 0 };
     const currentStreak = state.progress.streak.current;
+
     const updated = persist({
       ...state.progress,
       dailyStats: {
@@ -178,8 +250,11 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
       },
       streak: updateStreak(state.progress),
     });
-    await saveProgress(updated);
+
+    await saveProgressLocal(updated);
     set({ progress: updated });
+    debouncedSync(get);
+
     if (updated.streak.current > currentStreak && updated.streak.current > 0 && updated.streak.current % 7 === 0) {
       triggerConfetti({ scalar: 1 + updated.streak.current * 0.02 });
     }
@@ -187,28 +262,74 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
 
   updateSettings: async (settings) => {
     const state = get();
+    if (!state.progress) return;
+
     const updated = {
       ...state.progress,
       settings: { ...state.progress.settings, ...settings },
     };
-    await saveProgress(updated);
+
+    await saveProgressLocal(updated);
     set({ progress: updated });
+    debouncedSync(get);
   },
 
   unlockAchievement: async (achievementId: string) => {
     const state = get();
+    if (!state.progress) return;
     if (state.progress.achievements.includes(achievementId)) return;
+
     const updated = {
       ...state.progress,
       achievements: [...state.progress.achievements, achievementId],
     };
-    await saveProgress(updated);
+
+    await saveProgressLocal(updated);
     set({ progress: updated });
+    debouncedSync(get);
   },
 
   resetProgress: async () => {
-    const fresh = createDefaultProgress();
-    await saveProgress(fresh);
+    const state = get();
+    if (!state.userId) return;
+
+    const fresh = {
+      ...createDefaultProgress(state.userId),
+      userId: state.userId,
+    };
+
+    await saveProgressLocal(fresh);
+    await saveProgressToSupabase(fresh);
     set({ progress: fresh });
   },
 }));
+
+// Debounced sync: waits 2 seconds after last change, then uploads to Supabase
+function debouncedSync(get: () => ProgressState) {
+  if (syncTimeout) clearTimeout(syncTimeout);
+  syncTimeout = setTimeout(async () => {
+    const state = get();
+    if (state.progress && state.userId) {
+      await saveProgressToSupabase(state.progress);
+    }
+  }, 2000);
+}
+
+function createDefaultProgress(userId: string) {
+  return {
+    userId,
+    streak: { current: 0, longest: 0 },
+    completedLessons: [],
+    completedModules: [],
+    vocabularyProgress: {},
+    exerciseStats: { total: 0, correct: 0, wrong: 0, consecutiveCorrect: 0 },
+    dailyStats: {},
+    settings: {
+      dailyGoal: "medium" as const,
+      ttsEnabled: true,
+      showLatin: true,
+      speechRate: 0.9,
+    },
+    achievements: [],
+  };
+}

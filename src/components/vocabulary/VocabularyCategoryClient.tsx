@@ -4,8 +4,8 @@ import Link from "next/link";
 import { ModuleMeta, VocabularyItem } from "@/types";
 import { Flashcard } from "./Flashcard";
 import { ArrowLeft } from "lucide-react";
-import { useProgressStore } from "@/stores/useProgressStore";
 import { getCategoryCounts, VocabCategory } from "@/lib/spaced-repetition";
+import { useProgressSafe } from "@/hooks/useProgressSafe";
 import { cn } from "@/lib/utils";
 
 interface VocabularyCategoryClientProps {
@@ -21,7 +21,7 @@ const categoryLabels: Record<VocabCategory, { label: string; color: string }> = 
 };
 
 export function VocabularyCategoryClient({ moduleMeta, words }: VocabularyCategoryClientProps) {
-  const progress = useProgressStore((state) => state.progress);
+  const progress = useProgressSafe();
   const counts = getCategoryCounts(words, progress.vocabularyProgress);
 
   return (

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useProgressStore } from "@/stores/useProgressStore";
+import { useProgressSafe } from "@/hooks/useProgressSafe";
 import { getAllModules, getLessonsByModule } from "@/lib/content";
 import { ModuleMeta } from "@/types";
 import { Flame, BookOpen, Play, Type, Grid3X3, BookMarked, Lock, CheckCircle2, Circle, ChevronRight } from "lucide-react";
@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 
 // ── Stats Bar (horizontal, flowing) ──
 function StatsBar() {
-  const progress = useProgressStore((state) => state.progress);
+  const progress = useProgressSafe();
   const modules = getAllModules();
   const allLessons = modules.flatMap((m) => m.lessons);
   const completed = progress.completedLessons.length;
@@ -54,7 +54,7 @@ function StatsBar() {
 
 // ── Continue Button (large, pulsing) ──
 function ContinueButton() {
-  const progress = useProgressStore((state) => state.progress);
+  const progress = useProgressSafe();
   const modules = getAllModules().sort((a, b) => a.order - b.order);
   const allLessons = modules.flatMap((m) =>
     m.lessons.map((l) => ({ ...l, moduleId: m.moduleId }))
@@ -102,7 +102,7 @@ function ContinueButton() {
 
 // ── Module Card (with colored left stripe) ──
 function ModuleCard({ module, isUnlocked }: { module: ModuleMeta; isUnlocked: boolean }) {
-  const progress = useProgressStore((state) => state.progress);
+  const progress = useProgressSafe();
   const lessons = getLessonsByModule(module.moduleId);
   const completedCount = lessons.filter((l) =>
     progress.completedLessons.includes(l.lessonId)
@@ -194,7 +194,7 @@ function QuickTiles() {
 
 // ── Main Page ──
 export default function LernenPage() {
-  const progress = useProgressStore((state) => state.progress);
+  const progress = useProgressSafe();
   const modules = getAllModules().sort((a, b) => a.order - b.order);
 
   const modulesByLevel = modules.reduce<Record<string, ModuleMeta[]>>((acc, m) => {

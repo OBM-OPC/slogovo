@@ -1,7 +1,7 @@
 "use client";
 
 import { VocabularyItem } from "@/types";
-import { useProgressStore } from "@/stores/useProgressStore";
+import { useProgressSafe } from "@/hooks/useProgressSafe";
 import { SpeakButton } from "@/components/ui/SpeakButton";
 
 interface VocabularyListProps {
@@ -9,7 +9,7 @@ interface VocabularyListProps {
 }
 
 export function VocabularyList({ items }: VocabularyListProps) {
-  const progress = useProgressStore((state) => state.progress);
+  const progress = useProgressSafe();
 
   return (
     <ul className="space-y-3">

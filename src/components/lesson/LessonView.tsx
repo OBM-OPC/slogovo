@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Lesson } from "@/types";
+import { useProgressSafe } from "@/hooks/useProgressSafe";
 import { useProgressStore } from "@/stores/useProgressStore";
 import { Button } from "@/components/ui/Button";
 import { ProgressBar } from "@/components/ui/ProgressBar";
@@ -20,7 +21,7 @@ interface LessonViewProps {
 }
 
 export function LessonView({ lesson, moduleId, nextLessonId, context }: LessonViewProps) {
-  const progress = useProgressStore((state) => state.progress);
+  const progress = useProgressSafe();
   const completeLesson = useProgressStore((state) => state.completeLesson);
   const addStudyTime = useProgressStore((state) => state.addStudyTime);
 

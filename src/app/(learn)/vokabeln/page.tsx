@@ -5,7 +5,7 @@ import Link from "next/link";
 import { getAllModules, getAllVocabulary } from "@/lib/content";
 import { Flashcard } from "@/components/vocabulary/Flashcard";
 import { TypingExercise } from "@/components/vocabulary/TypingExercise";
-import { useProgressStore } from "@/stores/useProgressStore";
+import { useProgressSafe } from "@/hooks/useProgressSafe";
 import { sortBySpacedRepetition, getCategoryCounts, VocabCategory } from "@/lib/spaced-repetition";
 import { Search, Brain, Grid3X3, Type, BrickWall, Clock, BookOpen, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -24,7 +24,7 @@ export default function VocabularyPage() {
   const [search, setSearch] = useState("");
   const modules = getAllModules();
   const allVocab = getAllVocabulary();
-  const progress = useProgressStore((state) => state.progress);
+  const progress = useProgressSafe();
 
   const filtered = allVocab.filter(
     (w) =>

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useProgressStore } from "@/stores/useProgressStore";
+import { useAuth } from "@/hooks/useAuth";
 import { initVoices } from "@/lib/tts";
 import { AchievementToast } from "@/components/ui/AchievementToast";
 import { checkAchievements } from "@/lib/achievements";
@@ -15,13 +16,22 @@ export function AppShell({ children }: AppShellProps) {
   const progress = useProgressStore((state) => state.progress);
   const unlockAchievement = useProgressStore((state) => state.unlockAchievement);
   const [toastAchievements, setToastAchievements] = useState<string[]>([]);
+  const { user, isLoading } = useAuth();
+
+  // Initialize progress store once auth is ready
+  useEffect(() => {
+    if (!isLoading && user) {
+      init(user.id);
+    }
+  }, [init, user, isLoading]);
 
   useEffect(() => {
-    init();
     initVoices();
-  }, [init]);
+  }, []);
 
+  // Achievement toasts
   useEffect(() => {
+    if (!progress) return;
     const newIds = checkAchievements(progress).filter(
       (id) => !progress.achievements.includes(id)
     );

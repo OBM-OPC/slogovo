@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { VocabularyItem, DifficultyRating } from "@/types";
 import { Button } from "@/components/ui/Button";
+import { useProgressSafe } from "@/hooks/useProgressSafe";
 import { useProgressStore } from "@/stores/useProgressStore";
 import { speak, markUserInteraction } from "@/lib/tts";
 import { cn, shuffleArray } from "@/lib/utils";
@@ -27,7 +28,7 @@ const DIFFICULTY_LABELS: Record<DifficultyRating, { label: string; className: st
 };
 
 export function TypingExercise({ words, mode, onExit }: TypingExerciseProps) {
-  const progress = useProgressStore((state) => state.progress);
+  const progress = useProgressSafe();
   const reviewVocabularyWithDifficulty = useProgressStore((state) => state.reviewVocabularyWithDifficulty);
   const [queue, setQueue] = useState<VocabularyItem[]>(() => shuffleArray(words).slice(0, 20));
   const [index, setIndex] = useState(0);

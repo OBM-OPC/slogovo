@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { GrammarTopic, GrammarExample } from "@/types";
-import { useProgressStore } from "@/stores/useProgressStore";
+import { useProgressSafe } from "@/hooks/useProgressSafe";
 import { SpeakButton } from "@/components/ui/SpeakButton";
 import { Button } from "@/components/ui/Button";
 import { ArrowLeft, ChevronDown, ChevronUp, Lightbulb, BookOpen } from "lucide-react";
@@ -14,7 +14,7 @@ interface GrammarClientProps {
 }
 
 export function GrammarClient({ topic }: GrammarClientProps) {
-  const progress = useProgressStore((state) => state.progress);
+  const progress = useProgressSafe();
   const [activeExample, setActiveExample] = useState<number | null>(null);
   const [expandedTables, setExpandedTables] = useState<Record<number, boolean>>({});
 
