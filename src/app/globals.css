@@ -2,13 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans:wght@400;500;600;700&family=Noto+Sans+Cyrillic:wght@400;500;600;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,500;0,700;1,500&display=swap');
+
 :root {
-  --background: #F5F7FA;
-  --foreground: #1A1A2E;
-  --primary: #009B77;
-  --accent: #D62612;
+  --background: #FAF8F5;
+  --foreground: #1E1A16;
+  --primary: #2D6A4F;
+  --accent: #B91C1C;
+  --gold: #D4A574;
   --card: #FFFFFF;
-  --muted: #6B7280;
+  --muted: #78716C;
 }
 
 @layer base {
@@ -22,13 +25,16 @@
     font-family: "Inter", "Noto Sans", "Noto Sans Cyrillic", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   }
 
-  /* Ensure Cyrillic characters render with a safe fallback */
-  :lang(bg),
-  .bg-text {
-    font-family: "Noto Sans", "Noto Sans Cyrillic", "Inter", system-ui, sans-serif;
+  h1, h2, h3 {
+    font-family: "Playfair Display", "Noto Serif", Georgia, serif;
   }
 
-  /* Hide scrollbar but keep functionality */
+  :lang(bg),
+  .bg-text,
+  .cyrillic {
+    font-family: "Noto Serif", "Noto Sans Cyrillic", "Inter", system-ui, sans-serif;
+  }
+
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
@@ -40,11 +46,11 @@
 
 @layer components {
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary/30 active:scale-[0.98];
+    @apply inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3 font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/30 active:scale-[0.98];
   }
 
   .btn-primary {
-    @apply btn bg-primary text-white hover:bg-primary-600;
+    @apply btn bg-primary text-white hover:bg-primary-600 shadow-card hover:shadow-card-hover;
   }
 
   .btn-accent {
@@ -56,15 +62,19 @@
   }
 
   .btn-ghost {
-    @apply btn text-muted hover:bg-gray-100;
+    @apply btn text-muted hover:bg-warm-100;
   }
 
   .card {
-    @apply rounded-2xl bg-card p-5 shadow-sm;
+    @apply rounded-3xl bg-card p-5 shadow-card transition-shadow duration-200;
+  }
+
+  .card-hover {
+    @apply card hover:shadow-card-hover;
   }
 
   .input {
-    @apply w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-foreground placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20;
+    @apply w-full rounded-2xl border border-warm-200 bg-white px-4 py-3 text-foreground placeholder:text-warm-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all duration-200;
   }
 
   .safe-bottom {
@@ -73,6 +83,15 @@
 
   .safe-top {
     padding-top: env(safe-area-inset-top, 0px);
+  }
+
+  /* Bulgarian rose pattern background */
+  .bg-rose-pattern {
+    background-color: #FAF8F5;
+    background-image:
+      radial-gradient(circle at 20% 50%, rgba(45, 106, 79, 0.03) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(185, 28, 28, 0.02) 0%, transparent 50%),
+      radial-gradient(circle at 50% 80%, rgba(212, 165, 116, 0.04) 0%, transparent 50%);
   }
 }
 

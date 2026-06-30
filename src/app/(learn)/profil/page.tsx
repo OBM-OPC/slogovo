@@ -17,56 +17,72 @@ export default function ProfilPage() {
   const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
 
   return (
-    <main className="animate-fade-in px-4 py-6 safe-top">
-      {/* User Info */}
-      <div className="card mb-6 text-center">
-        <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-primary-50 text-2xl font-bold text-primary">
-          {user?.name?.charAt(0) || user?.email?.charAt(0) || "?"}
-        </div>
-        <h2 className="text-lg font-bold">{user?.name || "Lernender"}</h2>
-        <p className="text-sm text-muted">{user?.email}</p>
+    <main className="animate-fade-in bg-rose-pattern min-h-screen px-4 py-6 safe-top">
+      {/* Header */}
+      <div className="mb-6">
+        <p className="text-xs font-medium uppercase tracking-widest text-muted">Профил</p>
+        <h1 className="text-3xl font-serif font-bold text-foreground">Profil</h1>
       </div>
 
-      {/* Stats */}
-      <div className="mb-6 grid grid-cols-3 gap-3">
-        <div className="card flex flex-col items-center py-3">
-          <Flame className="mb-1 h-5 w-5 text-orange-500" />
-          <span className="text-lg font-bold">{progress.streak.current}</span>
-          <span className="text-xs text-muted">Tage Streak</span>
-        </div>
-        <div className="card flex flex-col items-center py-3">
-          <BookOpen className="mb-1 h-5 w-5 text-primary" />
-          <span className="text-lg font-bold">{completed}</span>
-          <span className="text-xs text-muted">Lektionen</span>
-        </div>
-        <div className="card flex flex-col items-center py-3">
-          <Trophy className="mb-1 h-5 w-5 text-yellow-500" />
-          <span className="text-lg font-bold">{progress.achievements.length}</span>
-          <span className="text-xs text-muted">Achievements</span>
+      {/* User Card */}
+      <div className="mb-8 overflow-hidden rounded-3xl bg-white shadow-card">
+        <div className="bg-gradient-to-br from-primary-50 via-white to-accent-50 p-6 text-center">
+          <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-white shadow-card text-3xl font-serif font-bold text-primary ring-4 ring-primary-50">
+            {user?.name?.charAt(0) || user?.email?.charAt(0) || "?"}
+          </div>
+          <h2 className="text-xl font-serif font-bold">{user?.name || "Lernender"}</h2>
+          <p className="text-sm text-muted">{user?.email}</p>
         </div>
       </div>
 
-      {/* Progress Bar */}
-      <div className="card mb-6">
-        <div className="mb-2 flex justify-between text-sm">
-          <span className="font-medium">Gesamtfortschritt</span>
-          <span className="text-muted">{pct}%</span>
+      {/* Stats Row */}
+      <div className="mb-8 overflow-hidden rounded-3xl bg-white shadow-card">
+        <div className="grid grid-cols-3 divide-x divide-warm-100">
+          <div className="flex flex-col items-center py-4">
+            <div className="mb-1 flex h-9 w-9 items-center justify-center rounded-xl bg-orange-50">
+              <Flame className="h-5 w-5 text-orange-500" />
+            </div>
+            <span className="text-xl font-bold font-serif">{progress.streak.current}</span>
+            <span className="text-xs text-muted">Tage Streak</span>
+          </div>
+          <div className="flex flex-col items-center py-4">
+            <div className="mb-1 flex h-9 w-9 items-center justify-center rounded-xl bg-primary-50">
+              <BookOpen className="h-5 w-5 text-primary" />
+            </div>
+            <span className="text-xl font-bold font-serif">{completed}</span>
+            <span className="text-xs text-muted">Lektionen</span>
+          </div>
+          <div className="flex flex-col items-center py-4">
+            <div className="mb-1 flex h-9 w-9 items-center justify-center rounded-xl bg-gold-50">
+              <Trophy className="h-5 w-5 text-gold" />
+            </div>
+            <span className="text-xl font-bold font-serif">{progress.achievements.length}</span>
+            <span className="text-xs text-muted">Erfolge</span>
+          </div>
         </div>
-        <div className="h-2 w-full rounded-full bg-gray-100">
+      </div>
+
+      {/* Progress */}
+      <div className="card mb-8">
+        <div className="mb-3 flex justify-between items-center">
+          <span className="font-serif font-bold">Gesamtfortschritt</span>
+          <span className="text-sm font-bold text-primary">{pct}%</span>
+        </div>
+        <div className="h-2 w-full rounded-full bg-warm-100 overflow-hidden">
           <div
-            className="h-full rounded-full bg-primary transition-all"
+            className="h-full rounded-full bg-gradient-to-r from-primary via-primary-400 to-gold transition-all duration-700"
             style={{ width: `${pct}%` }}
           />
         </div>
-        <p className="mt-2 text-xs text-muted">
+        <p className="mt-3 text-xs text-muted">
           {completed} von {total} Lektionen abgeschlossen
         </p>
       </div>
 
       {/* Achievements */}
-      <div className="mb-6">
-        <h3 className="mb-3 text-sm font-semibold text-muted uppercase tracking-wide">
-          Achievements
+      <div className="mb-8">
+        <h3 className="mb-4 text-sm font-semibold uppercase tracking-widest text-muted">
+          Постижения
         </h3>
         <div className="grid grid-cols-2 gap-3">
           {ACHIEVEMENTS.map((achievement) => {
@@ -75,17 +91,24 @@ export default function ProfilPage() {
               <div
                 key={achievement.id}
                 className={cn(
-                  "card flex flex-col items-center gap-1 py-4 text-center",
-                  !unlocked && "opacity-50"
+                  "flex flex-col items-center gap-2 rounded-3xl p-4 text-center shadow-card transition-all duration-200",
+                  unlocked
+                    ? "bg-white"
+                    : "bg-warm-50/50 opacity-50"
                 )}
               >
-                {unlocked ? (
-                  <CheckCircle2 className="h-6 w-6 text-success" />
-                ) : (
-                  <Lock className="h-6 w-6 text-muted" />
-                )}
-                <span className="text-sm font-medium">{achievement.title}</span>
-                <span className="text-xs text-muted">{achievement.description}</span>
+                <div className={cn(
+                  "flex h-12 w-12 items-center justify-center rounded-2xl",
+                  unlocked ? "bg-primary-50" : "bg-warm-100"
+                )}>
+                  {unlocked ? (
+                    <CheckCircle2 className="h-6 w-6 text-primary" />
+                  ) : (
+                    <Lock className="h-6 w-6 text-muted" />
+                  )}
+                </div>
+                <span className="text-sm font-serif font-bold">{achievement.title}</span>
+                <span className="text-xs text-muted leading-tight">{achievement.description}</span>
               </div>
             );
           })}
@@ -95,10 +118,10 @@ export default function ProfilPage() {
       {/* Logout */}
       <button
         onClick={() => logout()}
-        className="btn w-full justify-center gap-2 border border-red-200 text-red-600 hover:bg-red-50"
+        className="flex w-full items-center justify-center gap-2 rounded-3xl border-2 border-accent-100 bg-white px-5 py-4 text-accent shadow-card transition-all duration-200 hover:bg-accent-50 hover:shadow-card-hover"
       >
         <LogOut className="h-4 w-4" />
-        Abmelden
+        <span className="font-medium">Abmelden</span>
       </button>
     </main>
   );

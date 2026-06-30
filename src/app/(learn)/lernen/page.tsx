@@ -4,11 +4,10 @@ import Link from "next/link";
 import { useProgressStore } from "@/stores/useProgressStore";
 import { getAllModules, getLessonsByModule } from "@/lib/content";
 import { ModuleMeta } from "@/types";
-import { ProgressBar } from "@/components/ui/ProgressBar";
-import { Lock, CheckCircle2, Circle, Flame, BookOpen, Play, Type, Grid3X3, BookMarked } from "lucide-react";
+import { Flame, BookOpen, Play, Type, Grid3X3, BookMarked, Lock, CheckCircle2, Circle, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// ── Stats Bar ──
+// ── Stats Bar (horizontal, flowing) ──
 function StatsBar() {
   const progress = useProgressStore((state) => state.progress);
   const modules = getAllModules();
@@ -18,26 +17,42 @@ function StatsBar() {
   const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
 
   return (
-    <div className="mb-6 grid grid-cols-3 gap-3">
-      <div className="card flex flex-col items-center py-3">
-        <Flame className="mb-1 h-5 w-5 text-orange-500" />
-        <span className="text-lg font-bold">{progress.streak.current}</span>
-        <span className="text-xs text-muted">Tage Streak</span>
+    <div className="mb-8 overflow-hidden rounded-3xl bg-white shadow-card">
+      <div className="grid grid-cols-3 divide-x divide-warm-100">
+        <div className="flex flex-col items-center py-4">
+          <div className="mb-1 flex h-9 w-9 items-center justify-center rounded-xl bg-orange-50">
+            <Flame className="h-5 w-5 text-orange-500" />
+          </div>
+          <span className="text-xl font-bold font-serif">{progress.streak.current}</span>
+          <span className="text-xs text-muted">Tage Streak</span>
+        </div>
+        <div className="flex flex-col items-center py-4">
+          <div className="mb-1 flex h-9 w-9 items-center justify-center rounded-xl bg-primary-50">
+            <BookOpen className="h-5 w-5 text-primary" />
+          </div>
+          <span className="text-xl font-bold font-serif">{completed}</span>
+          <span className="text-xs text-muted">Lektionen</span>
+        </div>
+        <div className="flex flex-col items-center py-4">
+          <div className="mb-1 flex h-9 w-9 items-center justify-center rounded-xl bg-gold-50">
+            <span className="text-sm font-bold text-gold-600">{pct}%</span>
+          </div>
+          <span className="text-xl font-bold font-serif">{pct}%</span>
+          <span className="text-xs text-muted">Fortschritt</span>
+        </div>
       </div>
-      <div className="card flex flex-col items-center py-3">
-        <BookOpen className="mb-1 h-5 w-5 text-primary" />
-        <span className="text-lg font-bold">{completed}</span>
-        <span className="text-xs text-muted">Lektionen</span>
-      </div>
-      <div className="card flex flex-col items-center py-3">
-        <div className="mb-1 text-lg font-bold text-primary">{pct}%</div>
-        <span className="text-xs text-muted">Fortschritt</span>
+      {/* Progress bar at bottom */}
+      <div className="h-1 w-full bg-warm-100">
+        <div
+          className="h-full bg-gradient-to-r from-primary via-primary-400 to-gold transition-all duration-700"
+          style={{ width: `${pct}%` }}
+        />
       </div>
     </div>
   );
 }
 
-// ── Continue Button ──
+// ── Continue Button (large, pulsing) ──
 function ContinueButton() {
   const progress = useProgressStore((state) => state.progress);
   const modules = getAllModules().sort((a, b) => a.order - b.order);
@@ -50,8 +65,9 @@ function ContinueButton() {
 
   if (!next) {
     return (
-      <div className="card mb-6 bg-primary-50 text-center">
-        <p className="font-semibold text-primary">🎉 Alle Lektionen abgeschlossen!</p>
+      <div className="mb-8 rounded-3xl bg-primary-50 p-6 text-center shadow-card">
+        <p className="text-lg font-serif font-bold text-primary">🎉 Всички уроци са завършени!</p>
+        <p className="mt-1 text-sm text-muted">Alle Lektionen abgeschlossen</p>
       </div>
     );
   }
@@ -59,21 +75,32 @@ function ContinueButton() {
   return (
     <Link
       href={`/kurs/${next.moduleId}/${next.lessonId}/`}
-      className="card mb-6 flex items-center gap-4 bg-primary text-white hover:bg-primary-600 transition-colors"
+      className="group mb-8 block"
     >
-      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/20">
-        <Play className="h-5 w-5" />
+      <div className="relative overflow-hidden rounded-3xl bg-primary p-6 shadow-card transition-all duration-300 hover:shadow-card-hover hover:scale-[1.01]">
+        {/* Subtle glow effect */}
+        <div className="absolute inset-0 bg-gradient-to-r from-primary-400/20 to-transparent" />
+        <div className="relative flex items-center gap-5">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/15 shadow-inner animate-pulse-glow">
+            <Play className="h-6 w-6 text-white" />
+          </div>
+          <div className="flex-1">
+            <p className="text-sm font-medium text-white/70">Продължи да учиш</p>
+            <p className="text-lg font-serif font-bold text-white">{next.title}</p>
+          </div>
+          <div className="flex flex-col items-end gap-1">
+            <span className="rounded-full bg-white/15 px-3 py-1 text-xs font-medium text-white">
+              {next.duration}
+            </span>
+            <ChevronRight className="h-5 w-5 text-white/50" />
+          </div>
+        </div>
       </div>
-      <div className="flex-1">
-        <p className="text-sm opacity-80">Weiterlernen</p>
-        <p className="font-semibold">{next.title}</p>
-      </div>
-      <span className="text-sm opacity-60">{next.duration}</span>
     </Link>
   );
 }
 
-// ── Module Card (compact) ──
+// ── Module Card (with colored left stripe) ──
 function ModuleCard({ module, isUnlocked }: { module: ModuleMeta; isUnlocked: boolean }) {
   const progress = useProgressStore((state) => state.progress);
   const lessons = getLessonsByModule(module.moduleId);
@@ -81,35 +108,56 @@ function ModuleCard({ module, isUnlocked }: { module: ModuleMeta; isUnlocked: bo
     progress.completedLessons.includes(l.lessonId)
   ).length;
   const total = lessons.length;
+  const isComplete = completedCount === total;
+  const stripeColor = module.level === "A1" ? "bg-primary" : "bg-accent";
 
   return (
     <Link
       href={`/kurs/${module.moduleId}/`}
       className={cn(
-        "card mb-3 block transition-colors hover:border-primary/30",
-        !isUnlocked && "opacity-60"
+        "group mb-3 flex overflow-hidden rounded-3xl bg-white shadow-card transition-all duration-200 hover:shadow-card-hover hover:scale-[1.005]",
+        !isUnlocked && "opacity-50"
       )}
     >
-      <div className="flex items-center gap-3">
-        {!isUnlocked ? (
-          <Lock className="h-5 w-5 text-muted" />
-        ) : completedCount === total ? (
-          <CheckCircle2 className="h-5 w-5 text-success" />
-        ) : (
-          <Circle className="h-5 w-5 text-primary" />
-        )}
+      {/* Colored left stripe */}
+      <div className={cn("w-1.5 flex-shrink-0", stripeColor)} />
+      <div className="flex flex-1 items-center gap-4 p-4">
+        <div className={cn(
+          "flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-2xl",
+          isComplete ? "bg-primary-50" : isUnlocked ? "bg-warm-50" : "bg-warm-100"
+        )}>
+          {!isUnlocked ? (
+            <Lock className="h-5 w-5 text-muted" />
+          ) : isComplete ? (
+            <CheckCircle2 className="h-5 w-5 text-primary" />
+          ) : (
+            <Circle className="h-5 w-5 text-primary/60" />
+          )}
+        </div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-medium text-primary bg-primary-50 px-1.5 py-0.5 rounded">
+          <div className="flex items-center gap-2 mb-1">
+            <span className={cn(
+              "rounded-full px-2 py-0.5 text-xs font-medium",
+              module.level === "A1" ? "bg-primary-50 text-primary" : "bg-accent-50 text-accent"
+            )}>
               {module.level}
             </span>
-            <h3 className="font-semibold truncate">{module.title}</h3>
+            <h3 className="font-serif font-bold truncate">{module.title}</h3>
           </div>
-          <div className="mt-1 flex items-center gap-2">
-            <ProgressBar value={completedCount} max={total} className="flex-1" />
-            <span className="text-xs text-muted">{completedCount}/{total}</span>
+          <div className="flex items-center gap-2">
+            <div className="flex-1 h-1.5 rounded-full bg-warm-100 overflow-hidden">
+              <div
+                className={cn(
+                  "h-full rounded-full transition-all duration-500",
+                  module.level === "A1" ? "bg-primary" : "bg-accent"
+                )}
+                style={{ width: `${total > 0 ? (completedCount / total) * 100 : 0}%` }}
+              />
+            </div>
+            <span className="text-xs text-muted tabular-nums">{completedCount}/{total}</span>
           </div>
         </div>
+        <ChevronRight className="h-4 w-4 text-warm-300 group-hover:text-foreground transition-colors" />
       </div>
     </Link>
   );
@@ -118,24 +166,25 @@ function ModuleCard({ module, isUnlocked }: { module: ModuleMeta; isUnlocked: bo
 // ── Quick Access Tiles ──
 function QuickTiles() {
   const tiles = [
-    { href: "/vokabeln", icon: Type, label: "Vokabeln", desc: "Karteikarten & Übungen" },
-    { href: "/alphabet", icon: Grid3X3, label: "Alphabet", desc: "Kyrillisch lernen" },
-    { href: "/grammatik", icon: BookMarked, label: "Grammatik", desc: "Regeln & Beispiele" },
+    { href: "/vokabeln", icon: Type, label: "Речник", sub: "Vokabeln", color: "bg-primary-50 text-primary" },
+    { href: "/alphabet", icon: Grid3X3, label: "Азбука", sub: "Alphabet", color: "bg-accent-50 text-accent" },
+    { href: "/grammatik", icon: BookMarked, label: "Граматика", sub: "Grammatik", color: "bg-gold-50 text-gold-700" },
   ];
 
   return (
-    <div className="mb-6">
-      <h2 className="mb-3 text-sm font-semibold text-muted uppercase tracking-wide">Schnellzugriff</h2>
+    <div className="mb-8">
       <div className="grid grid-cols-3 gap-3">
         {tiles.map((tile) => (
           <Link
             key={tile.href}
             href={tile.href}
-            className="card flex flex-col items-center gap-1 py-4 text-center hover:border-primary/30 transition-colors"
+            className="group flex flex-col items-center gap-2 rounded-3xl bg-white p-4 shadow-card transition-all duration-200 hover:shadow-card-hover hover:scale-[1.02]"
           >
-            <tile.icon className="h-6 w-6 text-primary" />
-            <span className="text-sm font-medium">{tile.label}</span>
-            <span className="text-xs text-muted">{tile.desc}</span>
+            <div className={cn("flex h-11 w-11 items-center justify-center rounded-2xl transition-transform duration-200 group-hover:scale-110", tile.color)}>
+              <tile.icon className="h-5 w-5" />
+            </div>
+            <span className="text-sm font-serif font-bold">{tile.label}</span>
+            <span className="text-xs text-muted">{tile.sub}</span>
           </Link>
         ))}
       </div>
@@ -170,32 +219,47 @@ export default function LernenPage() {
   }
 
   return (
-    <main className="animate-fade-in px-4 py-6 safe-top">
-      <h1 className="mb-1 text-2xl font-bold">Lernen</h1>
-      <p className="mb-4 text-sm text-muted">Bulgarisch Schritt für Schritt</p>
+    <main className="animate-fade-in bg-rose-pattern min-h-screen px-4 py-6 safe-top">
+      {/* Header */}
+      <div className="mb-6">
+        <p className="text-xs font-medium uppercase tracking-widest text-muted">Български език</p>
+        <h1 className="text-3xl font-serif font-bold text-foreground">Lernen</h1>
+      </div>
 
       <StatsBar />
       <ContinueButton />
       <QuickTiles />
 
-      <h2 className="mb-3 text-sm font-semibold text-muted uppercase tracking-wide">Kurs</h2>
-      {levels.map((level) => (
-        <div key={level} className="mb-4">
-          <div className="mb-2 flex items-center gap-2">
-            <span className="rounded-full bg-primary px-2 py-0.5 text-xs font-bold text-white">
-              {level}
-            </span>
-            <div className="h-px flex-1 bg-gray-200" />
+      {/* Course Modules */}
+      <div className="mb-2 flex items-center gap-3">
+        <h2 className="text-sm font-semibold uppercase tracking-widest text-muted">Курс</h2>
+        <div className="h-px flex-1 bg-warm-200" />
+      </div>
+
+      <div className="mt-4 space-y-6">
+        {levels.map((level) => (
+          <div key={level}>
+            <div className="mb-3 flex items-center gap-3">
+              <span className={cn(
+                "rounded-full px-3 py-1 text-xs font-bold text-white",
+                level === "A1" ? "bg-primary" : "bg-accent"
+              )}>
+                {level}
+              </span>
+              <span className="text-xs text-muted">
+                {level === "A1" ? "Начинаещ" : "Напреднал"}
+              </span>
+            </div>
+            {modulesByLevel[level].map((module) => (
+              <ModuleCard
+                key={module.moduleId}
+                module={module}
+                isUnlocked={moduleUnlockMap[module.moduleId]}
+              />
+            ))}
           </div>
-          {modulesByLevel[level].map((module) => (
-            <ModuleCard
-              key={module.moduleId}
-              module={module}
-              isUnlocked={moduleUnlockMap[module.moduleId]}
-            />
-          ))}
-        </div>
-      ))}
+        ))}
+      </div>
     </main>
   );
 }
