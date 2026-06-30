@@ -118,8 +118,18 @@ export function LessonView({ lesson, moduleId, nextLessonId, context }: LessonVi
               </div>
             ))}
           </div>
-          <Button onClick={() => setSection("exercise")} fullWidth>
-            Übungen starten
+          <Button onClick={() => {
+            if (lesson.exercises.length === 0) {
+              setSection("summary");
+              if (!isCompleted) {
+                completeLesson(lesson.lessonId);
+                addStudyTime(15, lesson.vocabulary.length);
+              }
+            } else {
+              setSection("exercise");
+            }
+          }} fullWidth>
+            {lesson.exercises.length === 0 ? "Lektion abschließen" : "Übungen starten"}
           </Button>
         </section>
       )}

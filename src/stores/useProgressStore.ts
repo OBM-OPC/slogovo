@@ -81,7 +81,7 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
     console.log("[Progress] Init for user:", userId);
 
     // Try Supabase first
-    const fromSupabase = await loadProgressFromSupabase(userId);
+    const fromSupabase = await loadProgressFromSupabase();
 
     if (fromSupabase) {
       console.log("[Progress] Loaded from Supabase");

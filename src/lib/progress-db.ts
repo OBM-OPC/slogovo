@@ -1,5 +1,4 @@
 import { openDB, DBSchema, IDBPDatabase } from "idb";
-import { getSupabaseBrowser, restoreBrowserSession } from "./supabase-browser";
 import { UserProgress, VocabularyProgress, DailyGoal } from "@/types";
 
 // ==== IndexedDB (local cache) ====
@@ -44,55 +43,49 @@ export async function clearProgressLocal(userId: string): Promise<void> {
   await db.delete("progress", userId);
 }
 
-// ==== Supabase (source of truth) ====
+// ==== Server-side API (source of truth) ====
+// Server reads httpOnly cookie, so we never expose tokens to browser JS.
 
-export async function loadProgressFromSupabase(userId: string): Promise<UserProgress | null> {
-  const sb = getSupabaseBrowser();
-  if (!sb) return null;
-
-  await restoreBrowserSession();
-
-  const { data, error } = await sb
-    .from("user_progress")
-    .select("*")
-    .eq("user_id", userId)
-    .single();
-
-  if (error || !data) {
-    if (error && error.code !== "PGRST116") {
-      console.warn("[Progress] Supabase load error:", error);
+export async function loadProgressFromSupabase(): Promise<UserProgress | null> {
+  try {
+    const response = await fetch("/api/progress/load");
+    if (!response.ok) {
+      if (response.status === 401) {
+        console.warn("[Progress] Load: not authenticated");
+      } else {
+        console.warn("[Progress] Load failed:", response.status);
+      }
+      return null;
     }
+
+    const { progress } = await response.json();
+    if (!progress) return null;
+
+    return rowToProgress(progress);
+  } catch (error) {
+    console.warn("[Progress] Load error:", error);
     return null;
   }
-
-  return rowToProgress(data);
 }
 
 export async function saveProgressToSupabase(progress: UserProgress): Promise<boolean> {
-  const sb = getSupabaseBrowser();
-  if (!sb) return false;
+  try {
+    const response = await fetch("/api/progress/save", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ progress }),
+    });
 
-  await restoreBrowserSession();
+    if (!response.ok) {
+      console.warn("[Progress] Save failed:", response.status);
+      return false;
+    }
 
-  const { userId, ...rest } = progressToRow(progress);
-
-  const upsertData = {
-    user_id: userId,
-    ...rest,
-  };
-
-  const { error } = await sb
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    .from("user_progress" as any)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    .upsert(upsertData as any, { onConflict: "user_id" });
-
-  if (error) {
-    console.warn("[Progress] Supabase save error:", error);
+    return true;
+  } catch (error) {
+    console.warn("[Progress] Save error:", error);
     return false;
   }
-
-  return true;
 }
 
 export async function createInitialProgress(userId: string): Promise<UserProgress> {
@@ -123,21 +116,8 @@ function createDefaultProgress(userId: string): UserProgress {
   };
 }
 
-interface ProgressRow {
-  user_id: string;
-  streak_current: number;
-  streak_longest: number;
-  streak_last_study_date: string | null;
-  completed_lessons: string[];
-  completed_modules: string[];
-  vocabulary_progress: Record<string, VocabularyProgress>;
-  exercise_stats: { total: number; correct: number; wrong: number; consecutiveCorrect?: number };
-  daily_stats: Record<string, { minutes: number; vocabulary: number }>;
-  settings: { dailyGoal: DailyGoal; ttsEnabled: boolean; showLatin: boolean; speechRate: number };
-  achievements: string[];
-}
-
-function rowToProgress(row: ProgressRow): UserProgress {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function rowToProgress(row: any): UserProgress {
   return {
     userId: row.user_id,
     streak: {
@@ -157,22 +137,6 @@ function rowToProgress(row: ProgressRow): UserProgress {
       speechRate: 0.9,
     },
     achievements: row.achievements ?? [],
-  };
-}
-
-function progressToRow(progress: UserProgress): Omit<ProgressRow, "user_id"> & { userId: string } {
-  return {
-    userId: progress.userId,
-    streak_current: progress.streak.current,
-    streak_longest: progress.streak.longest,
-    streak_last_study_date: progress.streak.lastStudyDate ?? null,
-    completed_lessons: progress.completedLessons,
-    completed_modules: progress.completedModules,
-    vocabulary_progress: progress.vocabularyProgress,
-    exercise_stats: progress.exerciseStats,
-    daily_stats: progress.dailyStats,
-    settings: progress.settings,
-    achievements: progress.achievements,
   };
 }
 
