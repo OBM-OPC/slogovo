@@ -1,85 +1,119 @@
-# Slogovo - Bulgarisch lernen
+# Slogovo 🇧🇬
 
-Eine moderne Lern-App für Bulgarisch, gebaut mit Next.js 14, TypeScript, Tailwind CSS und SQLite.
+Modern Bulgarian language learning app built with Next.js 14, TypeScript, Tailwind CSS, and Supabase.
 
-## Features
+## What It Is
 
-- Email + Passwort Registrierung
-- Email + Passwort Login
-- Passwort zurücksetzen (via Email)
-- JWT-basierte Session-Verwaltung
-- Geschützte Routen (Middleware)
-- Responsive Design mit Tailwind CSS
-- OAuth (Google, Apple) via NextAuth.js
+Slogovo teaches Bulgarian through structured lessons (A1–A2 levels), grammar guides, vocabulary flashcards, and interactive exercises — all wrapped in a clean, responsive UI with progress tracking and achievements.
 
 ## Tech Stack
 
-| Layer | Technologie |
-|-------|--------------|
+| Layer | Technology |
+|-------|------------|
 | Framework | Next.js 14 (App Router) |
 | Language | TypeScript |
 | Styling | Tailwind CSS |
-| Database | SQLite (Prisma ORM) |
-| Auth | JWT + NextAuth.js |
-| Email | Nodemailer (SMTP) |
+| Database / Auth | Supabase (PostgreSQL + Auth) |
+| State | Zustand |
+| Animations | Framer Motion |
+| Icons | Lucide React |
+
+## Features
+
+- **Structured Curriculum** — A1–A2 modules with lessons stored as JSON content
+- **Lesson Engine** — Multiple exercise types: quiz, fill-in, matching, sentence builder
+- **Grammar Reference** — Thematic grammar pages
+- **Vocabulary** — Category-based flashcards + typing exercises
+- **Alphabet** — Bulgarian Cyrillic reference
+- **Progress Tracking** — Local IndexedDB with Supabase sync for logged-in users
+- **Achievements** — Gamified milestones with celebrations
+- **TTS** — Text-to-speech for Bulgarian words and sentences
+- **Auth** — Email/password registration and login via Supabase Auth
+- **Responsive** — Mobile-first with bottom navigation
+
+## Project Structure
+
+```
+slogovo/
+├── src/
+│   ├── app/                    # Next.js App Router
+│   │   ├── (learn)/            # Learn dashboard (protected)
+│   │   │   ├── kurs/           # Course modules & lessons
+│   │   │   ├── grammatik/      # Grammar reference
+│   │   │   ├── vokabeln/       # Vocabulary categories
+│   │   │   ├── alphabet/       # Alphabet guide
+│   │   │   ├── fortschritt/    # Progress page
+│   │   │   ├── profil/         # User profile
+│   │   │   └── einstellungen/  # Settings
+│   │   ├── api/                # API routes
+│   │   │   └── auth/           # Auth endpoints (login, register, logout, etc.)
+│   │   ├── login/              # Login page
+│   │   ├── register/           # Registration page
+│   │   ├── forgot-password/    # Password reset request
+│   │   ├── reset-password/     # Password reset confirmation
+│   │   ├── dashboard/          # Dashboard redirect
+│   │   ├── page.tsx            # Landing page
+│   │   ├── layout.tsx          # Root layout
+│   │   └── globals.css         # Global styles
+│   ├── components/
+│   │   ├── auth/               # Auth forms (login, register, forgot, reset)
+│   │   ├── layout/             # AppShell, BottomNav
+│   │   ├── lesson/             # LessonView, GrammarClient
+│   │   ├── quiz/               # ExerciseEngine, Quiz, FillIn, Matching, SentenceBuilder
+│   │   ├── vocabulary/         # Flashcard, TypingExercise, VocabularyList
+│   │   └── ui/                 # Button, ProgressBar, SpeakButton, toasts
+│   ├── hooks/                  # useAuth, useProgressSafe
+│   ├── lib/                    # Utilities, DB clients, content helpers
+│   ├── stores/                 # Zustand stores (progress)
+│   └── types/                  # TypeScript types
+├── content/                    # Curriculum JSON (A1, A2 → modules → lessons)
+├── supabase/                   # SQL schema files
+├── docs/                       # API docs, sitemap
+├── public/                     # Static assets
+└── package.json
+```
 
 ## Setup
 
-### Voraussetzungen
+### Prerequisites
 
 - Node.js 18+
-- npm oder yarn
+- npm
 
 ### Installation
 
-1. **Repository klonen**
-
 ```bash
-git clone https://github.comOBM-OPC/slogovo.git
+# Clone the repository
+git clone https://github.com/OBM-OPC/slogovo.git
 cd slogovo
-```
 
-2. **Abhängigkeiten installieren**
-
-```bash
+# Install dependencies
 npm install
-```
 
-3. **Umgebungsvariablen setzen**
-
-```bash
+# Environment variables
 cp .env.example .env
-# Bearbeite .env mit deinen Werten
-```
+# Edit .env with your Supabase credentials
 
-4. **Datenbank initialisieren**
-
-```bash
-npx prisma migrate dev
-```
-
-5. **Entwicklungsserver starten**
-
-```bash
+# Start development server
 npm run dev
 ```
 
-Öffne [http://localhost:3000](http://localhost:3000) in deinem Browser.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Umgebungsvariablen
-
-Kopiere `.env.example` zu `.env` und fülle die Werte aus:
+## Environment Variables
 
 ```env
-DATABASE_URL="file:./dev.db"
-NEXTAUTH_URL="http://localhost:3000"
-NEXTAUTH_SECRET="your-super-secret-key"
+# Supabase
+SUPABASE_URL="https://your-project.supabase.co"
+NEXT_PUBLIC_SUPABASE_URL="https://your-project.supabase.co"
 
-# Optional: OAuth
+# OAuth (Optional)
 GOOGLE_CLIENT_ID=""
 GOOGLE_CLIENT_SECRET=""
+APPLE_CLIENT_ID=""
+APPLE_CLIENT_SECRET=""
 
-# Optional: Email
+# Email (SMTP)
 SMTP_HOST="smtp.example.com"
 SMTP_PORT="587"
 SMTP_USER="your-email@example.com"
@@ -87,105 +121,24 @@ SMTP_PASSWORD="your-password"
 FROM_EMAIL="noreply@slogovo.de"
 ```
 
-## API Endpoints
+## Database
 
-| Method | Endpoint | Description |
-|--------|----------|------------|
-| POST | `/api/auth/register` | Benutzer registrieren |
-| relevant | `/api/auth/login` | Benutzer anmelden |
-| POST | `/api/auth/logout` | Benutzer abmelden |
-| GET | `/api/auth/me` | Aktuellen Benutzer abrufen |
-| POST | `/api/auth/forgot-password` | Passwort-Reset anfordern |
-| POST | `/api/auth/reset-password` | Passwort zurücksetzen |
-| GET/POST | `/api/auth/[...nextauth]` | NextAuth.js OAuth Endpoints |
+Supabase schema files are in `/supabase/`:
+- `schema.sql` — Core auth and user tables
+- `progress-schema.sql` — User progress tracking tables
 
-## Datenbank-Schema
-
-### User
-- `id` - Eindeutige ID (CUID)
-- `email` - E-Mail-Adresse (einzigartig)
-- `password` - Gehashtes Passwort (optional für OAuth)
-- `name` - Anzeigename
-- `image` - Profilbild URL
-- `emailVerified` - E-Mail-Verifizierungsdatum
-- `displayName` - Öffentlicher Name
-- `bio` - Kurzbeschreibung
-- `resetToken` / `resetTokenExpiry` - Passwort-Reset
-- `verificationToken` / `verificationTokenExpiry` - E-Mail-Verifizierung
-- `createdAt` / `updatedAt` - Timestamps
-
-### Account (OAuth)
-- `id` - Eindeutige ID
-- `userId` - Verknüpfung zu User
-- `type` - OAuth-Typ
-- `provider` / `providerAccountId` - OAuth-Anbieter
-- `refresh_token` / `access_token` - OAuth-Tokens
-- `expires_at` / `token_type` / `scope` / `id_token` / `session_state`
-
-## Projektstruktur
-
-```
-slogovo/
-├── src/
-│   ├── app/                    # Next.js App Router
-│   │   ├── api/auth/           # Auth API Routes
-│   │   ├── login/              # Login Seite
-│   │   ├── register/           # Registrierung Seite
-│   │   ├── forgot-password/    # Passwort vergessen
-│   │   ├── reset-password/     # Passwort zurücksetzen
-│   │   ├── dashboard/          # Geschützte Dashboard
-│   │   ├── page.tsx            # Landing Page
-│   │   └── layout.tsx          # Root Layout
-│   ├── components/
-│   │   └── auth/               # Auth UI Components
-│   ├── hooks/
-│   │   └── useAuth.ts          # Auth Hook
-│   ├── lib/
-│   │   ├── auth.ts             # Auth Utilities (Hash, JWT)
-│   │   ├── db.ts               # Database Client
-│   │   ├── email.ts            # Email Service
-│   │   └── validations.ts      # Zod Schemas
-│   └── middleware.ts            # Route Protection
-├── prisma/
-│   └── schema.prisma           # Database Schema
-└── docs/
-    └── API.md                  # API Dokumentation
-```
-
-## Laufen mit Docker
+## Build
 
 ```bash
-# Container bauen und starten
-docker build -t slogovo .
-docker run -p 3000:3000 slogovo
-```
-
-## Testen
-
-```bash
-# Unit Tests
-npm test
-
-# e2e Tests
-npm run e2e
-```
-
-## Deployment
-
-### Vercel
-
-1. Verbinde GitHub-Repo mit Vercel
-2. Setze Umgebungsvariablen in Vercel-Dashboard
-3. Deploy!
-
-### Self-Hosted
-
-```bash
+# Production build
 npm run build
-npm start
+
+# Static export (for hosting without a Node server)
+# Already configured: output = 'export' in next.config.js
+npm run build
 ```
 
-## Lizenz
+## License
 
 MIT
 
