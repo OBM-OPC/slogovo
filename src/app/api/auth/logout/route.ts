@@ -1,40 +1,18 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import { createClient } from "@supabase/supabase-js";
 
 export async function POST() {
   try {
-    const cookieStore = await cookies();
-    const sessionCookie = cookieStore.get("sb-session")?.value;
+    const response = NextResponse.json({ message: "Logout erfolgreich" }, { status: 200 });
 
-    if (sessionCookie) {
-      const session = JSON.parse(sessionCookie);
-
-      const supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || "",
-        process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || "",
-        {
-          auth: {
-            autoRefreshToken: false,
-            persistSession: false,
-          },
-        }
-      );
-
-      supabase.auth.setSession(session);
-      await supabase.auth.signOut();
-    }
-
-    // Clear the cookie
-    cookieStore.set("sb-session", "", {
+    response.cookies.set("sb-session", "", {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: true,
       sameSite: "lax",
       maxAge: 0,
       path: "/",
     });
 
-    return NextResponse.json({ message: "Logout erfolgreich" }, { status: 200 });
+    return response;
   } catch (error) {
     console.error("Logout error:", error);
     return NextResponse.json(

@@ -1,11 +1,11 @@
-import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
+import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const cookieStore = await cookies();
-    const sessionCookie = cookieStore.get("sb-session")?.value;
+    const cookieHeader = request.headers.get("cookie") || "";
+    const sessionMatch = cookieHeader.match(/sb-session=([^;]+)/);
+    const sessionCookie = sessionMatch ? decodeURIComponent(sessionMatch[1]) : null;
 
     if (!sessionCookie) {
       return NextResponse.json({ error: "Nicht authentifiziert" }, { status: 401 });
@@ -13,7 +13,6 @@ export async function GET() {
 
     const session = JSON.parse(sessionCookie);
 
-    // Create a fresh Supabase client with the user's session
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || "",
       process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || "",
@@ -25,9 +24,7 @@ export async function GET() {
       }
     );
 
-    supabase.auth.setSession(session);
-
-    const { data: { user }, error } = await supabase.auth.getUser();
+    const { data: { user }, error } = await supabase.auth.getUser(session.access_token);
 
     if (error || !user) {
       return NextResponse.json({ error: "Ungültige Session" }, { status: 401 });

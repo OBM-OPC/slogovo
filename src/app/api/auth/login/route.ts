@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 import { loginSchema } from "@/lib/validations";
-import { cookies } from "next/headers";
 
 export async function POST(request: NextRequest) {
   try {
@@ -17,7 +16,6 @@ export async function POST(request: NextRequest) {
 
     const { email, password } = result.data;
 
-    // Sign in with Supabase Auth
     const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
       email: email.toLowerCase(),
       password,
@@ -30,17 +28,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Store the full session as JSON in an HTTP-only cookie
-    const cookieStore = await cookies();
-    cookieStore.set("sb-session", JSON.stringify(authData.session), {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-      path: "/",
-    });
-
-    return NextResponse.json(
+    const response = NextResponse.json(
       {
         message: "Login erfolgreich",
         user: {
@@ -51,6 +39,16 @@ export async function POST(request: NextRequest) {
       },
       { status: 200 }
     );
+
+    response.cookies.set("sb-session", JSON.stringify(authData.session), {
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 7,
+      path: "/",
+    });
+
+    return response;
   } catch (error) {
     console.error("Login error:", error);
     return NextResponse.json(
