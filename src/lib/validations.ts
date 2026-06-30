@@ -29,7 +29,7 @@ export const resetPasswordSchema = z.object({
     .string()
     .min(8, "Passwort muss mindestens 8 Zeichen haben")
     .regex(/[A-Z]/, "Passwort muss mindestens einen Großbuchstaben enthalten")
-    .regex(/[a-z]/, "Passwort muss mindestens einen中小写 enthalten")
+    .regex(/[a-z]/, "Passwort muss mindestens einen Kleinbuchstaben enthalten")
     .regex(/[0-9]/, "Passwort muss mindestens eine Zahl enthalten"),
   confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {

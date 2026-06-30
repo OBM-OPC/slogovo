@@ -1,8 +1,6 @@
 import { create } from "zustand";
 import { UserProgress, Streak, DifficultyRating } from "@/types";
 import {
-  loadProgressFromSupabase,
-
   loadProgressLocal,
   saveProgressLocal,
   createInitialProgress,
@@ -82,32 +80,14 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
 
     console.log("[Progress] Init for user:", userId);
 
-    // Try Supabase first
-    const fromSupabase = await loadProgressFromSupabase();
-
-    // Also check localStorage
+    // Try localStorage only
     const fromLocal = await loadProgressLocal();
 
-    // Merge: prefer Supabase, but keep local if Supabase is empty
     let finalProgress: UserProgress | null = null;
 
-    if (fromSupabase && fromLocal) {
-      // Both exist — use whichever has more completed lessons
-      if (fromSupabase.completedLessons.length >= fromLocal.completedLessons.length) {
-        console.log("[Progress] Using Supabase data (more complete)");
-        finalProgress = fromSupabase;
-      } else {
-        console.log("[Progress] Using local data (more complete), uploading to Supabase...");
-        finalProgress = fromLocal;
-        
-      }
-    } else if (fromSupabase) {
-      console.log("[Progress] Loaded from Supabase");
-      finalProgress = fromSupabase;
-    } else if (fromLocal) {
-      console.log("[Progress] Loaded from local cache, uploading to Supabase...");
+    if (fromLocal) {
+      console.log("[Progress] Loaded from local storage");
       finalProgress = fromLocal;
-      
     } else {
       console.log("[Progress] Creating fresh progress");
       finalProgress = await createInitialProgress(userId);
@@ -124,9 +104,9 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
 
     console.log("[Progress] Manual sync...");
     set({ syncing: true });
-    const ok = 
+    await saveProgressLocal(state.progress);
     set({ syncing: false });
-    console.log("[Progress] Manual sync done:", ok);
+    console.log("[Progress] Manual sync done");
   },
 
   completeLesson: async (lessonId: string) => {

@@ -58,7 +58,7 @@ export async function sendWelcomeEmail(to: string, name?: string) {
           <li>Verwende den Vokabeltrainer für tägliche Übungen</li>
         </ul>
         <p style="margin: 20px 0;">
-          <a href="${process.env.NEXTAUTH_URL}/kurs" style="background-color: #009B77; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">Jetzt loslegen</a>
+          <a href="https://slogovo.de/kurs" style="background-color: #009B77; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">Jetzt loslegen</a>
         </p>
         <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;" />
         <p style="color: #6B7280; font-size: 12px;">
