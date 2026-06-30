@@ -30,9 +30,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Set HTTP-only cookie with the Supabase session
+    // Store the full session as JSON in an HTTP-only cookie
     const cookieStore = await cookies();
-    cookieStore.set("sb-token", authData.session.access_token, {
+    cookieStore.set("sb-session", JSON.stringify(authData.session), {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",

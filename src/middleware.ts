@@ -28,8 +28,8 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Check for auth token (Supabase token)
-  const token = request.cookies.get("sb-token")?.value;
+  // Check for auth session cookie (Supabase session)
+  const token = request.cookies.get("sb-session")?.value;
 
   if (!token) {
     // Redirect to login for protected routes
