@@ -122,6 +122,7 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
 
   completeLesson: async (lessonId: string) => {
     const state = get();
+    console.log("[Progress] completeLesson called:", lessonId, { hasProgress: !!state.progress, alreadyCompleted: state.progress?.completedLessons.includes(lessonId) });
     if (!state.progress) return;
     if (state.progress.completedLessons.includes(lessonId)) return;
 
@@ -132,12 +133,17 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
       streak: updateStreak(state.progress),
     });
 
-    await saveProgressLocal(updated);
-    set({ progress: updated });
-    scheduleSync(state.userId, updated);
+    try {
+      await saveProgressLocal(updated);
+      console.log("[Progress] completeLesson saved locally");
+      set({ progress: updated });
+      scheduleSync(state.userId, updated);
 
-    if (updated.completedLessons.length > completedCountBefore) {
-      triggerLevelUpConfetti();
+      if (updated.completedLessons.length > completedCountBefore) {
+        triggerLevelUpConfetti();
+      }
+    } catch (error) {
+      console.error("[Progress] completeLesson error:", error);
     }
   },
 

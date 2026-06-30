@@ -35,14 +35,19 @@ export function LessonView({ lesson, moduleId, nextLessonId, context }: LessonVi
   const totalLessons = context?.totalLessons ?? 0;
 
   const handleExerciseComplete = () => {
+    console.log("[LessonView] Exercise complete:", exerciseIndex + 1, "of", lesson.exercises.length);
     setExerciseScore((prev) => prev + 1);
     if (exerciseIndex < lesson.exercises.length - 1) {
       setExerciseIndex((prev) => prev + 1);
     } else {
+      console.log("[LessonView] Last exercise done, moving to summary");
       setSection("summary");
       if (!isCompleted) {
+        console.log("[LessonView] Calling completeLesson:", lesson.lessonId);
         completeLesson(lesson.lessonId);
         addStudyTime(15, lesson.vocabulary.length);
+      } else {
+        console.log("[LessonView] Already completed, skipping");
       }
     }
   };
@@ -158,7 +163,7 @@ export function LessonView({ lesson, moduleId, nextLessonId, context }: LessonVi
           <div className="mb-4 inline-flex rounded-full bg-success/10 p-4 text-success">
             <CheckCircle2 className="h-10 w-10" />
           </div>
-          <h2 className="mb-2 text-xl font-bold">Lektion abgeschlossen!</h2>
+          <h2 className="mb-2 text-xl font-bold">{isCompleted ? "Lektion abgeschlossen!" : "Geschafft!"}</h2>
           <p className="mb-6 text-muted">{lesson.summary}</p>
           <div className="mb-6 grid grid-cols-2 gap-3">
             <div className="rounded-xl bg-gray-50 p-3">
@@ -171,13 +176,25 @@ export function LessonView({ lesson, moduleId, nextLessonId, context }: LessonVi
             </div>
           </div>
           <div className="space-y-3">
+            {!isCompleted && (
+              <Button
+                onClick={() => {
+                  console.log("[LessonView] Manual complete:", lesson.lessonId);
+                  completeLesson(lesson.lessonId);
+                  addStudyTime(15, lesson.vocabulary.length);
+                }}
+                fullWidth
+              >
+                Als abgeschlossen markieren
+              </Button>
+            )}
             {nextLessonId ? (
               <Link href={`/kurs/${lesson.moduleId}/${nextLessonId}/`}>
-                <Button fullWidth>Nächste Lektion</Button>
+                <Button fullWidth variant={isCompleted ? "primary" : "outline"}>Nächste Lektion</Button>
               </Link>
             ) : (
               <Link href="/kurs/">
-                <Button fullWidth>Zurück zum Kurs</Button>
+                <Button fullWidth variant={isCompleted ? "primary" : "outline"}>Zurück zum Kurs</Button>
               </Link>
             )}
             <Link href="/kurs/">
