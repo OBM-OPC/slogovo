@@ -1,7 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { UserProgress, VocabularyProgress, DailyGoal } from "@/types";
 
-const PROGRESS_KEY = "slogov…s-v1";
+const PROGRESS_KEY = "slogovo-progress-v1";
 
 // ==== Browser-side Supabase client ====
 

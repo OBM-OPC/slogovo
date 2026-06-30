@@ -1,11 +1,34 @@
 "use client";
 
 import Link from "next/link";
+import { useState, useEffect } from "react";
 import { useProgressSafe } from "@/hooks/useProgressSafe";
 import { getAllModules, getLessonsByModule } from "@/lib/content";
 import { ModuleMeta } from "@/types";
 import { Flame, BookOpen, Play, Type, Grid3X3, BookMarked, Lock, CheckCircle2, Circle, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+function DebugProgress() {
+  const progress = useProgressSafe();
+  const [lsData, setLsData] = useState<object | null>(null);
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("slogovo-progress-v1");
+      setLsData(raw ? JSON.parse(raw) : null);
+    } catch {
+      setLsData({ error: true });
+    }
+  }, []);
+  return (
+    <pre className="mt-2 overflow-auto whitespace-pre-wrap text-[10px] leading-tight">{JSON.stringify({
+  userId: progress.userId,
+  completedLessons: progress.completedLessons,
+  completedModules: progress.completedModules,
+  streak: progress.streak,
+  localStorage: lsData,
+}, null, 2)}</pre>
+  );
+}
 
 // ── Stats Bar (horizontal, flowing) ──
 function StatsBar() {
@@ -260,6 +283,11 @@ export default function LernenPage() {
           </div>
         ))}
       </div>
+      {/* DEBUG PANEL */}
+      <details className="mt-8 rounded-2xl border border-red-200 bg-red-50 p-3 text-xs">
+        <summary className="cursor-pointer font-bold text-red-700">🔧 Debug: Progress Store</summary>
+        <DebugProgress />
+      </details>
     </main>
   );
 }
