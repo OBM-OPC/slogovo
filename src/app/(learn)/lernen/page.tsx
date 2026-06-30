@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 function DebugProgress() {
   const progress = useProgressSafe();
   const [lsData, setLsData] = useState<object | null>(null);
+  const [testResult, setTestResult] = useState<string>("");
   useEffect(() => {
     try {
       const raw = localStorage.getItem("slogovo-progress-v1");
@@ -19,14 +20,55 @@ function DebugProgress() {
       setLsData({ error: true });
     }
   }, []);
+  
+  const testLocalStorage = () => {
+    try {
+      const testKey = "slogovo-test";
+      localStorage.setItem(testKey, JSON.stringify({ test: true, time: Date.now() }));
+      const read = localStorage.getItem(testKey);
+      const parsed = read ? JSON.parse(read) : null;
+      setTestResult(`localStorage WORKS: ${JSON.stringify(parsed)}`);
+      localStorage.removeItem(testKey);
+    } catch (e) {
+      setTestResult(`localStorage FAILED: ${e}`);
+    }
+  };
+  
+  const forceSaveProgress = () => {
+    try {
+      const fakeProgress = {
+        userId: progress.userId,
+        streak: { current: 99, longest: 99 },
+        completedLessons: ["test-lesson-1", "test-lesson-2"],
+        completedModules: [],
+        vocabularyProgress: {},
+        exerciseStats: { total: 0, correct: 0, wrong: 0, consecutiveCorrect: 0 },
+        dailyStats: {},
+        settings: progress.settings,
+        achievements: [],
+      };
+      localStorage.setItem("slogovo-progress-v1", JSON.stringify(fakeProgress));
+      setTestResult("FAKE PROGRESS SAVED! Reload page to test.");
+    } catch (e) {
+      setTestResult(`Save FAILED: ${e}`);
+    }
+  };
+  
   return (
-    <pre className="mt-2 overflow-auto whitespace-pre-wrap text-[10px] leading-tight">{JSON.stringify({
+    <div>
+      <div className="mb-2 flex gap-2">
+        <button onClick={testLocalStorage} className="rounded bg-primary px-2 py-1 text-xs text-white">Test localStorage</button>
+        <button onClick={forceSaveProgress} className="rounded bg-red-500 px-2 py-1 text-xs text-white">Force Save Progress</button>
+      </div>
+      {testResult && <div className="mb-2 rounded bg-yellow-100 p-2 text-xs text-yellow-800">{testResult}</div>}
+      <pre className="mt-2 overflow-auto whitespace-pre-wrap text-[10px] leading-tight">{JSON.stringify({
   userId: progress.userId,
   completedLessons: progress.completedLessons,
   completedModules: progress.completedModules,
   streak: progress.streak,
   localStorage: lsData,
 }, null, 2)}</pre>
+    </div>
   );
 }
 
