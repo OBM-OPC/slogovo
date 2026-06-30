@@ -4,101 +4,99 @@ import { BookOpen, Brain, Trophy, Volume2, Sparkles } from "lucide-react";
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-rose-pattern">
-      {/* Navigation */}
-      <nav className="border-b border-warm-100 bg-white/80 backdrop-blur-xl">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span className="text-2xl font-serif font-bold text-primary">Slogovo</span>
-            <span className="h-5 w-px bg-warm-200" />
-            <span className="text-sm text-muted cyrillic">Български език</span>
+      {/* Navigation — mobile optimized */}
+      <nav className="sticky top-0 z-50 border-b border-warm-100 bg-white/90 backdrop-blur-xl">
+        <div className="mx-auto max-w-md px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-xl font-serif font-bold text-primary">Slogovo</span>
+            <span className="hidden sm:inline h-4 w-px bg-warm-200" />
+            <span className="hidden sm:inline text-xs text-muted cyrillic">Български език</span>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <Link
               href="/login"
-              className="rounded-2xl px-5 py-2.5 text-sm font-medium text-foreground hover:bg-warm-50 transition-colors"
+              className="rounded-xl px-3 py-2 text-xs font-medium text-foreground hover:bg-warm-50 transition-colors"
             >
               Anmelden
             </Link>
             <Link
               href="/register"
-              className="rounded-2xl bg-primary px-5 py-2.5 text-sm font-medium text-white shadow-card hover:bg-primary-600 hover:shadow-card-hover transition-all duration-200"
+              className="rounded-xl bg-primary px-3 py-2 text-xs font-medium text-white shadow-sm hover:bg-primary-600 transition-colors"
             >
-              Kostenlos starten
+              Starten
             </Link>
           </div>
         </div>
       </nav>
 
-      {/* Hero */}
-      <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-28">
-        <div className="text-center mb-20">
-          <p className="mb-4 inline-flex items-center gap-2 rounded-full bg-primary-50 px-4 py-1.5 text-sm font-medium text-primary">
-            <Sparkles className="h-4 w-4" />
-            Български език за начинаещи
+      {/* Hero — mobile first */}
+      <main className="mx-auto max-w-md px-4 py-10 sm:py-16">
+        <div className="text-center mb-12 sm:mb-16">
+          <p className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-primary-50 px-3 py-1 text-xs font-medium text-primary">
+            <Sparkles className="h-3.5 w-3.5" />
+            Български за начинаещи
           </p>
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-serif font-bold text-foreground mb-6 leading-tight">
+          <h1 className="text-3xl sm:text-5xl font-serif font-bold text-foreground mb-4 leading-tight">
             Lerne{" "}
             <span className="text-primary">Bulgarisch</span>
-            <br />
-            mit Slogovo
+            {" "}mit Slogovo
           </h1>
-          <p className="text-lg sm:text-xl text-muted max-w-2xl mx-auto mb-10 leading-relaxed">
-            Die interaktive App für deutschsprachige Anfänger. Beginne mit dem kyrillischen Alphabet
-            und arbeite dich bis zu deinem ersten Gespräch durch.
+          <p className="text-sm sm:text-base text-muted max-w-sm mx-auto mb-8 leading-relaxed">
+            Die interaktive App für Anfänger. Vom kyrillischen Alphabet bis zum ersten Gespräch.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col gap-3 px-4">
             <Link
               href="/register"
-              className="inline-flex items-center justify-center gap-2 rounded-3xl bg-primary px-8 py-4 text-lg font-medium text-white shadow-card hover:bg-primary-600 hover:shadow-card-hover transition-all duration-200"
+              className="flex items-center justify-center gap-2 rounded-2xl bg-primary px-6 py-3.5 text-base font-medium text-white shadow-card active:scale-[0.98] transition-all"
             >
               Kostenlos starten
-              <span className="text-white/60">→</span>
+              <span className="text-white/50">→</span>
             </Link>
             <Link
               href="/login"
-              className="inline-flex items-center justify-center gap-2 rounded-3xl border-2 border-warm-200 bg-white px-8 py-4 text-lg font-medium text-foreground shadow-card hover:border-primary/30 hover:shadow-card-hover transition-all duration-200"
+              className="flex items-center justify-center gap-2 rounded-2xl border-2 border-warm-200 bg-white px-6 py-3.5 text-base font-medium text-foreground shadow-card active:scale-[0.98] transition-all"
             >
               Anmelden
             </Link>
           </div>
         </div>
 
-        {/* Features */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        {/* Features — 2 columns on mobile, 4 on desktop */}
+        <div className="grid grid-cols-2 gap-3 sm:gap-4">
           <FeatureCard
-            icon={<BookOpen className="h-7 w-7" />}
-            title="Структуриран курс"
-            subtitle="Strukturierter Kurs"
-            description="Von A1 bis C1 — lerne Schritt für Schritt mit unserem Lektionssystem."
+            icon={<BookOpen className="h-5 w-5" />}
+            title="Курс"
+            subtitle="Strukturiert"
+            description="A1 bis C1 Schritt für Schritt"
             color="bg-primary-50 text-primary"
           />
           <FeatureCard
-            icon={<Brain className="h-7 w-7" />}
+            icon={<Brain className="h-5 w-5" />}
             title="Речник"
-            subtitle="Vokabeltrainer"
-            description="Effektives Lernen mit Karteikarten und Spaced Repetition."
+            subtitle="Vokabeln"
+            description="Karteikarten & Repetition"
             color="bg-accent-50 text-accent"
           />
           <FeatureCard
-            icon={<Volume2 className="h-7 w-7" />}
-            title="Произношение"
-            subtitle="Sprachausgabe"
-            description="Höre die korrekte Aussprache mit integrierter Text-to-Speech."
+            icon={<Volume2 className="h-5 w-5" />}
+            title="Звук"
+            subtitle="Aussprache"
+            description="Text-to-Speech integriert"
             color="bg-gold-50 text-gold-700"
           />
           <FeatureCard
-            icon={<Trophy className="h-7 w-7" />}
-            title="Постижения"
+            icon={<Trophy className="h-5 w-5" />}
+            title="Игри"
             subtitle="Gamification"
-            description="Bleib motiviert mit Streaks, Achievements und Fortschrittsbalken."
+            description="Streaks & Achievements"
             color="bg-primary-50 text-primary"
           />
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-warm-100 py-8 text-center">
-        <p className="text-sm text-muted">
+      <footer className="border-t border-warm-100 py-6 text-center">
+        <p className="text-xs text-muted">
           © 2026 Slogovo — Български език за всеки
         </p>
       </footer>
@@ -120,13 +118,13 @@ function FeatureCard({
   color: string;
 }) {
   return (
-    <div className="group rounded-3xl bg-white p-6 shadow-card transition-all duration-200 hover:shadow-card-hover hover:scale-[1.02]">
-      <div className={`mb-4 flex h-14 w-14 items-center justify-center rounded-2xl ${color} transition-transform duration-200 group-hover:scale-110`}>
+    <div className="group rounded-2xl bg-white p-4 shadow-card transition-all duration-200 active:scale-[0.98]">
+      <div className={`mb-3 flex h-10 w-10 items-center justify-center rounded-xl ${color} transition-transform duration-200 group-hover:scale-110`}>
         {icon}
       </div>
-      <h3 className="mb-1 font-serif text-lg font-bold text-foreground">{title}</h3>
-      <p className="mb-2 text-xs font-medium uppercase tracking-wider text-muted">{subtitle}</p>
-      <p className="text-sm text-muted leading-relaxed">{description}</p>
+      <h3 className="mb-0.5 font-serif text-sm font-bold text-foreground">{title}</h3>
+      <p className="mb-1 text-[10px] font-medium uppercase tracking-wider text-muted">{subtitle}</p>
+      <p className="text-xs text-muted leading-snug">{description}</p>
     </div>
   );
 }
