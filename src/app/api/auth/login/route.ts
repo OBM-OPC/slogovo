@@ -40,9 +40,11 @@ export async function POST(request: NextRequest) {
       { status: 200 }
     );
 
+    const secureCookie = process.env.NODE_ENV === "production";
+
     response.cookies.set("sb-session", JSON.stringify(authData.session), {
       httpOnly: true,
-      secure: true,
+      secure: secureCookie,
       sameSite: "lax",
       maxAge: 60 * 60 * 24 * 7,
       path: "/",
@@ -54,7 +56,7 @@ export async function POST(request: NextRequest) {
       refresh_token: authData.session.refresh_token,
     }), {
       httpOnly: false,
-      secure: true,
+      secure: secureCookie,
       sameSite: "lax",
       maxAge: 60 * 60 * 24 * 7,
       path: "/",
