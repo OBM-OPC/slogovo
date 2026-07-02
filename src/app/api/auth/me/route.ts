@@ -1,49 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { authenticateRequest, jsonWithAuthCookies } from "@/lib/server-auth";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
   try {
-    const cookieHeader = request.headers.get("cookie") || "";
-    const sessionMatch = cookieHeader.match(/sb-session=([^;]+)/);
-    const sessionCookie = sessionMatch ? decodeURIComponent(sessionMatch[1]) : null;
+    const auth = await authenticateRequest(request);
 
-    if (!sessionCookie) {
-      return NextResponse.json({ error: "Nicht authentifiziert" }, { status: 401 });
+    if (!auth.user) {
+      return NextResponse.json({ error: auth.error || "Nicht authentifiziert" }, { status: auth.status });
     }
 
-    const session = JSON.parse(sessionCookie);
-
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || "",
-      process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || "",
-      {
-        auth: {
-          autoRefreshToken: false,
-          persistSession: false,
-        },
-      }
-    );
-
-    const { data: { user }, error } = await supabase.auth.getUser(session.access_token);
-
-    if (error || !user) {
-      return NextResponse.json({ error: "Ungültige Session" }, { status: 401 });
-    }
-
-    return NextResponse.json(
+    return jsonWithAuthCookies(
       {
         user: {
-          id: user.id,
-          email: user.email,
-          name: user.user_metadata?.name || null,
-          image: user.user_metadata?.avatar_url || null,
-          displayName: user.user_metadata?.display_name || null,
-          bio: user.user_metadata?.bio || null,
-          createdAt: user.created_at,
+          id: auth.user.id,
+          email: auth.user.email,
+          name: auth.user.user_metadata?.name || null,
+          image: auth.user.user_metadata?.avatar_url || null,
+          displayName: auth.user.user_metadata?.display_name || null,
+          bio: auth.user.user_metadata?.bio || null,
+          createdAt: auth.user.created_at,
         },
       },
+      auth,
       { status: 200 }
     );
   } catch (error) {
