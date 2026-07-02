@@ -138,20 +138,50 @@ if (isBrowser()) {
 // Speak
 // ---------------------------------------------------------------------------
 
-export async function speak(text: string, progress?: UserProgress): Promise<boolean> {
-  if (!isBrowser()) return false;
+let currentAudio: HTMLAudioElement | null = null;
 
-  // Respect user settings
-  const settings = progress?.settings;
-  if (settings?.ttsEnabled === false) return false;
+async function speakWithFish(text: string, progress?: UserProgress): Promise<boolean> {
+  const response = await fetch("/api/tts/fish", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      text,
+      speed: progress?.settings.speechRate ?? 0.9,
+    }),
+  });
 
-  // Require interaction first (autoplay policy)
-  if (!hasUserInteracted) {
-    markUserInteraction();
-    // Give browser a moment to unlock
-    await new Promise((r) => setTimeout(r, 100));
-  }
+  if (!response.ok) return false;
 
+  const blob = await response.blob();
+  const url = URL.createObjectURL(blob);
+
+  return new Promise((resolve) => {
+    currentAudio?.pause();
+    currentAudio = new Audio(url);
+
+    const cleanup = () => {
+      URL.revokeObjectURL(url);
+      if (currentAudio?.src === url) currentAudio = null;
+    };
+
+    currentAudio.onended = () => {
+      cleanup();
+      setStatus("ready");
+      resolve(true);
+    };
+    currentAudio.onerror = () => {
+      cleanup();
+      resolve(false);
+    };
+
+    currentAudio.play().catch(() => {
+      cleanup();
+      resolve(false);
+    });
+  });
+}
+
+async function speakWithBrowser(text: string, progress?: UserProgress): Promise<boolean> {
   if (!isTTSAvailable()) {
     setStatus("unsupported");
     return false;
@@ -164,13 +194,11 @@ export async function speak(text: string, progress?: UserProgress): Promise<bool
     loadVoices();
   }
 
-  const rate = settings?.speechRate ?? 0.9;
+  const rate = progress?.settings.speechRate ?? 0.85;
+  const voice = bulgarianVoice;
 
-  // Use Bulgarian voice if available, otherwise any voice
-  const voice = bulgarianVoice || availableVoices[0] || null;
-
-  if (!voice && availableVoices.length === 0) {
-    setStatus("unsupported");
+  if (!voice) {
+    setStatus(availableVoices.length > 0 ? "no-voices" : "unsupported");
     return false;
   }
 
@@ -179,10 +207,10 @@ export async function speak(text: string, progress?: UserProgress): Promise<bool
       window.speechSynthesis.cancel();
 
       const utterance = new SpeechSynthesisUtterance(text);
-      if (voice) utterance.voice = voice;
-      utterance.lang = voice?.lang || "bg-BG";
+      utterance.voice = voice;
+      utterance.lang = voice.lang || "bg-BG";
       utterance.rate = rate;
-      utterance.pitch = 1;
+      utterance.pitch = 0.95;
 
       let done = false;
 
@@ -197,17 +225,11 @@ export async function speak(text: string, progress?: UserProgress): Promise<bool
       utterance.onerror = () => {
         if (!done) {
           done = true;
-          // If error was because no voice, mark as no-voices
-          if (!bulgarianVoice && availableVoices.length > 0) {
-            setStatus("no-voices");
-          } else {
-            setStatus("unsupported");
-          }
+          setStatus("unsupported");
           resolve(false);
         }
       };
 
-      // Safety timeout
       setTimeout(() => {
         if (!done) {
           done = true;
@@ -223,7 +245,37 @@ export async function speak(text: string, progress?: UserProgress): Promise<bool
   });
 }
 
+export async function speak(text: string, progress?: UserProgress): Promise<boolean> {
+  if (!isBrowser()) return false;
+
+  const settings = progress?.settings;
+  if (settings?.ttsEnabled === false) return false;
+
+  if (!hasUserInteracted) {
+    markUserInteraction();
+    await new Promise((r) => setTimeout(r, 100));
+  }
+
+  setStatus("ready");
+
+  try {
+    const fishOk = await speakWithFish(text, progress);
+    if (fishOk) return true;
+  } catch {
+    // Fish is optional; fall back to local browser voice below.
+  }
+
+  return speakWithBrowser(text, progress);
+}
+
 export function stopSpeaking(): void {
+  try {
+    currentAudio?.pause();
+    currentAudio = null;
+  } catch {
+    // ignore
+  }
+
   if (isTTSAvailable()) {
     try {
       window.speechSynthesis.cancel();
