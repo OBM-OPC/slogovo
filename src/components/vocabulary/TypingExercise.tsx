@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { VocabularyItem, DifficultyRating } from "@/types";
 import { Button } from "@/components/ui/Button";
 import { useProgressSafe } from "@/hooks/useProgressSafe";
@@ -9,7 +9,7 @@ import { speak, markUserInteraction } from "@/lib/tts";
 import { cn, shuffleArray } from "@/lib/utils";
 import { vibrateCorrect, vibrateWrong } from "@/lib/haptics";
 import { triggerConfetti } from "@/lib/confetti";
-import { Volume2, Loader2, AlertCircle } from "lucide-react";
+import { Volume2, Loader2, AlertCircle, Brain, Check, RotateCcw, Sparkles } from "lucide-react";
 
 
 type Phase = "question" | "answer";
@@ -20,11 +20,11 @@ interface TypingExerciseProps {
   onExit?: () => void;
 }
 
-const DIFFICULTY_LABELS: Record<DifficultyRating, { label: string; className: string }> = {
-  repeat: { label: "Wiederholen", className: "bg-danger text-white" },
-  hard: { label: "Schwer", className: "bg-warning text-white" },
-  good: { label: "Gut", className: "bg-success text-white" },
-  easy: { label: "Einfach", className: "bg-primary text-white" },
+const DIFFICULTY_LABELS: Record<DifficultyRating, { label: string; className: string; icon: typeof Check }> = {
+  repeat: { label: "Nochmal", className: "bg-danger text-white", icon: RotateCcw },
+  hard: { label: "Schwer", className: "bg-orange-500 text-white", icon: Brain },
+  good: { label: "Gut", className: "bg-primary text-white", icon: Check },
+  easy: { label: "Einfach", className: "bg-success text-white", icon: Sparkles },
 };
 
 export function TypingExercise({ words, mode, onExit }: TypingExerciseProps) {
@@ -83,6 +83,20 @@ export function TypingExercise({ words, mode, onExit }: TypingExerciseProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [index, phase, queue, progress]);
 
+  const word = queue[index];
+  const wordBg = word?.bg ?? "";
+
+  const buildTiles = useMemo(() => {
+    const tiles = wordBg.split("");
+    const pool = [...tiles];
+    const alphabet = "абвгдежзийклмнопрстуфхцчшщъьюя";
+    while (pool.length < 12) {
+      const c = alphabet[Math.floor(Math.random() * alphabet.length)];
+      if (!pool.includes(c)) pool.push(c);
+    }
+    return shuffleArray(pool);
+  }, [wordBg]);
+
   if (queue.length === 0) {
     return (
       <div className="card text-center">
@@ -102,8 +116,6 @@ export function TypingExercise({ words, mode, onExit }: TypingExerciseProps) {
     );
   }
 
-  const word = queue[index];
-
   const normalize = (s: string) =>
     s
       .toLowerCase()
@@ -111,17 +123,6 @@ export function TypingExercise({ words, mode, onExit }: TypingExerciseProps) {
       .trim();
 
   const acceptedAnswers = [word.bg, word.bgLatin].filter((s): s is string => typeof s === "string").map(normalize);
-
-  const buildTiles = (() => {
-    const tiles = word.bg.split("");
-    const pool = [...tiles];
-    const alphabet = "абвгдежзийклмнопрстуфхцчшщъьюя";
-    while (pool.length < 12) {
-      const c = alphabet[Math.floor(Math.random() * alphabet.length)];
-      if (!pool.includes(c)) pool.push(c);
-    }
-    return shuffleArray(pool);
-  })();
 
   const handleCheck = () => {
     const trimmed = normalize(input);
@@ -173,6 +174,16 @@ export function TypingExercise({ words, mode, onExit }: TypingExerciseProps) {
 
   return (
     <div ref={containerRef} className="space-y-4">
+      {onExit && (
+        <button
+          type="button"
+          onClick={onExit}
+          className="w-full rounded-2xl bg-primary-50 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary-100"
+        >
+          Zurück zu den Karten
+        </button>
+      )}
+
       <div className="card min-h-[220px] flex flex-col items-center justify-center text-center">
         <div className="mb-2 text-sm text-muted">Deutsch → Bulgarisch · {mode === "type" ? "Tippen" : "Bauen"}</div>
         <p className="mb-2 text-2xl font-semibold">{word.de}</p>
@@ -269,7 +280,10 @@ export function TypingExercise({ words, mode, onExit }: TypingExerciseProps) {
                 fullWidth
                 className={DIFFICULTY_LABELS[rating].className}
               >
-                {DIFFICULTY_LABELS[rating].label}
+                {(() => {
+                  const Icon = DIFFICULTY_LABELS[rating].icon;
+                  return <><Icon className="h-4 w-4" /> {DIFFICULTY_LABELS[rating].label}</>;
+                })()}
               </Button>
             ))}
           </div>

@@ -75,14 +75,22 @@ export default function VocabularyPage() {
         </button>
       </div>
 
-      {" "}
       {(mode === "trainer" || mode === "type" || mode === "build") && (
-        <div className="mb-4 flex gap-2">
+        <div className="mb-4 grid grid-cols-3 gap-2 rounded-2xl bg-gray-100 p-1">
+          <button
+            onClick={() => setMode("trainer")}
+            className={cn(
+              "flex items-center justify-center gap-2 rounded-xl py-2 text-sm font-medium transition-colors",
+              mode === "trainer" ? "bg-white text-primary shadow-sm" : "text-muted"
+            )}
+          >
+            <Brain className="h-4 w-4" /> Karten
+          </button>
           <button
             onClick={() => setMode("type")}
             className={cn(
-              "flex flex-1 items-center justify-center gap-2 rounded-xl py-2 text-sm font-medium transition-colors",
-              mode === "type" ? "bg-primary text-white" : "bg-gray-100 text-muted"
+              "flex items-center justify-center gap-2 rounded-xl py-2 text-sm font-medium transition-colors",
+              mode === "type" ? "bg-white text-primary shadow-sm" : "text-muted"
             )}
           >
             <Type className="h-4 w-4" /> Tippen
@@ -90,8 +98,8 @@ export default function VocabularyPage() {
           <button
             onClick={() => setMode("build")}
             className={cn(
-              "flex flex-1 items-center justify-center gap-2 rounded-xl py-2 text-sm font-medium transition-colors",
-              mode === "build" ? "bg-primary text-white" : "bg-gray-100 text-muted"
+              "flex items-center justify-center gap-2 rounded-xl py-2 text-sm font-medium transition-colors",
+              mode === "build" ? "bg-white text-primary shadow-sm" : "text-muted"
             )}
           >
             <BrickWall className="h-4 w-4" /> Bauen
@@ -141,8 +149,8 @@ export default function VocabularyPage() {
           <Flashcard words={trainerWords} />
         </div>
       )}
-      {mode === "type" && <TypingExercise words={trainerWords} mode="type" />}
-      {mode === "build" && <TypingExercise words={trainerWords} mode="build" />}
+      {mode === "type" && <TypingExercise words={trainerWords} mode="type" onExit={() => setMode("trainer")} />}
+      {mode === "build" && <TypingExercise words={trainerWords} mode="build" onExit={() => setMode("trainer")} />}
 
       {mode === "all" && (
         <div>
