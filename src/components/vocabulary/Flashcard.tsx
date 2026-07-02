@@ -27,7 +27,6 @@ const initialStats: SessionStats = {
 const ratingOptions: Array<{
   rating: DifficultyRating;
   label: string;
-  hint: string;
   shortcut: string;
   className: string;
   icon: typeof X;
@@ -35,7 +34,6 @@ const ratingOptions: Array<{
   {
     rating: "repeat",
     label: "Nochmal",
-    hint: "zurücksetzen",
     shortcut: "1",
     className: "border-danger text-danger hover:bg-danger/10",
     icon: RotateCcw,
@@ -43,7 +41,6 @@ const ratingOptions: Array<{
   {
     rating: "hard",
     label: "Schwer",
-    hint: "kurz später",
     shortcut: "2",
     className: "border-orange-500 text-orange-600 hover:bg-orange-50",
     icon: Brain,
@@ -51,7 +48,6 @@ const ratingOptions: Array<{
   {
     rating: "good",
     label: "Gut",
-    hint: "normal",
     shortcut: "3",
     className: "border-primary text-primary hover:bg-primary/10",
     icon: Check,
@@ -59,9 +55,8 @@ const ratingOptions: Array<{
   {
     rating: "easy",
     label: "Einfach",
-    hint: "später",
     shortcut: "4",
-    className: "border-success text-success hover:bg-success/10",
+    className: "border-success bg-success text-white hover:bg-success/90 hover:text-white",
     icon: Sparkles,
   },
 ];
@@ -226,7 +221,7 @@ export function Flashcard({ words }: FlashcardProps) {
             }}
             className="rounded-full bg-gray-100 px-3 py-1 font-medium text-foreground transition-colors hover:bg-gray-200"
           >
-            {reverseMode ? "BG → DE" : "DE → BG"} · R
+            {reverseMode ? "BG → DE" : "DE → BG"}
           </button>
         </div>
         <div className="h-2 overflow-hidden rounded-full bg-gray-100">
@@ -263,7 +258,6 @@ export function Flashcard({ words }: FlashcardProps) {
             <div className="mb-4 text-sm text-muted">Bewerte, wie leicht es war</div>
             <p className={cn("font-bold", reverseMode ? "text-2xl" : "text-4xl text-primary")}>{cardFace?.backMain}</p>
             {cardFace?.backSub && <p className="mt-2 text-sm italic text-muted">{cardFace.backSub}</p>}
-            <p className="mt-5 text-xs text-muted">Shortcuts: 1 Nochmal · 2 Schwer · 3 Gut · 4 Einfach</p>
           </div>
         </div>
       </div>
@@ -281,10 +275,7 @@ export function Flashcard({ words }: FlashcardProps) {
               className={cn("flex-col gap-1 py-3", option.className)}
               title={!flipped ? "Erst Karte aufdecken" : undefined}
             >
-              <span className="flex items-center gap-1.5">
-                <Icon className="h-4 w-4" /> {option.label}
-              </span>
-              <span className="text-[11px] opacity-70">{option.shortcut} · {option.hint}</span>
+              <Icon className="h-4 w-4" /> {option.label}
             </Button>
           );
         })}
