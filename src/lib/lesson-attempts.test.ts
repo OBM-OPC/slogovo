@@ -21,6 +21,14 @@ describe("createLessonAttempt", () => {
         acceptedAnswers: ["right"],
         durationMs: 100,
       }),
+      buildExerciseResult({
+        exerciseId: "ex1",
+        exerciseType: "quiz",
+        itemId: "q3",
+        userAnswer: "right",
+        acceptedAnswers: ["right"],
+        durationMs: 100,
+      }),
     ];
     const attempt = createLessonAttempt({
       userId: "u1",
@@ -28,7 +36,7 @@ describe("createLessonAttempt", () => {
       moduleId: "m1",
       level: "A1",
       results,
-      totalDurationMs: 200,
+      totalDurationMs: 300,
       startedAt: new Date().toISOString(),
       completed: true,
     });

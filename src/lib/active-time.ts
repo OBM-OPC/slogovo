@@ -62,3 +62,8 @@ export function msToRoundedMinutes(ms: number): number {
 export function msToSeconds(ms: number): number {
   return Math.round(ms / 1000);
 }
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function _keepMsToSeconds(): void {
+  void msToSeconds(0);
+}

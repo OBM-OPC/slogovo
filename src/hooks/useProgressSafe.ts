@@ -7,8 +7,10 @@ const emptyProgress: UserProgress = {
   userId: "",
   streak: { current: 0, longest: 0 },
   completedLessons: [],
+  masteredLessons: [],
   completedModules: [],
   vocabularyProgress: {},
+  lessonScores: {},
   exerciseStats: { total: 0, correct: 0, wrong: 0, consecutiveCorrect: 0 },
   dailyStats: {},
   settings: {
