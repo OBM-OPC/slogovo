@@ -7,7 +7,7 @@ import { cn, shuffleArray } from "@/lib/utils";
 
 interface MatchingExerciseProps {
   pairs: MatchingPair[];
-  onComplete: () => void;
+  onComplete: (correct: boolean) => void;
 }
 
 export function MatchingExercise({ pairs, onComplete }: MatchingExerciseProps) {
@@ -17,6 +17,8 @@ export function MatchingExercise({ pairs, onComplete }: MatchingExerciseProps) {
   const [wrong, setWrong] = useState<Set<string>>(new Set());
 
   const [bgOptions, setBgOptions] = useState<string[]>(() => shuffleArray(pairs.map((p) => p.bg)));
+
+  const [anyWrong, setAnyWrong] = useState(false);
 
   const handleDeClick = (de: string) => {
     if (selectedDe === de) {
@@ -35,6 +37,7 @@ export function MatchingExercise({ pairs, onComplete }: MatchingExerciseProps) {
       setSelectedDe(null);
     } else {
       setWrong((prev) => new Set([...prev, selectedDe, bg]));
+      setAnyWrong(true);
       setTimeout(() => {
         setWrong((prev) => {
           const next = new Set(prev);
@@ -49,7 +52,7 @@ export function MatchingExercise({ pairs, onComplete }: MatchingExerciseProps) {
 
     if (matched.size + (isCorrect ? 1 : 0) === pairs.length) {
       setBgOptions([]);
-      onComplete();
+      onComplete(!anyWrong && !isCorrect ? false : !anyWrong);
     }
   };
 

@@ -11,49 +11,49 @@
       "id": "a2m4l3-1",
       "de": "die Notaufnahme",
       "bg": "спешното отделение",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m4l3-2",
       "de": "der Operationssaal",
       "bg": "операционната",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m4l3-3",
       "de": "der Verband",
       "bg": "превръзката",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m4l3-4",
       "de": "die Untersuchung",
       "bg": "прегледът",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m4l3-5",
       "de": "das Röntgenbild",
       "bg": "рентгеновата снимка",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m4l3-6",
       "de": "die Blutprobe",
       "bg": "кръвната проба",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m4l3-7",
       "de": "der Krankenwagen",
       "bg": "линейката",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m4l3-8",
       "de": "die Versicherung",
       "bg": "застраховката",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     }
   ],
   "grammar": {

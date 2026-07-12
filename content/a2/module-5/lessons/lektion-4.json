@@ -11,61 +11,61 @@
       "id": "a2m5l4-1",
       "de": "das Telefon",
       "bg": "телефонът",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m5l4-2",
       "de": "anrufen",
       "bg": "обаждам се",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m5l4-3",
       "de": "auflegen",
       "bg": "затварям",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m5l4-4",
       "de": "die Mailbox",
       "bg": "гласовата поща",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m5l4-5",
       "de": "verbinden",
       "bg": "свързвам",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m5l4-6",
       "de": "besetzt",
       "bg": "зает",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m5l4-7",
       "de": "der Anruf",
       "bg": "обаждането",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m5l4-8",
       "de": "das Handy",
       "bg": "мобилният телефон",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m5l4-9",
       "de": "die Nachricht",
       "bg": "съобщението",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m5l4-10",
       "de": "zurückrufen",
       "bg": "връщам обаждане",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     }
   ],
   "grammar": {

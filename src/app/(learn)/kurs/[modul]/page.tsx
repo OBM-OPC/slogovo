@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useProgressSafe } from "@/hooks/useProgressSafe";
 import { getLessonsByModule, getModuleById } from "@/lib/content";
 import { ProgressBar } from "@/components/ui/ProgressBar";
-import { CheckCircle2, Circle, ArrowLeft, ChevronRight } from "lucide-react";
+import { CheckCircle2, Circle, ArrowLeft, ChevronRight, Award } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function ModulePage() {
@@ -67,6 +67,7 @@ export default function ModulePage() {
       <ul className="space-y-2">
         {lessons.map((lesson) => {
           const isCompleted = progress.completedLessons.includes(lesson.lessonId);
+          const isMastered = progress.masteredLessons.includes(lesson.lessonId);
           const isNext = !isCompleted && lessons
             .filter((l) => !progress.completedLessons.includes(l.lessonId))[0]?.lessonId === lesson.lessonId;
 
@@ -76,16 +77,19 @@ export default function ModulePage() {
                 href={`/kurs/${moduleId}/${lesson.lessonId}/`}
                 className={cn(
                   "group flex items-center gap-4 rounded-3xl p-4 transition-all duration-200",
-                  isCompleted && "bg-primary-50/50 shadow-sm",
+                  isMastered && "bg-success/10 shadow-sm ring-1 ring-success/30",
+                  isCompleted && !isMastered && "bg-primary-50/50 shadow-sm",
                   isNext && "bg-white shadow-card ring-1 ring-gold/30",
                   !isCompleted && !isNext && "bg-white shadow-card hover:shadow-card-hover"
                 )}
               >
                 <div className={cn(
                   "flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-2xl",
-                  isCompleted ? "bg-primary-50" : isNext ? "bg-gold-50" : "bg-warm-50"
+                  isMastered ? "bg-success-50" : isCompleted ? "bg-primary-50" : isNext ? "bg-gold-50" : "bg-warm-50"
                 )}>
-                  {isCompleted ? (
+                  {isMastered ? (
+                    <Award className="h-5 w-5 text-success" />
+                  ) : isCompleted ? (
                     <CheckCircle2 className="h-5 w-5 text-primary" />
                   ) : isNext ? (
                     <Circle className="h-5 w-5 text-gold" />
@@ -98,7 +102,11 @@ export default function ModulePage() {
                     "font-serif font-bold",
                     isNext && "text-gold-700"
                   )}>{lesson.title}</p>
-                  <p className="text-xs text-muted">{lesson.duration}</p>
+                  <p className="text-xs text-muted">
+                    {lesson.duration}
+                    {isMastered && " · gemeistert"}
+                    {isCompleted && !isMastered && " · abgeschlossen"}
+                  </p>
                 </div>
                 {isNext && (
                   <span className="rounded-full bg-gold-50 px-3 py-1 text-xs font-medium text-gold-700">
