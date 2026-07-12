@@ -76,7 +76,25 @@ export function QuizExercise({ questions, onComplete }: QuizExerciseProps) {
       </div>
 
       {showResult && (
-        <div className="mt-6">
+        <div className="mt-6 space-y-3">
+          {question.explanation && (
+            <div className={cn(
+              "rounded-xl p-4 text-sm",
+              selected === question.correctOptionIndex
+                ? "bg-success/10 text-success"
+                : "bg-warm-50 text-muted"
+            )}>
+              <p className="font-medium">{question.explanation}</p>
+              {question.grammarTopicSlug && (
+                <a
+                  href={`/grammatik/${question.grammarTopicSlug}`}
+                  className="mt-2 inline-block text-sm text-primary underline"
+                >
+                  Zum Grammatikthema
+                </a>
+              )}
+            </div>
+          )}
           <Button onClick={handleNext} fullWidth>
             {current < questions.length - 1 ? "Weiter" : "Fertig"}
           </Button>

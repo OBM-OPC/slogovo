@@ -18,6 +18,8 @@ export function FillInExercise({ sentences, onComplete }: FillInExerciseProps) {
   const [showResult, setShowResult] = useState(false);
 
   const sentence = sentences[current];
+  const explanation = showResult ? sentence.explanation : undefined;
+  const grammarSlug = showResult ? sentence.grammarTopicSlug : undefined;
 
   const checkAnswer = () => {
     const trimmed = input.trim().toLowerCase();
@@ -97,6 +99,25 @@ export function FillInExercise({ sentences, onComplete }: FillInExerciseProps) {
         </Button>
       ) : (
         <div className="space-y-3">
+          {explanation && (
+            <div className={cn(
+              "rounded-xl p-4 text-sm",
+              sentence.answers.some((a) => a.toLowerCase() === input.trim().toLowerCase())
+                ? "bg-success/10 text-success"
+                : "bg-warm-50 text-muted"
+            )}
+            >
+              <p className="font-medium">{explanation}</p>
+              {grammarSlug && (
+                <a
+                  href={`/grammatik/${grammarSlug}`}
+                  className="mt-2 inline-block text-sm text-primary underline"
+                >
+                  Zum Grammatikthema
+                </a>
+              )}
+            </div>
+          )}
           <div
             className={cn(
               "rounded-xl p-4 text-center font-medium",
