@@ -1,8 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
 import { loginSchema } from "@/lib/validations";
 
-export async function POST(request: NextRequest) {
+export const dynamic = "force-dynamic";
+
+export async function POST(request: Request) {
   try {
     const body = await request.json();
 
@@ -15,54 +17,28 @@ export async function POST(request: NextRequest) {
     }
 
     const { email, password } = result.data;
+    const supabase = createClient();
 
-    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email: email.toLowerCase(),
       password,
     });
 
-    if (authError || !authData.session) {
+    if (error || !data.session) {
       return NextResponse.json(
         { error: "Ungültige E-Mail-Adresse oder Passwort" },
         { status: 401 }
       );
     }
 
-    const response = NextResponse.json(
-      {
-        message: "Login erfolgreich",
-        user: {
-          id: authData.user?.id,
-          email: authData.user?.email,
-          name: authData.user?.user_metadata?.name || null,
-        },
+    return NextResponse.json({
+      message: "Login erfolgreich",
+      user: {
+        id: data.user.id,
+        email: data.user.email,
+        name: data.user.user_metadata?.name || null,
       },
-      { status: 200 }
-    );
-
-    const secureCookie = process.env.NODE_ENV === "production";
-
-    response.cookies.set("sb-session", JSON.stringify(authData.session), {
-      httpOnly: true,
-      secure: secureCookie,
-      sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 7,
-      path: "/",
     });
-
-    // Also set a non-httpOnly cookie for browser-side Supabase client
-    response.cookies.set("sb-token", JSON.stringify({
-      access_token: authData.session.access_token,
-      refresh_token: authData.session.refresh_token,
-    }), {
-      httpOnly: false,
-      secure: secureCookie,
-      sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 7,
-      path: "/",
-    });
-
-    return response;
   } catch (error) {
     console.error("Login error:", error);
     return NextResponse.json(

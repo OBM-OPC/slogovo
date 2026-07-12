@@ -1,13 +1,14 @@
-import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
 import { resetPasswordSchema } from "@/lib/validations";
 
-export async function POST(request: NextRequest) {
+export const dynamic = "force-dynamic";
+
+export async function POST(request: Request) {
   try {
     const body = await request.json();
 
     const { token, password } = body;
-
     if (!token) {
       return NextResponse.json(
         { error: "Token ist erforderlich" },
@@ -26,12 +27,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Verify the token and update password with Supabase Auth
+    const supabase = createClient();
+
     const { error } = await supabase.auth.verifyOtp({
       token_hash: token,
       type: "recovery",
       options: {
-        redirectTo: `${process.env.NEXTAUTH_URL}/login`,
+        redirectTo: `${process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"}/login`,
       },
     });
 
@@ -42,10 +44,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Update password
-    const { error: updateError } = await supabase.auth.updateUser({
-      password,
-    });
+    const { error: updateError } = await supabase.auth.updateUser({ password });
 
     if (updateError) {
       return NextResponse.json(

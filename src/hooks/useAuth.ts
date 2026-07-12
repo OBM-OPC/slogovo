@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 interface User {
   id: string;
@@ -18,6 +19,7 @@ interface AuthState {
 }
 
 export function useAuth() {
+  const supabase = createClient();
   const [state, setState] = useState<AuthState>({
     user: null,
     isLoading: true,
@@ -26,47 +28,48 @@ export function useAuth() {
 
   const fetchUser = useCallback(async () => {
     try {
-      const response = await fetch("/api/auth/me");
-      if (response.ok) {
-        const data = await response.json();
-        console.log("[Auth] User loaded:", data.user?.id);
-        setState({
-          user: data.user,
-          isLoading: false,
-          isAuthenticated: true,
-        });
-      } else {
-        console.warn("[Auth] /api/auth/me failed:", response.status);
-        setState({
-          user: null,
-          isLoading: false,
-          isAuthenticated: false,
-        });
+      const { data: { user }, error } = await supabase.auth.getUser();
+
+      if (error || !user) {
+        setState({ user: null, isLoading: false, isAuthenticated: false });
+        return;
       }
+
+      setState({
+        user: {
+          id: user.id,
+          email: user.email ?? "",
+          name: user.user_metadata?.name || null,
+          image: user.user_metadata?.avatar_url || null,
+          displayName: user.user_metadata?.display_name || null,
+          bio: user.user_metadata?.bio || null,
+        },
+        isLoading: false,
+        isAuthenticated: true,
+      });
     } catch (err) {
       console.error("[Auth] Error fetching user:", err);
-      setState({
-        user: null,
-        isLoading: false,
-        isAuthenticated: false,
-      });
+      setState({ user: null, isLoading: false, isAuthenticated: false });
     }
-  }, []);
+  }, [supabase]);
 
   useEffect(() => {
-    fetchUser();
-  }, [fetchUser]);
+    void fetchUser();
 
-  const login = async (email: string, password: string) => {
-    const response = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
+      void fetchUser();
     });
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || "Login fehlgeschlagen");
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [fetchUser, supabase]);
+
+  const login = async (email: string, password: string) => {
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+    if (error) {
+      throw new Error(error.message || "Login fehlgeschlagen");
     }
 
     await fetchUser();
@@ -75,27 +78,29 @@ export function useAuth() {
   };
 
   const register = async (name: string, email: string, password: string, confirmPassword: string) => {
-    const response = await fetch("/api/auth/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password, confirmPassword }),
+    if (password !== confirmPassword) {
+      throw new Error("Die Passwörter stimmen nicht überein");
+    }
+
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { name } },
     });
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || "Registrierung fehlgeschlagen");
+    if (error) {
+      throw new Error(error.message || "Registrierung fehlgeschlagen");
     }
 
     return true;
   };
 
   const logout = async () => {
-    await fetch("/api/auth/logout", { method: "POST" });
-    setState({
-      user: null,
-      isLoading: false,
-      isAuthenticated: false,
-    });
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error("Logout error:", error);
+    }
+    setState({ user: null, isLoading: false, isAuthenticated: false });
     window.location.href = "/login";
   };
 
