@@ -1,14 +1,7 @@
 export type Level = "A1" | "A2" | "B1" | "B2" | "C1";
 export type DifficultyRating = "repeat" | "hard" | "good" | "easy";
 
-export interface VocabularyItem {
-  id: string;
-  de: string;
-  bg: string;
-  bgLatin?: string;
-  audio?: string;
-  category?: string;
-}
+export type { VocabularyItem, PartOfSpeech, GrammaticalGender, VerbAspect } from "./vocabulary";
 
 export interface GrammarExample {
   bg: string;
