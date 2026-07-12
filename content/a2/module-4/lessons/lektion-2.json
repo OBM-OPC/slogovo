@@ -11,61 +11,61 @@
       "id": "a2m4l2-1",
       "de": "der Arzt",
       "bg": "лекарят",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m4l2-2",
       "de": "das Krankenhaus",
       "bg": "болницата",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m4l2-3",
       "de": "der Termin",
       "bg": "прегледът",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m4l2-4",
       "de": "das Rezept",
       "bg": "рецептата",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m4l2-5",
       "de": "die Apotheke",
       "bg": "аптеката",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m4l2-6",
       "de": "die Tablette",
       "bg": "таблетката",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m4l2-7",
       "de": "der Schmerz",
       "bg": "болката",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m4l2-8",
       "de": "die Temperatur",
       "bg": "температурата",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m4l2-9",
       "de": "husten",
       "bg": "кашлям",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m4l2-10",
       "de": "niesen",
       "bg": "кашлям",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     }
   ],
   "grammar": {

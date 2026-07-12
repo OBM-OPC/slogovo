@@ -11,49 +11,49 @@
       "id": "a2m2l4-1",
       "de": "zahlen",
       "bg": "плащам",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m2l4-2",
       "de": "das Bargeld",
       "bg": "парите в брой",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m2l4-3",
       "de": "die Karte",
       "bg": "картата",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m2l4-4",
       "de": "das Trinkgeld",
       "bg": "бакшишът",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m2l4-5",
       "de": "die Wechselstube",
       "bg": "обменното бюро",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m2l4-6",
       "de": "der Kurs",
       "bg": "курсът",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m2l4-7",
       "de": "die Quittung",
       "bg": "касовата бележка",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m2l4-8",
       "de": "das Rückgeld",
       "bg": "рестото",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     }
   ],
   "grammar": {

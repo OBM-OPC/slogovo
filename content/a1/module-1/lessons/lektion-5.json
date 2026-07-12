@@ -50,7 +50,7 @@
       "title": "Baue die Höflichkeitsformel",
       "data": [
         { "id": "sb1", "words": ["Благодаря", "много", "за", "помощта."], "correctOrder": ["Благодаря", "много", "за", "помощта."], "de": "Vielen Dank für die Hilfe." },
-        { "id": "sb2", "words": ["Извинете", "можете", "да", "помогнете", "ли?"], "correctOrder": ["Извинете", "можете", "ли", "да", "помогнете?"], "de": "Entschuldigung, können Sie helfen?" }
+        { "id": "sb2", "words": ["Извинете", "можете", "ли", "да", "помогнете?"], "correctOrder": ["Извинете", "можете", "ли", "да", "помогнете?"], "de": "Entschuldigung, können Sie helfen?" }
       ]
     }
   ]
