@@ -20,6 +20,8 @@ export function SentenceBuilderExercise({ sentences, onComplete }: SentenceBuild
   const [anyWrong, setAnyWrong] = useState(false);
 
   const sentence = sentences[current];
+  const explanation = showResult ? sentence.explanation : undefined;
+  const grammarSlug = showResult ? sentence.grammarTopicSlug : undefined;
   const available = sentence.words.filter((w) => !selected.includes(w));
 
   const handleWordClick = (word: string) => {
@@ -101,6 +103,24 @@ export function SentenceBuilderExercise({ sentences, onComplete }: SentenceBuild
         </Button>
       ) : (
         <div className="space-y-3">
+          {explanation && (
+            <div className={cn(
+              "rounded-xl p-4 text-sm",
+              selected.join(" ") === sentence.correctOrder.join(" ")
+                ? "bg-success/10 text-success"
+                : "bg-warm-50 text-muted"
+            )}>
+              <p className="font-medium">{explanation}</p>
+              {grammarSlug && (
+                <a
+                  href={`/grammatik/${grammarSlug}`}
+                  className="mt-2 inline-block text-sm text-primary underline"
+                >
+                  Zum Grammatikthema
+                </a>
+              )}
+            </div>
+          )}
           <div
             className={cn(
               "rounded-xl p-4 text-center font-medium",
