@@ -12,6 +12,9 @@ import type { VocabularyItem } from "./vocabulary";
 const _vocabularyTypeRef: VocabularyItem | undefined = undefined;
 void _vocabularyTypeRef;
 
+export * from "./learning";
+export * from "./speaking";
+
 export interface GrammarExample {
   bg: string;
   de: string;
