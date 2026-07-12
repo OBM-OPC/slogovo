@@ -1,4 +1,7 @@
 import { VocabularyItem } from "./vocabulary";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const _vocabTypeRef: VocabularyItem | undefined = undefined;
+void _vocabTypeRef;
 
 export type ExerciseResultStatus =
   | "correct"

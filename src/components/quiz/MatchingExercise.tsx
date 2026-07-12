@@ -18,8 +18,9 @@ export function MatchingExercise({ pairs, onComplete }: MatchingExerciseProps) {
 
   const [bgOptions, setBgOptions] = useState<string[]>(() => shuffleArray(pairs.map((p) => p.bg)));
 
-  const [anyWrong, setAnyWrong] = useState(false);
+  const [, setAnyWrong] = useState(false);
   const [lastExplanation, setLastExplanation] = useState<{ text?: string; grammarTopicSlug?: string }>({});
+  const showExplanation = lastExplanation.text || lastExplanation.grammarTopicSlug;
 
   const handleDeClick = (de: string) => {
     if (selectedDe === de) {
@@ -108,7 +109,7 @@ export function MatchingExercise({ pairs, onComplete }: MatchingExerciseProps) {
           ))}
         </div>
       </div>
-      {lastExplanation.text && (
+      {showExplanation && (
         <div className="mt-4 rounded-xl bg-warm-50 p-4 text-sm text-muted">
           <p className="font-medium">{lastExplanation.text}</p>
           {lastExplanation.grammarTopicSlug && (

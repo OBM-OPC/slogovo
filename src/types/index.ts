@@ -40,6 +40,8 @@ export interface QuizQuestion {
   options: string[];
   correctOptionIndex: number;
   bg?: string;
+  explanation?: string;
+  grammarTopicSlug?: string;
 }
 
 export interface FillInSentence {
@@ -49,12 +51,16 @@ export interface FillInSentence {
   answers: string[]; // accepted alternatives
   bg?: string;
   de?: string; // German hint for the full sentence meaning
+  explanation?: string;
+  grammarTopicSlug?: string;
 }
 
 export interface MatchingPair {
   id: string;
   de: string;
   bg: string;
+  explanation?: string;
+  grammarTopicSlug?: string;
 }
 
 export interface SentenceBuilder {
@@ -63,6 +69,8 @@ export interface SentenceBuilder {
   correctOrder: string[];
   bg?: string;
   de?: string;
+  explanation?: string;
+  grammarTopicSlug?: string;
 }
 
 export interface Exercise {
@@ -129,8 +137,10 @@ export interface UserProgress {
   userId: string;
   streak: Streak;
   completedLessons: string[];
+  masteredLessons: string[];
   completedModules: string[];
   vocabularyProgress: Record<string, VocabularyProgress>;
+  lessonScores: Record<string, number>;
   exerciseStats: {
     total: number;
     correct: number;
