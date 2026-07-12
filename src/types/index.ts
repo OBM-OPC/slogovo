@@ -127,8 +127,10 @@ export interface UserProgress {
   userId: string;
   streak: Streak;
   completedLessons: string[];
+  masteredLessons: string[];
   completedModules: string[];
   vocabularyProgress: Record<string, VocabularyProgress>;
+  lessonScores: Record<string, number>;
   exerciseStats: {
     total: number;
     correct: number;

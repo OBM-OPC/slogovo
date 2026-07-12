@@ -8,7 +8,7 @@ import { useProgressStore } from "@/stores/useProgressStore";
 
 interface QuizExerciseProps {
   questions: QuizQuestion[];
-  onComplete: () => void;
+  onComplete: (correct: boolean) => void;
 }
 
 export function QuizExercise({ questions, onComplete }: QuizExerciseProps) {
@@ -36,7 +36,7 @@ export function QuizExercise({ questions, onComplete }: QuizExerciseProps) {
       setSelected(null);
       setShowResult(false);
     } else {
-      onComplete();
+      onComplete(true);
     }
   };
 

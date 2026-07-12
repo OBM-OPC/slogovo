@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 
 interface FillInExerciseProps {
   sentences: FillInSentence[];
-  onComplete: () => void;
+  onComplete: (correct: boolean) => void;
 }
 
 export function FillInExercise({ sentences, onComplete }: FillInExerciseProps) {
@@ -16,6 +16,8 @@ export function FillInExercise({ sentences, onComplete }: FillInExerciseProps) {
   const [current, setCurrent] = useState(0);
   const [input, setInput] = useState("");
   const [showResult, setShowResult] = useState(false);
+
+  const [anyWrong, setAnyWrong] = useState(false);
 
   const sentence = sentences[current];
 
@@ -25,6 +27,7 @@ export function FillInExercise({ sentences, onComplete }: FillInExerciseProps) {
       (a) => a.toLowerCase() === trimmed
     );
     setShowResult(true);
+    if (!isCorrect) setAnyWrong(true);
     addExerciseResult(isCorrect);
   };
 
@@ -34,7 +37,7 @@ export function FillInExercise({ sentences, onComplete }: FillInExerciseProps) {
       setInput("");
       setShowResult(false);
     } else {
-      onComplete();
+      onComplete(!anyWrong);
     }
   };
 

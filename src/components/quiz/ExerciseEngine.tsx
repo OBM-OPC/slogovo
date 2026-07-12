@@ -8,7 +8,7 @@ import { SentenceBuilderExercise } from "./SentenceBuilderExercise";
 
 interface ExerciseEngineProps {
   exercise: Exercise;
-  onComplete: () => void;
+  onComplete: (correct: boolean) => void;
 }
 
 export function ExerciseEngine({ exercise, onComplete }: ExerciseEngineProps) {
