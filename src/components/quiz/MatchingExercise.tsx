@@ -7,7 +7,7 @@ import { cn, shuffleArray } from "@/lib/utils";
 
 interface MatchingExerciseProps {
   pairs: MatchingPair[];
-  onComplete: () => void;
+  onComplete: (correct: boolean) => void;
 }
 
 export function MatchingExercise({ pairs, onComplete }: MatchingExerciseProps) {
@@ -17,6 +17,9 @@ export function MatchingExercise({ pairs, onComplete }: MatchingExerciseProps) {
   const [wrong, setWrong] = useState<Set<string>>(new Set());
 
   const [bgOptions, setBgOptions] = useState<string[]>(() => shuffleArray(pairs.map((p) => p.bg)));
+
+  const [anyWrong, setAnyWrong] = useState(false);
+  const [lastExplanation, setLastExplanation] = useState<{ text?: string; grammarTopicSlug?: string }>({});
 
   const handleDeClick = (de: string) => {
     if (selectedDe === de) {
@@ -32,9 +35,16 @@ export function MatchingExercise({ pairs, onComplete }: MatchingExerciseProps) {
     const isCorrect = pair?.bg === bg;
     if (isCorrect) {
       setMatched((prev) => new Set([...prev, selectedDe]));
+      setLastExplanation({ text: pair?.explanation, grammarTopicSlug: pair?.grammarTopicSlug });
       setSelectedDe(null);
     } else {
       setWrong((prev) => new Set([...prev, selectedDe, bg]));
+      setAnyWrong(true);
+      const rightPair = pairs.find((p) => p.de === selectedDe);
+      setLastExplanation({
+        text: rightPair?.explanation,
+        grammarTopicSlug: rightPair?.grammarTopicSlug,
+      });
       setTimeout(() => {
         setWrong((prev) => {
           const next = new Set(prev);
@@ -49,7 +59,7 @@ export function MatchingExercise({ pairs, onComplete }: MatchingExerciseProps) {
 
     if (matched.size + (isCorrect ? 1 : 0) === pairs.length) {
       setBgOptions([]);
-      onComplete();
+      onComplete(!anyWrong && !isCorrect ? false : !anyWrong);
     }
   };
 
@@ -98,6 +108,19 @@ export function MatchingExercise({ pairs, onComplete }: MatchingExerciseProps) {
           ))}
         </div>
       </div>
+      {lastExplanation.text && (
+        <div className="mt-4 rounded-xl bg-warm-50 p-4 text-sm text-muted">
+          <p className="font-medium">{lastExplanation.text}</p>
+          {lastExplanation.grammarTopicSlug && (
+            <a
+              href={`/grammatik/${lastExplanation.grammarTopicSlug}`}
+              className="mt-2 inline-block text-sm text-primary underline"
+            >
+              Zum Grammatikthema
+            </a>
+          )}
+        </div>
+      )}
     </div>
   );
 }

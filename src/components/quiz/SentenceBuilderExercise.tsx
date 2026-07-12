@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 
 interface SentenceBuilderExerciseProps {
   sentences: SentenceBuilder[];
-  onComplete: () => void;
+  onComplete: (correct: boolean) => void;
 }
 
 export function SentenceBuilderExercise({ sentences, onComplete }: SentenceBuilderExerciseProps) {
@@ -17,7 +17,11 @@ export function SentenceBuilderExercise({ sentences, onComplete }: SentenceBuild
   const [selected, setSelected] = useState<string[]>([]);
   const [showResult, setShowResult] = useState(false);
 
+  const [anyWrong, setAnyWrong] = useState(false);
+
   const sentence = sentences[current];
+  const explanation = showResult ? sentence.explanation : undefined;
+  const grammarSlug = showResult ? sentence.grammarTopicSlug : undefined;
   const available = sentence.words.filter((w) => !selected.includes(w));
 
   const handleWordClick = (word: string) => {
@@ -35,6 +39,7 @@ export function SentenceBuilderExercise({ sentences, onComplete }: SentenceBuild
       selected.length === sentence.correctOrder.length &&
       selected.every((w, i) => w === sentence.correctOrder[i]);
     setShowResult(true);
+    if (!isCorrect) setAnyWrong(true);
     addExerciseResult(isCorrect);
   };
 
@@ -44,7 +49,7 @@ export function SentenceBuilderExercise({ sentences, onComplete }: SentenceBuild
       setSelected([]);
       setShowResult(false);
     } else {
-      onComplete();
+      onComplete(!anyWrong);
     }
   };
 
@@ -98,6 +103,24 @@ export function SentenceBuilderExercise({ sentences, onComplete }: SentenceBuild
         </Button>
       ) : (
         <div className="space-y-3">
+          {explanation && (
+            <div className={cn(
+              "rounded-xl p-4 text-sm",
+              selected.join(" ") === sentence.correctOrder.join(" ")
+                ? "bg-success/10 text-success"
+                : "bg-warm-50 text-muted"
+            )}>
+              <p className="font-medium">{explanation}</p>
+              {grammarSlug && (
+                <a
+                  href={`/grammatik/${grammarSlug}`}
+                  className="mt-2 inline-block text-sm text-primary underline"
+                >
+                  Zum Grammatikthema
+                </a>
+              )}
+            </div>
+          )}
           <div
             className={cn(
               "rounded-xl p-4 text-center font-medium",

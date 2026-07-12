@@ -22,6 +22,7 @@ interface ProgressState {
   userId: string | null;
   init: (userId: string) => Promise<void>;
   completeLesson: (lessonId: string) => Promise<void>;
+  masterLesson: (lessonId: string, score?: number) => Promise<void>;
   completeModule: (moduleId: string) => Promise<void>;
   reviewVocabulary: (wordId: string, known: boolean) => Promise<void>;
   reviewVocabularyWithDifficulty: (wordId: string, rating: DifficultyRating) => Promise<void>;
@@ -147,6 +148,30 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
     if (updated.completedLessons.length > completedCountBefore) {
       triggerLevelUpConfetti();
     }
+  },
+
+  masterLesson: async (lessonId: string, score = 100) => {
+    const state = get();
+    if (!state.progress) return;
+    if (state.progress.masteredLessons.includes(lessonId)) return;
+
+    const previousBest = state.progress.lessonScores[lessonId] ?? 0;
+    const updated = persist({
+      ...state.progress,
+      masteredLessons: [...state.progress.masteredLessons, lessonId],
+      completedLessons: state.progress.completedLessons.includes(lessonId)
+        ? state.progress.completedLessons
+        : [...state.progress.completedLessons, lessonId],
+      lessonScores: {
+        ...state.progress.lessonScores,
+        [lessonId]: Math.max(previousBest, score),
+      },
+      streak: updateStreak(state.progress),
+    });
+
+    saveProgressLocal(updated);
+    set({ progress: updated });
+    await saveProgressToSupabase(updated);
   },
 
   completeModule: async (moduleId: string) => {

@@ -1,4 +1,3 @@
-import { VocabularyItem } from "./vocabulary";
 
 export type ExerciseResultStatus =
   | "correct"

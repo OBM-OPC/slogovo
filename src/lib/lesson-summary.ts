@@ -1,6 +1,6 @@
-import { ExerciseResult, LessonAttempt } from "@/types/learning";
+import { LessonAttempt } from "@/types/learning";
 import { calculateLessonMetrics } from "./evaluation";
-import { msToRoundedMinutes, msToSeconds } from "./active-time";
+import { msToRoundedMinutes } from "./active-time";
 
 export interface LessonPerformanceSummary {
   lessonId: string;

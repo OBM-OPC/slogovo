@@ -1,4 +1,9 @@
-import { ExerciseResult, ExerciseResultStatus, ExerciseType } from "@/types/learning";
+import {
+  ExerciseResult,
+  ExerciseResultStatus,
+  ExerciseType,
+} from "@/types/learning";
+import { DEFAULT_MASTERY_PASS_CONFIG, evaluateMasteryPass } from "./mastery";
 
 function normalizeAnswer(input: string): string {
   return input
@@ -137,10 +142,17 @@ export function calculateLessonMetrics(results: ExerciseResult[]): {
   return { accuracy, score, firstTryCorrect, itemsAnswered };
 }
 
-export function lessonPassed(results: ExerciseResult[], minAccuracy = 0.7, minItems = 3): boolean {
-  const { accuracy, itemsAnswered } = calculateLessonMetrics(results);
-  if (itemsAnswered < minItems) return false;
-  return accuracy >= minAccuracy;
+export function lessonPassed(
+  results: ExerciseResult[],
+  minAccuracy = DEFAULT_MASTERY_PASS_CONFIG.minAccuracy,
+  minItems = DEFAULT_MASTERY_PASS_CONFIG.minItems
+): boolean {
+  const { passed } = evaluateMasteryPass(results, {
+    ...DEFAULT_MASTERY_PASS_CONFIG,
+    minAccuracy,
+    minItems,
+  });
+  return passed;
 }
 
 export function allAnswersWrong(results: ExerciseResult[]): boolean {
