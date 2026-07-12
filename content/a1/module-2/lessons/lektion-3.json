@@ -31,7 +31,7 @@
       "title": "Baue die Bestellung",
       "data": [
         { "id": "sb1", "words": ["Искам", "една", "салата", "и", "вода."], "correctOrder": ["Искам", "една", "салата", "и", "вода."], "de": "Ich möchte einen Salat und Wasser." },
-        { "id": "sb2", "words": ["дайте", "Моля", "менюто", "ми."], "correctOrder": ["Моля", "дайте", "ми", "менюто."], "de": "Bitte geben Sie mir die Speisekarte." }
+        { "id": "sb2", "words": ["дайте", "Моля", "менюто.", "ми"], "correctOrder": ["Моля", "дайте", "ми", "менюто."], "de": "Bitte geben Sie mir die Speisekarte." }
       ]
     },
     {
