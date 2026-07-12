@@ -1,9 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
 import { registerSchema } from "@/lib/validations";
 import { sendWelcomeEmail } from "@/lib/email";
 
-export async function POST(request: NextRequest) {
+export const dynamic = "force-dynamic";
+
+export async function POST(request: Request) {
   try {
     const body = await request.json();
 
@@ -16,37 +18,24 @@ export async function POST(request: NextRequest) {
     }
 
     const { name, email, password } = result.data;
+    const supabase = createClient();
 
-    // Check if user already exists
-    const { data: existingUser } = await supabase
-      .from("users")
-      .select("id")
-      .eq("email", email.toLowerCase())
-      .single();
-
-    if (existingUser) {
-      return NextResponse.json(
-        { error: "Ein Benutzer mit dieser E-Mail-Adresse existiert bereits" },
-        { status: 409 }
-      );
-    }
-
-    // Create user with Supabase Auth
-    const { data: authData, error: authError } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email: email.toLowerCase(),
       password,
       options: {
-        data: {
-          name: name || null,
-        },
+        data: { name: name || null },
       },
     });
 
-    if (authError) {
-      console.error("Auth error:", authError);
+    if (error) {
+      // Supabase returns a user-friendly message; map duplicate/sign-up errors.
+      const isDuplicate =
+        error.message.toLowerCase().includes("already registered") ||
+        error.message.toLowerCase().includes("already exists");
       return NextResponse.json(
-        { error: authError.message },
-        { status: 400 }
+        { error: isDuplicate ? "Ein Benutzer mit dieser E-Mail-Adresse existiert bereits" : error.message },
+        { status: isDuplicate ? 409 : 400 }
       );
     }
 
@@ -56,11 +45,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         message: "Registrierung erfolgreich",
-        user: {
-          id: authData.user?.id,
-          email: email.toLowerCase(),
-          name: name || null,
-        },
+        user: data.user
+          ? {
+              id: data.user.id,
+              email: email.toLowerCase(),
+              name: name || null,
+            }
+          : null,
       },
       { status: 201 }
     );
