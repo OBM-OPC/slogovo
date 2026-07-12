@@ -11,61 +11,61 @@
       "id": "a2m6l1-1",
       "de": "der Ehemann",
       "bg": "съпругът",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m6l1-2",
       "de": "die Ehefrau",
       "bg": "съпругата",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m6l1-3",
       "de": "der Schwager",
       "bg": "зетят",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m6l1-4",
       "de": "die Schwägerin",
       "bg": "снахата",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m6l1-5",
       "de": "der Enkel",
       "bg": "внукът",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m6l1-6",
       "de": "die Enkelin",
       "bg": "внучката",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m6l1-7",
       "de": "der Schwiegersohn",
       "bg": "зятьовецът",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m6l1-8",
       "de": "die Schwiegermutter",
       "bg": "свекървата",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m6l1-9",
       "de": "verheiratet",
       "bg": "омъжена/женен",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m6l1-10",
       "de": "geschieden",
       "bg": "разведен",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     }
   ],
   "grammar": {

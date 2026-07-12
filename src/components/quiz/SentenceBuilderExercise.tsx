@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 
 interface SentenceBuilderExerciseProps {
   sentences: SentenceBuilder[];
-  onComplete: () => void;
+  onComplete: (correct: boolean) => void;
 }
 
 export function SentenceBuilderExercise({ sentences, onComplete }: SentenceBuilderExerciseProps) {
@@ -16,6 +16,8 @@ export function SentenceBuilderExercise({ sentences, onComplete }: SentenceBuild
   const [current, setCurrent] = useState(0);
   const [selected, setSelected] = useState<string[]>([]);
   const [showResult, setShowResult] = useState(false);
+
+  const [anyWrong, setAnyWrong] = useState(false);
 
   const sentence = sentences[current];
   const available = sentence.words.filter((w) => !selected.includes(w));
@@ -35,6 +37,7 @@ export function SentenceBuilderExercise({ sentences, onComplete }: SentenceBuild
       selected.length === sentence.correctOrder.length &&
       selected.every((w, i) => w === sentence.correctOrder[i]);
     setShowResult(true);
+    if (!isCorrect) setAnyWrong(true);
     addExerciseResult(isCorrect);
   };
 
@@ -44,7 +47,7 @@ export function SentenceBuilderExercise({ sentences, onComplete }: SentenceBuild
       setSelected([]);
       setShowResult(false);
     } else {
-      onComplete();
+      onComplete(!anyWrong);
     }
   };
 

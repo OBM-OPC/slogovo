@@ -11,61 +11,61 @@
       "id": "a2m5l3-1",
       "de": "das Büro",
       "bg": "офисът",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m5l3-2",
       "de": "der Computer",
       "bg": "компютърът",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m5l3-3",
       "de": "das Meeting",
       "bg": "срещата",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m5l3-4",
       "de": "die E-Mail",
       "bg": "имейлът",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m5l3-5",
       "de": "der Kollege",
       "bg": "колегата",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m5l3-6",
       "de": "der Chef",
       "bg": "шефът",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m5l3-7",
       "de": "die Deadline",
       "bg": "крайният срок",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m5l3-8",
       "de": "der Urlaub",
       "bg": "отпуската",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m5l3-9",
       "de": "krank",
       "bg": "болен",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m5l3-10",
       "de": "die Pause",
       "bg": "почивката",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     }
   ],
   "grammar": {

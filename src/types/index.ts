@@ -1,14 +1,16 @@
 export type Level = "A1" | "A2" | "B1" | "B2" | "C1";
 export type DifficultyRating = "repeat" | "hard" | "good" | "easy";
 
-export interface VocabularyItem {
-  id: string;
-  de: string;
-  bg: string;
-  bgLatin?: string;
-  audio?: string;
-  category?: string;
-}
+export type {
+  VocabularyItem,
+  PartOfSpeech,
+  GrammaticalGender,
+  VerbAspect,
+} from "./vocabulary";
+import type { VocabularyItem } from "./vocabulary";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const _vocabularyTypeRef: VocabularyItem | undefined = undefined;
+void _vocabularyTypeRef;
 
 export interface GrammarExample {
   bg: string;
@@ -135,8 +137,10 @@ export interface UserProgress {
   userId: string;
   streak: Streak;
   completedLessons: string[];
+  masteredLessons: string[];
   completedModules: string[];
   vocabularyProgress: Record<string, VocabularyProgress>;
+  lessonScores: Record<string, number>;
   exerciseStats: {
     total: number;
     correct: number;
