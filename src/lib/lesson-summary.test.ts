@@ -28,10 +28,19 @@ describe("buildLessonPerformanceSummary", () => {
         exerciseId: "ex1",
         exerciseType: "quiz",
         itemId: "q3",
-        userAnswer: "wrong",
+        userAnswer: "right",
         acceptedAnswers: ["right"],
         durationMs: 1000,
         vocabularyId: "v3",
+      }),
+      buildExerciseResult({
+        exerciseId: "ex1",
+        exerciseType: "quiz",
+        itemId: "q4",
+        userAnswer: "wrong",
+        acceptedAnswers: ["right"],
+        durationMs: 1000,
+        vocabularyId: "v4",
       }),
     ];
     const attempt = createLessonAttempt({
@@ -46,11 +55,12 @@ describe("buildLessonPerformanceSummary", () => {
     });
     const summary = buildLessonPerformanceSummary(attempt);
     expect(summary.passed).toBe(true);
-    expect(summary.accuracy).toBeCloseTo(0.667, 2);
+    expect(summary.accuracy).toBeCloseTo(0.75, 2);
     expect(summary.activeMinutes).toBe(3);
-    expect(summary.weakVocabularyIds).toContain("v3");
+    expect(summary.weakVocabularyIds).toContain("v4");
     expect(summary.strongVocabularyIds).toContain("v1");
     expect(summary.strongVocabularyIds).toContain("v2");
+    expect(summary.strongVocabularyIds).toContain("v3");
   });
 
   it("summarizes a failing all-wrong attempt", () => {
