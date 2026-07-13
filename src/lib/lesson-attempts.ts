@@ -1,4 +1,4 @@
-import { ExerciseResult, LessonAttempt } from "@/types/learning";
+import { ExerciseResult, LessonAttempt, RequiredExerciseGroup } from "@/types/learning";
 import { calculateLessonMetrics, evaluateLessonOutcome } from "./evaluation";
 
 export interface CreateLessonAttemptInput {
@@ -14,6 +14,7 @@ export interface CreateLessonAttemptInput {
   completed: boolean;
   requiredScore: number;
   requiresProductive?: boolean;
+  requiredExerciseGroups?: RequiredExerciseGroup[];
   masteryScore?: number;
 }
 
@@ -23,6 +24,7 @@ export function createLessonAttempt(input: CreateLessonAttemptInput): LessonAtte
     completed: input.completed,
     requiredScore: input.requiredScore,
     requiresProductive: input.requiresProductive,
+    requiredExerciseGroups: input.requiredExerciseGroups,
     masteryScore: input.masteryScore,
   });
   const totalDurationMs = Math.max(0, input.totalDurationMs);

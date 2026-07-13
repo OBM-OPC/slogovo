@@ -79,6 +79,71 @@ describe("lesson outcome", () => {
     }).passed).toBe(false);
   });
 
+  it("fails a configured exercise group even when the overall score passes", () => {
+    const core = makeExerciseResult(["correct", "correct", "correct"], {
+      exerciseId: "core-exercise",
+    });
+    const listening = makeExerciseResult(["wrong"], {
+      exerciseId: "listening-exercise",
+      exerciseType: "listen",
+    });
+    const outcome = evaluateLessonOutcome([core, listening], {
+      completed: true,
+      requiredScore: 70,
+      requiredExerciseGroups: [{
+        id: "listening",
+        exerciseIds: ["listening-exercise"],
+      }],
+    });
+
+    expect(outcome.score).toBe(75);
+    expect(outcome.passed).toBe(false);
+    expect(outcome.missingRequiredGroups).toEqual(["listening"]);
+  });
+
+  it("allows a deferred retry to satisfy the original exercise group", () => {
+    const core = makeExerciseResult(["correct", "correct", "correct"], {
+      exerciseId: "core-exercise",
+    });
+    const listening = makeExerciseResult(["wrong"], {
+      exerciseId: "listening-exercise",
+      exerciseType: "listen",
+    });
+    const retry = makeExerciseResult(["correct"], {
+      exerciseId: "listening-exercise",
+      exerciseType: "quiz",
+      attemptNumber: 2,
+    });
+    const outcome = evaluateLessonOutcome([core, listening, retry], {
+      completed: true,
+      requiredScore: 70,
+      requiredExerciseGroups: [{
+        id: "listening",
+        exerciseIds: ["listening-exercise"],
+      }],
+    });
+
+    expect(outcome.passed).toBe(true);
+    expect(outcome.missingRequiredGroups).toEqual([]);
+  });
+
+  it("enforces the configured minimum across a group", () => {
+    const first = makeExerciseResult(["correct"], { exerciseId: "first" });
+    const second = makeExerciseResult(["wrong"], { exerciseId: "second" });
+    const outcome = evaluateLessonOutcome([first, second], {
+      completed: true,
+      requiredScore: 50,
+      requiredExerciseGroups: [{
+        id: "core",
+        exerciseIds: ["first", "second"],
+        minimumPassed: 2,
+      }],
+    });
+
+    expect(outcome.passed).toBe(false);
+    expect(outcome.missingRequiredGroups).toEqual(["core"]);
+  });
+
   it("calculates partial results from first attempts rather than completed blocks", () => {
     const metrics = calculateLessonMetrics([makeExerciseResult(["correct", "wrong", "correct"])]);
     expect(metrics.firstTryCorrect).toBe(2);

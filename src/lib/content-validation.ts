@@ -69,7 +69,62 @@ function validateLesson(lesson: Lesson, moduleMeta: ModuleMeta, issues: ContentV
     exerciseIds.add(exercise.id);
   });
 
+  validateRequiredExerciseGroups(lesson, exerciseIds, prefix, issues);
+
   // Cross-check vocabulary ids referenced in exercises? Not yet, content does not use ids there.
+}
+
+function validateRequiredExerciseGroups(
+  lesson: Lesson,
+  exerciseIds: Set<string>,
+  lessonPath: string,
+  issues: ContentValidationIssue[]
+): void {
+  const groupIds = new Set<string>();
+  (lesson.requiredExerciseGroups ?? []).forEach((group, index) => {
+    const path = `${lessonPath}/requiredExerciseGroups[${index}]`;
+    const groupId = typeof group.id === "string" ? group.id.trim() : "";
+    if (!isNonEmptyString(group.id)) {
+      issues.push({ path, message: "required exercise group id is missing", severity: "error" });
+    } else if (groupIds.has(groupId)) {
+      issues.push({ path, message: `duplicate required exercise group id '${groupId}'`, severity: "error" });
+    } else {
+      groupIds.add(groupId);
+    }
+
+    if (!Array.isArray(group.exerciseIds) || group.exerciseIds.length === 0) {
+      issues.push({ path, message: "required exercise group must reference at least one exercise", severity: "error" });
+      return;
+    }
+
+    const uniqueExerciseIds = new Set(group.exerciseIds);
+    if (uniqueExerciseIds.size !== group.exerciseIds.length) {
+      issues.push({ path, message: "required exercise group contains duplicate exercise ids", severity: "error" });
+    }
+    group.exerciseIds.forEach((exerciseId) => {
+      if (!exerciseIds.has(exerciseId)) {
+        issues.push({ path, message: `required exercise group references unknown exercise '${exerciseId}'`, severity: "error" });
+        return;
+      }
+      const exercise = lesson.exercises.find((candidate) => candidate.id === exerciseId);
+      if (exercise && !exercise.data.some((item) => item.required !== false)) {
+        issues.push({
+          path,
+          message: `required exercise group references exercise '${exerciseId}' without required items`,
+          severity: "error",
+        });
+      }
+    });
+
+    const minimumPassed = group.minimumPassed ?? 1;
+    if (!Number.isInteger(minimumPassed) || minimumPassed < 1 || minimumPassed > uniqueExerciseIds.size) {
+      issues.push({
+        path,
+        message: `required exercise group minimumPassed must be an integer between 1 and ${uniqueExerciseIds.size}`,
+        severity: "error",
+      });
+    }
+  });
 }
 
 function validateVocabularyItem(item: VocabularyItem, path: string, issues: ContentValidationIssue[]): void {

@@ -14,7 +14,7 @@ void _vocabularyTypeRef;
 
 export * from "./learning";
 export * from "./speaking";
-import type { ExerciseType, ListenExerciseItem } from "./learning";
+import type { ExerciseType, ListenExerciseItem, RequiredExerciseGroup } from "./learning";
 
 export interface GrammarExample {
   bg: string;
@@ -98,6 +98,7 @@ export interface Lesson {
   grammar: GrammarSection;
   exercises: Exercise[];
   requiresProductive?: boolean;
+  requiredExerciseGroups?: RequiredExerciseGroup[];
 }
 
 export interface ModuleMeta {

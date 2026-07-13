@@ -36,4 +36,23 @@ describe("createLessonAttempt", () => {
   it("does not pass before screens are complete even with correct answers", () => {
     expect(attempt([makeExerciseResult(["correct"])], false).passed).toBe(false);
   });
+
+  it("passes required exercise groups into the authoritative outcome", () => {
+    const result = createLessonAttempt({
+      id: "00000000-0000-4000-8000-000000000002",
+      userId: "u1",
+      lessonId: "l1",
+      moduleId: "m1",
+      level: "A1",
+      results: [makeExerciseResult(["correct"], { exerciseId: "core" })],
+      totalDurationMs: 5_000,
+      startedAt: "2026-07-13T10:00:00.000Z",
+      completed: true,
+      requiredScore: 70,
+      requiredExerciseGroups: [{ id: "listening", exerciseIds: ["listen"] }],
+    });
+
+    expect(result.score).toBe(100);
+    expect(result.passed).toBe(false);
+  });
 });

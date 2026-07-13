@@ -15,6 +15,17 @@ export type ExerciseType =
   | "listen"
   | "typing";
 
+/**
+ * A lesson-level pass gate. At least `minimumPassed` exercises from the listed
+ * stable exercise IDs must have every required item answered correctly at
+ * least once. The default minimum is one.
+ */
+export interface RequiredExerciseGroup {
+  id: string;
+  exerciseIds: string[];
+  minimumPassed?: number;
+}
+
 export interface ExerciseItemResult {
   /** Stable id for this answer, used for idempotent synchronization. */
   id: string;
