@@ -11,6 +11,7 @@ import { evaluateAnswerDetailed } from "@/lib/answer-evaluation";
 import { getAllModules, getAllVocabulary, getLessonsByModule } from "@/lib/content";
 import { buildDailyPlan, type DailyPlan, type DailySessionItem, type GrammarWeakness } from "@/lib/planner";
 import { useProgressStore } from "@/stores/useProgressStore";
+import { durationBucket, trackLearningEvent } from "@/lib/telemetry";
 
 const SOURCE_LABELS: Record<DailySessionItem["source"], string> = {
   due_review: "Fällige Wiederholung",
@@ -78,9 +79,14 @@ export function DailySessionClient() {
     }
     const nextIndex = index + 1;
     if (nextIndex >= activePlan.sessionItems.length) {
-      const elapsedMinutes = Math.max(1, Math.round((Date.now() - (startedAt ?? Date.now())) / 60_000));
+      const elapsedMs = Date.now() - (startedAt ?? Date.now());
+      const elapsedMinutes = Math.max(1, Math.round(elapsedMs / 60_000));
       const vocabularyCount = activePlan.sessionItems.filter((item) => item.kind === "vocabulary").length;
       await addStudyTime(elapsedMinutes, vocabularyCount);
+      trackLearningEvent("daily_session_completed", {
+        count: activePlan.sessionItems.length,
+        durationBucket: durationBucket(elapsedMs),
+      });
       setFinished(true);
       return;
     }

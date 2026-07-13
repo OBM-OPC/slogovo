@@ -1,5 +1,6 @@
 import { getPendingEvents, markFailed, markSynced, type SyncEvent } from "./sync-queue";
 import type { SyncBatchResult } from "./sync-server";
+import { trackMonitoringEvent } from "./telemetry";
 
 export interface SyncResult {
   processed: number;
@@ -51,11 +52,23 @@ export async function processSyncQueue(
         result.errors.push(`${event.id}: ${message}`);
       }
     }
+    if (result.failed > 0) {
+      trackMonitoringEvent("sync_failure", {
+        errorCode: "SYNC_EVENT_REJECTED",
+        count: result.failed,
+        online: typeof navigator !== "undefined" ? navigator.onLine : undefined,
+      });
+    }
   } catch (error) {
     const message = error instanceof Error ? error.message : "Network sync failed";
     for (const event of events) markFailed(event.id, message);
     result.failed = events.length;
     result.errors.push(message);
+    trackMonitoringEvent("sync_failure", {
+      errorCode: "SYNC_TRANSPORT_FAILED",
+      count: events.length,
+      online: typeof navigator !== "undefined" ? navigator.onLine : undefined,
+    });
   }
 
   return result;

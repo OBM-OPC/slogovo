@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createDefaultProgress } from "@/lib/progress-db";
 import { rowToProgress } from "@/lib/progress-serialization";
+import { logEvent } from "@/lib/structured-log";
 
 export const dynamic = "force-dynamic";
 
@@ -21,6 +22,7 @@ export async function GET() {
       .single();
 
     if (error && error.code !== "PGRST116") {
+      logEvent("database_error", { errorCode: "DATABASE_READ_FAILED", operation: "progress_load" });
       return NextResponse.json(
         { error: "Fehler beim Laden", details: error.message },
         { status: 500 }
@@ -33,6 +35,7 @@ export async function GET() {
 
     return NextResponse.json({ progress }, { status: 200 });
   } catch (error) {
+    logEvent("database_error", { errorCode: "DATABASE_READ_FAILED", operation: "progress_load" });
     const message = error instanceof Error ? error.message : String(error);
     return NextResponse.json(
       { error: "Ein Fehler ist aufgetreten", details: message },

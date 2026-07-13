@@ -164,6 +164,24 @@ export interface Database {
         Update: Partial<Database["public"]["Tables"]["offline_events"]["Row"]>;
         Relationships: [];
       };
+      telemetry_events: {
+        Row: {
+          id: string;
+          occurred_at: string;
+          category: string;
+          event_name: string;
+          properties: Json;
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["telemetry_events"]["Row"]> & {
+          id: string;
+          occurred_at: string;
+          category: string;
+          event_name: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["telemetry_events"]["Row"]>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;

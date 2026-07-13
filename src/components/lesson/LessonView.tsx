@@ -16,6 +16,7 @@ import { getModuleById } from "@/lib/content";
 import { createInitialExerciseRuns, createRetryRuns, ExerciseRun } from "@/lib/lesson-flow";
 import { createLessonAttempt } from "@/lib/lesson-attempts";
 import { useProgressStore } from "@/stores/useProgressStore";
+import { durationBucket, trackLearningEvent } from "@/lib/telemetry";
 
 interface LessonViewProps {
   lesson: Lesson;
@@ -35,6 +36,8 @@ export function LessonView({ lesson, moduleId, nextLessonId, context }: LessonVi
   const initialRuns = useRef(createInitialExerciseRuns(lesson.exercises));
   const activeTime = useRef(createActiveTimeTracker({ idleThresholdMs: 60_000 }));
   const attemptStartedAt = useRef(new Date().toISOString());
+  const lessonStarted = useRef(false);
+  const lessonFinished = useRef(false);
   const [section, setSection] = useState<LessonSection>("intro");
   const [runs, setRuns] = useState<ExerciseRun[]>(initialRuns.current);
   const [runIndex, setRunIndex] = useState(0);
@@ -51,6 +54,7 @@ export function LessonView({ lesson, moduleId, nextLessonId, context }: LessonVi
 
   useEffect(() => {
     const tracker = activeTime.current;
+    const startedAt = attemptStartedAt.current;
     const onVisibilityChange = () => {
       if (document.hidden) tracker.pause();
     };
@@ -58,8 +62,26 @@ export function LessonView({ lesson, moduleId, nextLessonId, context }: LessonVi
     return () => {
       document.removeEventListener("visibilitychange", onVisibilityChange);
       tracker.pause();
+      if (lessonStarted.current && !lessonFinished.current) {
+        trackLearningEvent("lesson_abandoned", {
+          lessonId: lesson.lessonId,
+          moduleId: lesson.moduleId,
+          outcome: "abandoned",
+          reason: "navigation",
+          durationBucket: durationBucket(Date.now() - Date.parse(startedAt)),
+        });
+      }
     };
-  }, []);
+  }, [lesson.lessonId, lesson.moduleId]);
+
+  const startLesson = () => {
+    interact();
+    if (!lessonStarted.current) {
+      lessonStarted.current = true;
+      trackLearningEvent("lesson_started", { lessonId: lesson.lessonId, moduleId: lesson.moduleId });
+    }
+    setSection("vocab");
+  };
 
   const finishAttempt = async (finalResults: ExerciseResult[]) => {
     interact();
@@ -78,6 +100,14 @@ export function LessonView({ lesson, moduleId, nextLessonId, context }: LessonVi
       requiresProductive,
       requiredExerciseGroups: lesson.requiredExerciseGroups,
     });
+    lessonFinished.current = true;
+    trackLearningEvent(finalAttempt.passed ? "lesson_passed" : "lesson_failed", {
+      lessonId: lesson.lessonId,
+      moduleId: lesson.moduleId,
+      outcome: finalAttempt.passed ? "passed" : "failed",
+      durationBucket: durationBucket(finalAttempt.totalDurationMs),
+      count: finalAttempt.itemsAnswered,
+    });
     setAttempt(finalAttempt);
     setSection("summary");
     await recordLessonAttempt(finalAttempt, lesson.vocabulary.length);
@@ -85,6 +115,25 @@ export function LessonView({ lesson, moduleId, nextLessonId, context }: LessonVi
 
   const handleExerciseComplete = async (result: ExerciseResult) => {
     interact();
+    for (const itemResult of result.itemResults) {
+      const properties = {
+        lessonId: lesson.lessonId,
+        moduleId: lesson.moduleId,
+        exerciseId: result.exerciseId,
+        itemId: itemResult.itemId,
+        vocabularyId: itemResult.vocabularyId,
+        outcome: itemResult.isPassing ? "correct" as const : "incorrect" as const,
+        durationBucket: durationBucket(itemResult.durationMs),
+      };
+      trackLearningEvent("exercise_answered", properties);
+      if (!itemResult.isPassing) trackLearningEvent("item_failed", properties);
+      if (itemResult.isPassing && itemResult.attemptNumber > 1) {
+        trackLearningEvent("item_later_corrected", properties);
+      }
+      if (itemResult.hintsUsed > 0) {
+        trackLearningEvent("hint_used", { ...properties, count: itemResult.hintsUsed });
+      }
+    }
     const finalResults = [...results, result];
     const retryRuns = currentRun ? createRetryRuns(currentRun.exercise, result) : [];
     const nextRuns = retryRuns.length > 0 ? [...runs, ...retryRuns] : runs;
@@ -127,7 +176,7 @@ export function LessonView({ lesson, moduleId, nextLessonId, context }: LessonVi
         <section className="card">
           <h2 className="mb-2 text-lg font-semibold">Einführung</h2>
           <p className="mb-6 text-muted">{lesson.introduction}</p>
-          <Button onClick={() => { interact(); setSection("vocab"); }} fullWidth>Los geht&apos;s</Button>
+          <Button onClick={startLesson} fullWidth>Los geht&apos;s</Button>
         </section>
       )}
 

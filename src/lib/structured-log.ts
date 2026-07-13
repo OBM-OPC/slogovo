@@ -22,3 +22,12 @@ export function logError(event: string, error: unknown, context: LogContext = {}
     ...errorFields(error),
   }));
 }
+
+export function logEvent(event: string, context: LogContext = {}): void {
+  console.warn(JSON.stringify({
+    level: "warn",
+    event,
+    timestamp: new Date().toISOString(),
+    ...context,
+  }));
+}

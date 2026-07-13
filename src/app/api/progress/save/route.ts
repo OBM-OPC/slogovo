@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { mergeProgress } from "@/lib/progress-merge";
 import { progressToRow, rowToProgress } from "@/lib/progress-serialization";
 import { parseUserProgress } from "@/lib/progress-schema";
+import { logEvent } from "@/lib/structured-log";
 
 export const dynamic = "force-dynamic";
 
@@ -29,6 +30,7 @@ export async function POST(request: Request) {
       .eq("user_id", user.id)
       .maybeSingle();
     if (loadError) {
+      logEvent("database_error", { errorCode: "DATABASE_READ_FAILED", operation: "progress_merge" });
       return NextResponse.json(
         { error: "Fehler beim Zusammenführen", details: loadError.message },
         { status: 500 }
@@ -48,6 +50,7 @@ export async function POST(request: Request) {
       );
 
     if (error) {
+      logEvent("database_error", { errorCode: "DATABASE_WRITE_FAILED", operation: "progress_save" });
       return NextResponse.json(
         { error: "Fehler beim Speichern", details: error.message },
         { status: 500 }
@@ -62,6 +65,7 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
+    logEvent("database_error", { errorCode: "DATABASE_WRITE_FAILED", operation: "progress_save" });
     const message = error instanceof Error ? error.message : String(error);
     return NextResponse.json(
       { error: "Ein Fehler ist aufgetreten", details: message },

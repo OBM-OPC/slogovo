@@ -17,6 +17,7 @@ import {
   remainingReorderWords,
 } from "@/lib/listen-exercise";
 import { cn } from "@/lib/utils";
+import { trackLearningEvent, trackMonitoringEvent } from "@/lib/telemetry";
 
 interface ListenExerciseProps {
   exerciseId: string;
@@ -37,6 +38,7 @@ export function ListenExercise({
   const exerciseStartedAt = useRef(new Date().toISOString());
   const itemStartedAt = useRef(new Date().toISOString());
   const itemResults = useRef<ExerciseItemResult[]>([]);
+  const audioPlayCounts = useRef<Record<string, number>>({});
   const [current, setCurrent] = useState(0);
   const [input, setInput] = useState("");
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
@@ -50,6 +52,11 @@ export function ListenExercise({
 
   const play = async (speed: AudioSpeed) => {
     onInteraction?.();
+    const previousPlays = audioPlayCounts.current[item.id] ?? 0;
+    audioPlayCounts.current[item.id] = previousPlays + 1;
+    if (previousPlays > 0) {
+      trackLearningEvent("audio_replayed", { exerciseId, itemId: item.id, speed, count: previousPlays });
+    }
     setAudioState("loading");
     setActiveSpeed(speed);
     const playback = await playAudioDetailed(
@@ -67,6 +74,16 @@ export function ListenExercise({
     );
     setAudioSource(playback.source);
     setAudioState(playback.ok ? "idle" : "error");
+    if (!playback.ok) {
+      trackMonitoringEvent("audio_failure", {
+        exerciseId,
+        itemId: item.id,
+        source: playback.source,
+        speed,
+        errorCode: "AUDIO_PLAYBACK_FAILED",
+        online: typeof navigator !== "undefined" ? navigator.onLine : undefined,
+      });
+    }
     setActiveSpeed(null);
   };
 
@@ -225,7 +242,11 @@ export function ListenExercise({
             <button
               type="button"
               className="font-medium text-primary underline underline-offset-2"
-              onClick={() => { onInteraction?.(); setRevealCount((count) => count + 1); }}
+              onClick={() => {
+                onInteraction?.();
+                setRevealCount((count) => count + 1);
+                trackLearningEvent("hint_used", { exerciseId, itemId: item.id, count: revealCount + 1 });
+              }}
             >
               Hinweis anzeigen ({maxReveals - revealCount} übrig)
             </button>

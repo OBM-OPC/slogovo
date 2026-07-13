@@ -23,6 +23,18 @@ async function main() {
     // eslint-disable-next-line no-console
     console.log(text);
   }
+  if (errors > 0) {
+    // Machine-readable monitoring signal for CI/log aggregation. Details stay
+    // in the validator output; no learner data is involved.
+    // eslint-disable-next-line no-console
+    console.error(JSON.stringify({
+      level: "error",
+      event: "invalid_lesson_content",
+      errorCode: "INVALID_CONTENT",
+      errorCount: errors,
+      timestamp: new Date().toISOString(),
+    }));
+  }
   // eslint-disable-next-line no-console
   console.log(
     `\nValidated ${inventory.modules.length} module file(s), ${inventory.lessons.length} lesson file(s), and ${registeredGrammarTopics.length} grammar topic(s): ${errors} error(s), ${warnings} warning(s).`,
@@ -33,6 +45,13 @@ async function main() {
 }
 
 void main().catch((error: unknown) => {
+  // eslint-disable-next-line no-console
+  console.error(JSON.stringify({
+    level: "error",
+    event: "content_loading_error",
+    errorCode: "CONTENT_LOAD_FAILED",
+    timestamp: new Date().toISOString(),
+  }));
   // eslint-disable-next-line no-console
   console.error(error instanceof Error ? error.message : String(error));
   process.exit(1);

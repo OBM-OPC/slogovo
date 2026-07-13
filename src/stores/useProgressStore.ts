@@ -21,6 +21,7 @@ import { enableAutoSync, processSyncQueue, scheduleSync } from "@/lib/sync";
 import { addEvent, addLessonAttemptEvent } from "@/lib/sync-queue";
 import { mergeProgress } from "@/lib/progress-merge";
 import { recordProductionAttempt, recordRecognitionAttempt } from "@/lib/mastery-tracking";
+import { trackLearningEvent } from "@/lib/telemetry";
 
 interface ProgressState {
   progress: UserProgress | null;
@@ -227,6 +228,7 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
       });
       scheduleSync(state.userId);
     }
+    trackLearningEvent("review_completed", { vocabularyId: wordId, mode: "recognition" });
   },
 
   reviewVocabularyWithDifficulty: async (wordId, rating, mode = "recognition") => {
@@ -271,6 +273,7 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
       });
       scheduleSync(state.userId);
     }
+    trackLearningEvent("review_completed", { vocabularyId: wordId, mode });
   },
 
   addStudyTime: async (minutes: number, vocabulary = 0) => {

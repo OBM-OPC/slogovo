@@ -4,6 +4,12 @@ import type { Lesson } from "@/types";
 import { LessonView } from "./LessonView";
 
 const recordLessonAttempt = vi.fn();
+const telemetry = vi.hoisted(() => ({ track: vi.fn() }));
+
+vi.mock("@/lib/telemetry", () => ({
+  durationBucket: vi.fn(() => "under_30s"),
+  trackLearningEvent: telemetry.track,
+}));
 
 vi.mock("@/hooks/useProgressSafe", () => ({
   useProgressSafe: () => ({
@@ -43,7 +49,10 @@ const lesson: Lesson = {
 };
 
 describe("LessonView retry flow", () => {
-  beforeEach(() => recordLessonAttempt.mockReset());
+  beforeEach(() => {
+    recordLessonAttempt.mockReset();
+    telemetry.track.mockReset();
+  });
 
   it("moves failed required items into a different retry format", () => {
     render(
@@ -62,6 +71,18 @@ describe("LessonView retry flow", () => {
     fireEvent.click(screen.getByRole("button", { name: "Fertig" }));
 
     expect(screen.getByText("Fehler wiederholen")).toBeTruthy();
+    expect(telemetry.track).toHaveBeenCalledWith("lesson_started", {
+      lessonId: lesson.lessonId,
+      moduleId: lesson.moduleId,
+    });
+    expect(telemetry.track).toHaveBeenCalledWith("exercise_answered", expect.objectContaining({
+      exerciseId: "quiz-retry",
+      itemId: "required-question",
+      outcome: "incorrect",
+    }));
+    expect(telemetry.track).toHaveBeenCalledWith("item_failed", expect.objectContaining({
+      itemId: "required-question",
+    }));
     fireEvent.click(screen.getByRole("button", { name: "Wiederholung starten" }));
     expect(screen.getByPlaceholderText("Antwort eingeben")).toBeTruthy();
     expect(screen.getByText("Welche Antwort?")).toBeTruthy();

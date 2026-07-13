@@ -3,7 +3,7 @@ import { ZodError } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { parseSyncBatch } from "@/lib/sync-schema";
 import { persistSyncEvents } from "@/lib/sync-server";
-import { logError } from "@/lib/structured-log";
+import { logEvent } from "@/lib/structured-log";
 
 export const dynamic = "force-dynamic";
 
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
-    logError("sync.request_failed", error);
+    logEvent("sync_failure", { errorCode: "SYNC_TRANSPORT_FAILED", reason: "server" });
     return NextResponse.json(
       { error: "Synchronisation fehlgeschlagen" },
       { status: 500 }

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { resetPasswordSchema } from "@/lib/validations";
+import { logEvent } from "@/lib/structured-log";
 
 export const dynamic = "force-dynamic";
 
@@ -10,6 +11,7 @@ export async function POST(request: Request) {
 
     const { token, password } = body;
     if (!token) {
+      logEvent("auth_failure", { errorCode: "AUTH_REJECTED", reason: "missing_reset_token" });
       return NextResponse.json(
         { error: "Token ist erforderlich" },
         { status: 400 }
@@ -21,6 +23,7 @@ export async function POST(request: Request) {
       confirmPassword: password,
     });
     if (!result.success) {
+      logEvent("auth_failure", { errorCode: "AUTH_REJECTED", reason: "validation" });
       return NextResponse.json(
         { error: result.error.issues[0].message },
         { status: 400 }
@@ -38,6 +41,7 @@ export async function POST(request: Request) {
     });
 
     if (error) {
+      logEvent("auth_failure", { errorCode: "AUTH_REJECTED", reason: "invalid_reset_token" });
       return NextResponse.json(
         { error: "Ungültiger oder abgelaufener Token" },
         { status: 400 }
@@ -47,6 +51,7 @@ export async function POST(request: Request) {
     const { error: updateError } = await supabase.auth.updateUser({ password });
 
     if (updateError) {
+      logEvent("auth_failure", { errorCode: "AUTH_REJECTED", reason: "password_update_rejected" });
       return NextResponse.json(
         { error: updateError.message },
         { status: 400 }
@@ -57,8 +62,8 @@ export async function POST(request: Request) {
       { message: "Passwort erfolgreich zurückgesetzt" },
       { status: 200 }
     );
-  } catch (error) {
-    console.error("Reset password error:", error);
+  } catch {
+    logEvent("auth_failure", { errorCode: "AUTH_SERVER_ERROR", reason: "server" });
     return NextResponse.json(
       { error: "Ein Fehler ist aufgetreten. Bitte versuche es später erneut." },
       { status: 500 }
