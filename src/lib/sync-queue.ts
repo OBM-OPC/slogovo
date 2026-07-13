@@ -1,11 +1,11 @@
 export type SyncEventType =
   | "lesson_attempt"
-  | "exercise_result"
   | "vocabulary_review"
   | "settings_changed";
 
 export interface BaseSyncEvent {
   id: string;
+  deviceId: string;
   type: SyncEventType;
   userId: string;
   timestamp: string;
@@ -21,24 +21,12 @@ export interface LessonAttemptEvent extends BaseSyncEvent {
   };
 }
 
-export interface ExerciseResultEvent extends BaseSyncEvent {
-  type: "exercise_result";
-  payload: {
-    attemptId: string;
-    exerciseId: string;
-    exerciseType: string;
-    itemId: string;
-    status: string;
-    durationMs: number;
-    vocabularyId?: string;
-  };
-}
-
 export interface VocabularyReviewEvent extends BaseSyncEvent {
   type: "vocabulary_review";
   payload: {
     wordId: string;
     rating: string;
+    mode?: "recognition" | "production";
     reviewedAt: string;
   };
 }
@@ -52,17 +40,44 @@ export interface SettingsChangedEvent extends BaseSyncEvent {
 
 export type SyncEvent =
   | LessonAttemptEvent
-  | ExerciseResultEvent
   | VocabularyReviewEvent
   | SettingsChangedEvent;
 
 const STORAGE_KEY = "slogovo-sync-queue-v1";
+const DEVICE_ID_KEY = "slogovo-device-id-v1";
+let volatileDeviceId: string | null = null;
+
+function randomToken(): string {
+  if (typeof globalThis.crypto?.randomUUID === "function") {
+    return globalThis.crypto.randomUUID();
+  }
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+}
+
+export function getDeviceId(): string {
+  if (typeof window === "undefined") return "server";
+
+  try {
+    const stored = localStorage.getItem(DEVICE_ID_KEY);
+    if (stored) return stored;
+    const created = `device-${randomToken()}`;
+    localStorage.setItem(DEVICE_ID_KEY, created);
+    return created;
+  } catch {
+    volatileDeviceId ??= `device-${randomToken()}`;
+    return volatileDeviceId;
+  }
+}
 
 export function loadQueue(): SyncEvent[] {
   if (typeof window === "undefined") return [];
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as SyncEvent[]) : [];
+    if (!raw) return [];
+    const parsed = JSON.parse(raw) as SyncEvent[];
+    if (!Array.isArray(parsed)) return [];
+    const deviceId = getDeviceId();
+    return parsed.map((event) => ({ ...event, deviceId: event.deviceId || deviceId }));
   } catch {
     return [];
   }
@@ -73,13 +88,20 @@ function saveQueue(queue: SyncEvent[]): void {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(queue));
 }
 
-export function generateEventId(): string {
-  return `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+export function generateEventId(deviceId = getDeviceId()): string {
+  return `${deviceId}:${randomToken()}`;
 }
 
+type QueueManagedFields = "id" | "deviceId" | "synced" | "errorCount" | "error";
+type NewSyncEvent = SyncEvent extends infer Event
+  ? Event extends SyncEvent
+    ? Omit<Event, QueueManagedFields> & { deviceId?: string }
+    : never
+  : never;
+
 export function addEvent(
-  event: Omit<SyncEvent, "id" | "synced" | "errorCount" | "error">,
-  eventId = generateEventId()
+  event: NewSyncEvent,
+  eventId = generateEventId(event.deviceId ?? getDeviceId())
 ): SyncEvent {
   const queue = loadQueue();
   const existing = queue.find((queued) => queued.id === eventId);
@@ -87,6 +109,7 @@ export function addEvent(
   const full: SyncEvent = {
     ...event,
     id: eventId,
+    deviceId: event.deviceId ?? getDeviceId(),
     synced: false,
     errorCount: 0,
   } as SyncEvent;
@@ -120,7 +143,7 @@ export function markFailed(eventId: string, error: string): void {
   const queue = loadQueue();
   const updated = queue.map((e) =>
     e.id === eventId
-      ? { ...e, error, errorCount: e.errorCount + 1, synced: e.errorCount >= 2 }
+      ? { ...e, error, errorCount: e.errorCount + 1 }
       : e
   );
   saveQueue(updated);

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { registerSchema } from "@/lib/validations";
 import { sendWelcomeEmail } from "@/lib/email";
+import { logEvent } from "@/lib/structured-log";
 
 export const dynamic = "force-dynamic";
 
@@ -11,6 +12,7 @@ export async function POST(request: Request) {
 
     const result = registerSchema.safeParse(body);
     if (!result.success) {
+      logEvent("auth_failure", { errorCode: "AUTH_REJECTED", reason: "validation" });
       return NextResponse.json(
         { error: result.error.issues[0].message },
         { status: 400 }
@@ -29,6 +31,7 @@ export async function POST(request: Request) {
     });
 
     if (error) {
+      logEvent("auth_failure", { errorCode: "AUTH_REJECTED", reason: "registration_rejected" });
       // Supabase returns a user-friendly message; map duplicate/sign-up errors.
       const isDuplicate =
         error.message.toLowerCase().includes("already registered") ||
@@ -55,8 +58,8 @@ export async function POST(request: Request) {
       },
       { status: 201 }
     );
-  } catch (error) {
-    console.error("Registration error:", error);
+  } catch {
+    logEvent("auth_failure", { errorCode: "AUTH_SERVER_ERROR", reason: "server" });
     return NextResponse.json(
       { error: "Ein Fehler ist aufgetreten. Bitte versuche es später erneut." },
       { status: 500 }

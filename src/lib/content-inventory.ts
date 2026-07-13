@@ -37,6 +37,27 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
+function isModuleMetaCandidate(value: unknown): value is ModuleMeta {
+  if (!isRecord(value)) return false;
+  return typeof value.moduleId === "string"
+    && typeof value.level === "string"
+    && typeof value.title === "string"
+    && typeof value.description === "string"
+    && typeof value.order === "number"
+    && Array.isArray(value.lessons);
+}
+
+function isLessonCandidate(value: unknown): value is Lesson {
+  if (!isRecord(value)) return false;
+  return typeof value.lessonId === "string"
+    && typeof value.moduleId === "string"
+    && typeof value.level === "string"
+    && typeof value.title === "string"
+    && Array.isArray(value.vocabulary)
+    && isRecord(value.grammar)
+    && Array.isArray(value.exercises);
+}
+
 export async function loadContentInventory(contentRoot = path.resolve(process.cwd(), "content")): Promise<ContentInventory> {
   const modules: ContentFile<ModuleMeta>[] = [];
   const lessons: ContentFile<Lesson>[] = [];
@@ -68,9 +89,17 @@ export async function loadContentInventory(contentRoot = path.resolve(process.cw
     }
 
     if (isModuleMeta) {
-      modules.push({ path: contentPath, data: parsed as unknown as ModuleMeta });
+      if (isModuleMetaCandidate(parsed)) {
+        modules.push({ path: contentPath, data: parsed });
+      } else {
+        issues.push({ path: contentPath, message: "module metadata has an invalid top-level shape", severity: "error" });
+      }
     } else {
-      lessons.push({ path: contentPath, data: parsed as unknown as Lesson });
+      if (isLessonCandidate(parsed)) {
+        lessons.push({ path: contentPath, data: parsed });
+      } else {
+        issues.push({ path: contentPath, message: "lesson has an invalid top-level shape", severity: "error" });
+      }
     }
   }
 

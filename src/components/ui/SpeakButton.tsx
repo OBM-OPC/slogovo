@@ -74,8 +74,10 @@ export function SpeakButton({
   if (variant === "inline") {
     return (
       <button
+        type="button"
         onClick={handleClick}
         disabled={isLoading}
+        aria-busy={isLoading}
         title={getTTSLabel(status)}
         className={cn(
           "inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors",
@@ -95,6 +97,7 @@ export function SpeakButton({
 
   return (
     <button
+      type="button"
       onClick={handleClick}
       disabled={isLoading}
       title={getTTSLabel(status)}
@@ -108,6 +111,7 @@ export function SpeakButton({
         className
       )}
       aria-label={label || "Vokabel anhören"}
+      aria-busy={isLoading}
     >
       {icon}
     </button>

@@ -87,7 +87,9 @@ export function QuizExercise({
               type="button"
               onClick={() => handleSelect(index)}
               disabled={showResult}
-              className={cn("w-full rounded-xl border-2 p-4 text-left font-medium transition-colors", stateClass)}
+              aria-pressed={isSelected}
+              aria-label={`${option}${showResult && isCorrect ? ", richtig" : showResult && isSelected ? ", falsch" : ""}`}
+              className={cn("min-h-12 w-full rounded-xl border-2 p-4 text-left font-medium transition-colors", stateClass)}
             >
               {option}
             </button>

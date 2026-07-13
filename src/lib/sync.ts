@@ -1,7 +1,6 @@
-import { createClient as createBrowserClient } from "@/lib/supabase/client";
-import { SyncEvent, getPendingEvents, markSynced, markFailed } from "./sync-queue";
-import { attemptToDbRow } from "./lesson-attempts";
-import { flattenExerciseResults } from "./evaluation";
+import { getPendingEvents, markFailed, markSynced, type SyncEvent } from "./sync-queue";
+import type { SyncBatchResult } from "./sync-server";
+import { trackMonitoringEvent } from "./telemetry";
 
 export interface SyncResult {
   processed: number;
@@ -9,147 +8,103 @@ export interface SyncResult {
   errors: string[];
 }
 
-export type SyncSupabaseClient = {
-  auth: {
-    getUser: () => Promise<{ data: { user: { id: string } | null }; error: Error | null }>;
-  };
-  from: (table: string) => {
-    upsert: (data: Record<string, unknown>, options?: { onConflict?: string }) => Promise<{ error: Error | null }>;
-    insert: (data: Record<string, unknown>) => Promise<{ error: Error | null }>;
-  };
-};
+export type SyncTransport = (events: SyncEvent[]) => Promise<SyncBatchResult>;
+
+let autoSyncUserId: string | null = null;
+let onlineHandler: (() => void) | null = null;
+let reconnectCallback: (() => void | Promise<void>) | null = null;
+
+export async function sendSyncBatch(events: SyncEvent[]): Promise<SyncBatchResult> {
+  const response = await fetch("/api/sync", {
+    method: "POST",
+    credentials: "same-origin",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ events }),
+  });
+  if (!response.ok) {
+    const body = (await response.json().catch(() => ({}))) as { error?: string };
+    throw new Error(body.error || `Sync failed with HTTP ${response.status}`);
+  }
+  return response.json() as Promise<SyncBatchResult>;
+}
 
 export async function processSyncQueue(
   userId: string,
-  client?: SyncSupabaseClient
+  transport: SyncTransport = sendSyncBatch
 ): Promise<SyncResult> {
   const events = getPendingEvents(userId);
   const result: SyncResult = { processed: 0, failed: 0, errors: [] };
-
   if (events.length === 0) return result;
 
-  const supabase = client ?? (createBrowserClient() as unknown as SyncSupabaseClient);
-  const { data, error } = await supabase.auth.getUser();
+  try {
+    const response = await transport(events);
+    const processedIds = new Set(response.processed);
+    const failures = new Map(response.failed.map((failure) => [failure.id, failure.error]));
 
-  if (error || !data.user || data.user.id !== userId) {
-    result.errors.push("User not authenticated");
-    return result;
-  }
-
-  for (const event of events) {
-    try {
-      const ok = await sendEvent(supabase, event);
-      if (ok) {
+    for (const event of events) {
+      if (processedIds.has(event.id)) {
         markSynced(event.id);
         result.processed += 1;
       } else {
-        markFailed(event.id, "Server rejected event");
+        const message = failures.get(event.id) ?? "Server did not acknowledge event";
+        markFailed(event.id, message);
         result.failed += 1;
+        result.errors.push(`${event.id}: ${message}`);
       }
-    } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
-      markFailed(event.id, message);
-      result.failed += 1;
-      result.errors.push(`${event.id}: ${message}`);
     }
+    if (result.failed > 0) {
+      trackMonitoringEvent("sync_failure", {
+        errorCode: "SYNC_EVENT_REJECTED",
+        count: result.failed,
+        online: typeof navigator !== "undefined" ? navigator.onLine : undefined,
+      });
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Network sync failed";
+    for (const event of events) markFailed(event.id, message);
+    result.failed = events.length;
+    result.errors.push(message);
+    trackMonitoringEvent("sync_failure", {
+      errorCode: "SYNC_TRANSPORT_FAILED",
+      count: events.length,
+      online: typeof navigator !== "undefined" ? navigator.onLine : undefined,
+    });
   }
 
   return result;
 }
 
-async function sendEvent(supabase: SyncSupabaseClient, event: SyncEvent): Promise<boolean> {
-  switch (event.type) {
-    case "vocabulary_review": {
-      const { wordId, rating, reviewedAt } = event.payload;
-      const { error } = await supabase.from("vocabulary_review_events").upsert(
-        {
-          user_id: event.userId,
-          word_id: wordId,
-          rating,
-          reviewed_at: reviewedAt,
-          client_event_id: event.id,
-        },
-        { onConflict: "user_id, client_event_id" }
-      );
-      return !error;
-    }
-
-    case "lesson_attempt": {
-      const { attempt } = event.payload;
-      const { error } = await supabase.from("lesson_attempts").upsert(
-        { ...attemptToDbRow(attempt), client_event_id: event.id },
-        { onConflict: "user_id, client_event_id" }
-      );
-      if (error) return false;
-
-      for (const item of flattenExerciseResults(attempt.results)) {
-        const clientEventId = `${event.id}:${item.id}`;
-        const { error: itemError } = await supabase.from("exercise_results").upsert(
-          {
-            user_id: event.userId,
-            attempt_id: attempt.id,
-            exercise_id: item.exerciseId,
-            exercise_type: item.exerciseType,
-            item_id: item.itemId,
-            status: item.status,
-            is_passing: item.isPassing,
-            user_answer: item.userAnswer,
-            correct_answers: item.acceptedAnswers,
-            feedback: item.feedback,
-            feedback_needs_review: item.feedbackNeedsReview ?? false,
-            duration_ms: item.durationMs,
-            answered_at: item.completedAt,
-            vocabulary_id: item.vocabularyId,
-            client_event_id: clientEventId,
-          },
-          { onConflict: "user_id, client_event_id" }
-        );
-        if (itemError) return false;
-      }
-      return true;
-    }
-
-    case "exercise_result": {
-      const { attemptId, exerciseId, exerciseType, itemId, status, durationMs, vocabularyId } = event.payload;
-      const { error } = await supabase.from("exercise_results").upsert(
-        {
-          user_id: event.userId,
-          attempt_id: attemptId,
-          exercise_id: exerciseId,
-          exercise_type: exerciseType,
-          item_id: itemId,
-          status,
-          duration_ms: durationMs,
-          vocabulary_id: vocabularyId,
-          client_event_id: event.id,
-        },
-        { onConflict: "user_id, client_event_id" }
-      );
-      return !error;
-    }
-
-    case "settings_changed": {
-      const { settings } = event.payload;
-      const { error } = await supabase
-        .from("user_progress")
-        .upsert(
-          {
-            user_id: event.userId,
-            settings,
-            updated_at: new Date().toISOString(),
-          },
-          { onConflict: "user_id" }
-        );
-      return !error;
-    }
-
-    default:
-      return false;
+export function enableAutoSync(
+  userId: string,
+  onReconnect?: () => void | Promise<void>
+): void {
+  if (typeof window === "undefined") return;
+  if (autoSyncUserId === userId) {
+    reconnectCallback = onReconnect ?? reconnectCallback;
+    return;
   }
+  disableAutoSync();
+  autoSyncUserId = userId;
+  reconnectCallback = onReconnect ?? null;
+  onlineHandler = () => {
+    void processSyncQueue(userId);
+    void reconnectCallback?.();
+  };
+  window.addEventListener("online", onlineHandler);
+}
+
+export function disableAutoSync(): void {
+  if (typeof window !== "undefined" && onlineHandler) {
+    window.removeEventListener("online", onlineHandler);
+  }
+  onlineHandler = null;
+  autoSyncUserId = null;
+  reconnectCallback = null;
 }
 
 export function scheduleSync(userId: string, delayMs = 5000): void {
   if (typeof window === "undefined") return;
+  enableAutoSync(userId);
   setTimeout(() => {
     void processSyncQueue(userId);
   }, delayMs);

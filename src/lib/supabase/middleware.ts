@@ -1,5 +1,6 @@
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { secureAuthCookieOptions } from "./cookies";
 
 function getEnv() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -24,18 +25,20 @@ export async function updateSession(request: NextRequest) {
         return request.cookies.get(name)?.value;
       },
       set(name: string, value: string, options: CookieOptions) {
-        request.cookies.set({ name, value, ...options });
+        const secured = secureAuthCookieOptions(options);
+        request.cookies.set({ name, value, ...secured });
         response = NextResponse.next({
           request: { headers: request.headers },
         });
-        response.cookies.set({ name, value, ...options });
+        response.cookies.set({ name, value, ...secured });
       },
       remove(name: string, options: CookieOptions) {
-        request.cookies.set({ name, value: "", ...options });
+        const secured = secureAuthCookieOptions(options);
+        request.cookies.set({ name, value: "", ...secured });
         response = NextResponse.next({
           request: { headers: request.headers },
         });
-        response.cookies.set({ name, value: "", ...options });
+        response.cookies.set({ name, value: "", ...secured });
       },
     },
   });

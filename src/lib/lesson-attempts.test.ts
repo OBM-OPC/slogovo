@@ -24,6 +24,7 @@ describe("createLessonAttempt", () => {
     expect(result.passed).toBe(true);
     expect(result.activeTimeSeconds).toBe(42);
     expect(result.totalDurationMs).not.toBe(15 * 60_000);
+    expect(result.xpEarned).toBe(12);
   });
 
   it("does not pass merely because the final screen was reached", () => {
@@ -31,6 +32,13 @@ describe("createLessonAttempt", () => {
     expect(result.completed).toBe(true);
     expect(result.passed).toBe(false);
     expect(result.mastered).toBe(false);
+    expect(result.xpEarned).toBe(0);
+  });
+
+  it("does not award XP to an empty click-through attempt", () => {
+    const result = attempt([], true);
+    expect(result.passed).toBe(false);
+    expect(result.xpEarned).toBe(0);
   });
 
   it("does not pass before screens are complete even with correct answers", () => {

@@ -37,6 +37,7 @@ export function reviewWord(
     : 0;
 
   return {
+    ...progress,
     status: known ? "review" : "difficult",
     timesCorrect: progress.timesCorrect + (known ? 1 : 0),
     timesWrong: progress.timesWrong + (known ? 0 : 1),
@@ -86,6 +87,7 @@ export function reviewWordWithDifficulty(
   const status = rating === "repeat" ? "difficult" : rating === "easy" ? "mastered" : "review";
 
   return {
+    ...progress,
     status,
     timesCorrect: progress.timesCorrect + (known ? 1 : 0),
     timesWrong: progress.timesWrong + (known ? 0 : 1),

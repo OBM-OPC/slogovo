@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useProgressSafe } from "@/hooks/useProgressSafe";
 import { getAllModules, getLessonsByModule } from "@/lib/content";
 import { ModuleMeta } from "@/types";
-import { Flame, BookOpen, Play, Type, Grid3X3, BookMarked, Lock, CheckCircle2, Circle, ChevronRight } from "lucide-react";
+import { Flame, BookOpen, Play, Type, Grid3X3, BookMarked, Lock, CheckCircle2, Circle, ChevronRight, RotateCcw, Mic, CircleAlert, ChartNoAxesColumnIncreasing, Settings, UserRound } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 // ── Stats Bar (horizontal, flowing) ──
@@ -63,18 +63,9 @@ function ContinueButton() {
     (l) => !progress.completedLessons.includes(l.lessonId)
   );
 
-  if (!next) {
-    return (
-      <div className="mb-8 rounded-3xl bg-primary-50 p-6 text-center shadow-card">
-        <p className="text-lg font-serif font-bold text-primary">🎉 Всички уроци са завършени!</p>
-        <p className="mt-1 text-sm text-muted">Alle Lektionen abgeschlossen</p>
-      </div>
-    );
-  }
-
   return (
     <Link
-      href={`/kurs/${next.moduleId}/${next.lessonId}/`}
+      href="/heute-lernen"
       className="group mb-8 block"
     >
       <div className="relative overflow-hidden rounded-3xl bg-primary p-6 shadow-card transition-all duration-300 hover:shadow-card-hover hover:scale-[1.01]">
@@ -85,12 +76,13 @@ function ContinueButton() {
             <Play className="h-6 w-6 text-white" />
           </div>
           <div className="flex-1">
-            <p className="text-sm font-medium text-white/70">Продължи да учиш</p>
-            <p className="text-lg font-serif font-bold text-white">{next.title}</p>
+            <p className="text-sm font-medium text-white/70">Твоята дневна сесия</p>
+            <p className="text-lg font-serif font-bold text-white">Heute lernen</p>
+            <p className="text-xs text-white/70">{next ? `Mit ${next.title} und fälligen Wiederholungen` : "Wiederholen und Wissen festigen"}</p>
           </div>
           <div className="flex flex-col items-end gap-1">
             <span className="rounded-full bg-white/15 px-3 py-1 text-xs font-medium text-white">
-              {next.duration}
+              {progress.settings.dailyGoal === "light" ? "5 min" : progress.settings.dailyGoal === "intense" ? "30 min" : "15 min"}
             </span>
             <ChevronRight className="h-5 w-5 text-white/50" />
           </div>
@@ -166,14 +158,16 @@ function ModuleCard({ module, isUnlocked }: { module: ModuleMeta; isUnlocked: bo
 // ── Quick Access Tiles ──
 function QuickTiles() {
   const tiles = [
-    { href: "/vokabeln", icon: Type, label: "Речник", sub: "Vokabeln", color: "bg-primary-50 text-primary" },
-    { href: "/alphabet", icon: Grid3X3, label: "Азбука", sub: "Alphabet", color: "bg-accent-50 text-accent" },
-    { href: "/grammatik", icon: BookMarked, label: "Граматика", sub: "Grammatik", color: "bg-gold-50 text-gold-700" },
+    { href: "/wiederholen", icon: RotateCcw, label: "Wiederholen", sub: "Fällige Karten", color: "bg-danger/10 text-danger" },
+    { href: "/sprechen", icon: Mic, label: "Sprechen", sub: "Laut üben", color: "bg-accent-50 text-accent" },
+    { href: "/fehler", icon: CircleAlert, label: "Fehler", sub: "Gezielt üben", color: "bg-gold-50 text-gold-700" },
+    { href: "/vokabeln", icon: Type, label: "Wortschatz", sub: "Suchen & üben", color: "bg-primary-50 text-primary" },
+    { href: "/fortschritt", icon: ChartNoAxesColumnIncreasing, label: "Fortschritt", sub: "Mastery sehen", color: "bg-success/10 text-success" },
   ];
 
   return (
     <div className="mb-8">
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 gap-3">
         {tiles.map((tile) => (
           <Link
             key={tile.href}
@@ -187,6 +181,10 @@ function QuickTiles() {
             <span className="text-xs text-muted">{tile.sub}</span>
           </Link>
         ))}
+      </div>
+      <div className="mt-3 grid grid-cols-2 gap-3">
+        <Link href="/alphabet" className="flex items-center gap-3 rounded-2xl bg-white p-3 text-sm font-medium shadow-card"><Grid3X3 className="h-5 w-5 text-accent" /> Alphabet</Link>
+        <Link href="/grammatik" className="flex items-center gap-3 rounded-2xl bg-white p-3 text-sm font-medium shadow-card"><BookMarked className="h-5 w-5 text-gold-700" /> Grammatik</Link>
       </div>
     </div>
   );
@@ -221,9 +219,15 @@ export default function LernenPage() {
   return (
     <main className="animate-fade-in bg-rose-pattern min-h-screen px-4 py-6 safe-top">
       {/* Header */}
-      <div className="mb-6">
-        <p className="text-xs font-medium uppercase tracking-widest text-muted">Български език</p>
-        <h1 className="text-3xl font-serif font-bold text-foreground">Lernen</h1>
+      <div className="mb-6 flex items-start justify-between gap-3">
+        <div>
+          <p className="text-xs font-medium uppercase tracking-widest text-muted">Български език</p>
+          <h1 className="text-3xl font-serif font-bold text-foreground">Lernen</h1>
+        </div>
+        <div className="flex gap-2">
+          <Link href="/profil" aria-label="Profil" className="rounded-full bg-white p-2.5 text-muted shadow-card"><UserRound className="h-5 w-5" /></Link>
+          <Link href="/einstellungen" aria-label="Einstellungen" className="rounded-full bg-white p-2.5 text-muted shadow-card"><Settings className="h-5 w-5" /></Link>
+        </div>
       </div>
 
       <StatsBar />

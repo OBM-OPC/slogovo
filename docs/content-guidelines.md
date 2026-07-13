@@ -13,7 +13,8 @@ Scope: Slogovo only. Do not reference the old LLB application.
 
 - Required for A1 content until the learner explicitly disables Latin script in settings.
 - Optional for A2+ once the learner is assumed to read Cyrillic.
-- If a native speaker has not verified the transliteration, set `bgLatin: "NATIVE_REVIEW_NEEDED"`.
+- Unverified transliteration must stay out of production content. The validator
+  rejects `NATIVE_REVIEW_NEEDED` and `needsNativeReview: true` markers.
 
 ## `pronunciationHint`
 
@@ -30,6 +31,25 @@ Scope: Slogovo only. Do not reference the old LLB application.
 ## Verification checklist
 
 - [ ] Every vocabulary item has a non-empty `bg` and `de`.
-- [ ] A1 items have a non-empty `bgLatin` or `NATIVE_REVIEW_NEEDED` placeholder.
+- [ ] A1 items have a verified, non-empty `bgLatin`.
 - [ ] `pronunciationHint` is used instead of inventing pronunciation rules.
 - [ ] No Bulgarian grammar claims are made without native review or source reference.
+
+## Coverage report
+
+Run `npm run content:report` for the author-facing inventory. The same report is
+printed by `npm run validate:content` and therefore by every production build.
+
+The report treats vocabulary as tested when an exercise explicitly references
+its stable `vocabularyId` or uses its Bulgarian form in an answer, option,
+matching pair, sentence, or listening prompt. Authored audio means an `audio`
+path on vocabulary or an `audioUrl` on a listening item; runtime TTS fallback is
+useful, but does not count as reviewed source audio. Productive practice means a
+fill-in, sentence builder, typed listening answer, dictation, or listening
+reorder task.
+
+Coverage gaps are inventory findings, not silent validation failures. Authors
+receive exact file paths and affected stable IDs for untested vocabulary,
+missing audio, missing accepted answers, unsupported exercise types, duplicate
+IDs, missing grammar explanations, and lessons without productive exercises.
+Structural content errors still fail validation as before.

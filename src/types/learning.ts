@@ -7,6 +7,16 @@ export type ExerciseResultStatus =
   | "wrong"
   | "skipped";
 
+export type AnswerFeedbackStatus =
+  | "correct"
+  | "correct_with_typo"
+  | "accepted_variant"
+  | "partially_correct"
+  | "wrong_form"
+  | "wrong_word"
+  | "missing_word"
+  | "incorrect";
+
 export type ExerciseType =
   | "quiz"
   | "fill-in"
@@ -37,6 +47,7 @@ export interface ExerciseItemResult {
   userAnswer?: string;
   acceptedAnswers: string[];
   feedback?: string;
+  feedbackStatus?: AnswerFeedbackStatus;
   feedbackNeedsReview?: boolean;
   durationMs: number;
   startedAt: string;
@@ -124,7 +135,18 @@ export type ListenFormat =
 interface ListenBaseItem {
   id: string;
   audioText: string;
+  /** Authored normal-speed recording. TTS remains the final fallback. */
   audioUrl?: string;
+  /** Optional authored slow recording; normal audio is slowed when absent. */
+  slowAudioUrl?: string;
+  /** Optional app-bundled/downloaded recording used when the network asset fails. */
+  offlineAudioUrl?: string;
+  /** Stable key for Cache Storage, independent from a signed remote URL. */
+  audioCacheKey?: string;
+  /** An authored hint; the transcript is never revealed implicitly. */
+  revealText?: string;
+  /** Maximum number of times the authored hint can be revealed. */
+  maxReveals?: number;
   required?: boolean;
   vocabularyId?: string;
 }
@@ -138,11 +160,15 @@ export interface ListenSelectItem extends ListenBaseItem {
 export interface ListenTypeItem extends ListenBaseItem {
   format: "listen-type";
   acceptedAnswers: string[];
+  allowOmittedSubjectPronoun?: boolean;
 }
 
 export interface DictationItem extends ListenBaseItem {
   format: "dictation";
   wordCount?: number;
+  acceptedVariants?: string[];
+  acceptedTransliterations?: string[];
+  allowOmittedSubjectPronoun?: boolean;
 }
 
 export interface ListenReorderItem extends ListenBaseItem {

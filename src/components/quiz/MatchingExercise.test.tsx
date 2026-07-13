@@ -17,12 +17,13 @@ describe("MatchingExercise", () => {
       />
     );
 
-    fireEvent.click(screen.getByRole("button", { name: "Hallo" }));
-    fireEvent.click(screen.getByRole("button", { name: "Благодаря" }));
-    fireEvent.click(screen.getByRole("button", { name: "Hallo" }));
+    fireEvent.click(screen.getByRole("button", { name: /^Hallo/ }));
+    fireEvent.click(screen.getByRole("button", { name: /^Благодаря/ }));
+    expect(screen.getByRole("button", { name: "Hallo, falsch" })).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: /^Hallo/ }));
     fireEvent.click(screen.getByRole("button", { name: "Здравей" }));
     fireEvent.click(screen.getByRole("button", { name: "Danke" }));
-    fireEvent.click(screen.getByRole("button", { name: "Благодаря" }));
+    fireEvent.click(screen.getByRole("button", { name: /^Благодаря/ }));
 
     await waitFor(() => expect(onComplete).toHaveBeenCalledTimes(1));
     const result = onComplete.mock.calls[0][0];

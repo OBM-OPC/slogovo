@@ -1,71 +1,29 @@
 import { UserProgress, Achievement } from "@/types";
+import { learningMetrics } from "@/lib/gamification";
 
 export const ACHIEVEMENTS: Achievement[] = [
-  {
-    id: "first-steps",
-    icon: "🥾",
-    title: "Erste Schritte",
-    description: "Schließe deine erste Lektion ab.",
-  },
-  {
-    id: "seven-day-streak",
-    icon: "🔥",
-    title: "7-Tage-Streak",
-    description: "Lerne 7 Tage in Folge.",
-  },
-  {
-    id: "hundred-vocabulary",
-    icon: "🧠",
-    title: "100 Vokabeln",
-    description: "Lerne 100 Vokabeln.",
-  },
-  {
-    id: "a1-master",
-    icon: "📚",
-    title: "A1-Meister",
-    description: "Schließe alle A1-Module ab.",
-  },
-  {
-    id: "perfect-quiz",
-    icon: "🎯",
-    title: "Perfektes Quiz",
-    description: "Beantworte 10 Übungen richtig.",
-  },
-  {
-    id: "world-citizen",
-    icon: "🌍",
-    title: "Weltbürger",
-    description: "Halte einen 30-Tage-Streak.",
-  },
+  { id: "first-steps", icon: "🥾", title: "Erste Meisterschaft", description: "Meistere deine erste Lektion." },
+  { id: "seven-day-streak", icon: "🔥", title: "7 echte Lerntage", description: "Lerne an 7 aufeinanderfolgenden Tagen mit messbarer Aktivität." },
+  { id: "hundred-vocabulary", icon: "🧠", title: "25 Wörter gemeistert", description: "Bringe 25 Wörter bis zum Mastery-Status." },
+  { id: "review-rhythm", icon: "🔁", title: "Wiederholungsrhythmus", description: "Wiederhole an 7 verschiedenen Tagen." },
+  { id: "speaking-practice", icon: "🗣️", title: "Aktiv gesprochen", description: "Absolviere 20 produktive Sprech- oder Abrufversuche." },
+  { id: "a1-master", icon: "📚", title: "Grammatik-Fundament", description: "Meistere 5 Lektionen mit ihren Grammatikzielen." },
+  { id: "world-citizen", icon: "⏱️", title: "120 aktive Minuten", description: "Sammle zwei Stunden tatsächlich gemessene Lernzeit." },
+  { id: "weekly-goal", icon: "🎯", title: "Wochenziel", description: "Erreiche dein Tagesziel an 5 der letzten 7 Tage." },
 ];
 
-export function checkAchievements(progress: UserProgress): string[] {
-  const unlocked: string[] = [];
+export function checkAchievements(progress: UserProgress, now = new Date()): string[] {
+  const metrics = learningMetrics(progress, now);
+  const eligible = new Set<string>();
 
-  if (progress.completedLessons.length >= 1 && !progress.achievements.includes("first-steps")) {
-    unlocked.push("first-steps");
-  }
+  if (progress.masteredLessons.length >= 1) eligible.add("first-steps");
+  if (progress.streak.current >= 7) eligible.add("seven-day-streak");
+  if (metrics.masteredWords >= 25) eligible.add("hundred-vocabulary");
+  if (metrics.distinctReviewDays >= 7) eligible.add("review-rhythm");
+  if (metrics.productionAttempts >= 20) eligible.add("speaking-practice");
+  if (metrics.masteredGrammarLessons >= 5) eligible.add("a1-master");
+  if (metrics.activeMinutes >= 120) eligible.add("world-citizen");
+  if (metrics.weeklyGoalDays >= 5) eligible.add("weekly-goal");
 
-  if (progress.streak.current >= 7 && !progress.achievements.includes("seven-day-streak")) {
-    unlocked.push("seven-day-streak");
-  }
-
-  if (Object.keys(progress.vocabularyProgress).length >= 100 && !progress.achievements.includes("hundred-vocabulary")) {
-    unlocked.push("hundred-vocabulary");
-  }
-
-  const completedA1Modules = progress.completedModules.filter((id) => id.startsWith("a1-"));
-  if (completedA1Modules.length >= 3 && !progress.achievements.includes("a1-master")) {
-    unlocked.push("a1-master");
-  }
-
-  if (progress.exerciseStats.correct >= 10 && !progress.achievements.includes("perfect-quiz")) {
-    unlocked.push("perfect-quiz");
-  }
-
-  if (progress.streak.current >= 30 && !progress.achievements.includes("world-citizen")) {
-    unlocked.push("world-citizen");
-  }
-
-  return unlocked;
+  return [...eligible].filter((id) => !progress.achievements.includes(id));
 }

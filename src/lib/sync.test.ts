@@ -1,52 +1,55 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { processSyncQueue, SyncSupabaseClient } from "./sync";
-import { addEvent, addLessonAttemptEvent, clearQueue } from "./sync-queue";
+import {
+  disableAutoSync,
+  enableAutoSync,
+  processSyncQueue,
+  sendSyncBatch,
+  type SyncTransport,
+} from "./sync";
+import {
+  addEvent,
+  addLessonAttemptEvent,
+  clearQueue,
+  getPendingEvents,
+  type SyncEvent,
+} from "./sync-queue";
 import { createLessonAttempt } from "./lesson-attempts";
 import { makeExerciseResult } from "@/test/learning-fixtures";
 
-function makeClient(stored: Record<string, unknown>[] = []): SyncSupabaseClient {
-  return {
-    auth: {
-      getUser: vi.fn().mockResolvedValue({ data: { user: { id: "u1" } }, error: null }),
-    },
-    from: vi.fn((table: string) => ({
-      upsert: vi.fn(async (data: Record<string, unknown>) => {
-        stored.push({ table, data });
-        return { error: null };
-      }),
-      insert: vi.fn(async (data: Record<string, unknown>) => {
-        stored.push({ table, data });
-        return { error: null };
-      }),
-    })),
-  };
+function successfulTransport(): SyncTransport {
+  return vi.fn(async (events: SyncEvent[]) => ({
+    processed: events.map((event) => event.id),
+    failed: [],
+  }));
 }
 
 describe("processSyncQueue", () => {
   beforeEach(() => {
     clearQueue();
+    disableAutoSync();
+    vi.unstubAllGlobals();
   });
 
-  it("syncs pending vocabulary review events", async () => {
+  it("syncs pending vocabulary review events through the server transport", async () => {
     addEvent({
       type: "vocabulary_review",
       userId: "u1",
       timestamp: new Date().toISOString(),
       payload: { wordId: "w1", rating: "good", reviewedAt: new Date().toISOString() },
     });
-    const client = makeClient();
-    const result = await processSyncQueue("u1", client);
-    expect(result.processed).toBe(1);
-    expect(result.failed).toBe(0);
-    expect(client.from).toHaveBeenCalledWith("vocabulary_review_events");
+    const transport = successfulTransport();
+    const result = await processSyncQueue("u1", transport);
+    expect(result).toMatchObject({ processed: 1, failed: 0 });
+    expect(transport).toHaveBeenCalledOnce();
+    expect(getPendingEvents("u1")).toHaveLength(0);
   });
 
-  it("does not create duplicate records when the same client_event_id is synced again", async () => {
+  it("does not submit duplicate lesson attempts from client retries", async () => {
     const attempt = createLessonAttempt({
       id: "00000000-0000-4000-8000-000000000077",
       userId: "u1",
-      lessonId: "l1",
-      moduleId: "m1",
+      lessonId: "a1-modul-1-lektion-1",
+      moduleId: "a1-modul-1",
       level: "A1",
       results: [makeExerciseResult(["correct"])],
       totalDurationMs: 12_000,
@@ -54,37 +57,82 @@ describe("processSyncQueue", () => {
       completed: true,
       requiredScore: 80,
     });
-    const event = addLessonAttemptEvent(attempt);
-    expect(addLessonAttemptEvent(attempt).id).toBe(event.id);
-    const stored: Record<string, unknown>[] = [];
-    const client = makeClient(stored);
-    await processSyncQueue("u1", client);
-    expect(stored.filter((row) => row.table === "lesson_attempts")).toHaveLength(1);
+    addLessonAttemptEvent(attempt);
+    addLessonAttemptEvent(attempt);
+    const transport = successfulTransport();
+    await processSyncQueue("u1", transport);
+
+    expect(transport).toHaveBeenCalledWith([expect.objectContaining({ id: attempt.id })]);
   });
 
-  it("preserves events from multiple devices by merging after sync", async () => {
-    addEvent({
+  it("preserves failed events for later retry instead of silently dropping them", async () => {
+    const event = addEvent({
       type: "vocabulary_review",
       userId: "u1",
       timestamp: new Date().toISOString(),
       payload: { wordId: "w1", rating: "good", reviewedAt: new Date().toISOString() },
     });
-    const client = makeClient();
-    const result = await processSyncQueue("u1", client);
-    expect(result.processed).toBe(1);
+    const transport: SyncTransport = vi.fn().mockRejectedValue(new Error("offline"));
+
+    await processSyncQueue("u1", transport);
+    await processSyncQueue("u1", transport);
+
+    expect(getPendingEvents("u1")).toEqual([
+      expect.objectContaining({ id: event.id, errorCount: 2, error: "offline" }),
+    ]);
   });
 
-  it("fails when user is not authenticated", async () => {
-    addEvent({
+  it("posts batches only to the same-origin authenticated API", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({ processed: ["event-1"], failed: [] }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      })
+    );
+    vi.stubGlobal("fetch", fetchMock);
+    const event = addEvent(
+      {
+        type: "vocabulary_review",
+        userId: "u1",
+        timestamp: new Date().toISOString(),
+        payload: { wordId: "w1", rating: "good", reviewedAt: new Date().toISOString() },
+      },
+      "event-1"
+    );
+
+    await sendSyncBatch([event]);
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/sync",
+      expect.objectContaining({ method: "POST", credentials: "same-origin" })
+    );
+  });
+
+  it("retries the offline queue when the browser reconnects", async () => {
+    const event = addEvent({
       type: "vocabulary_review",
       userId: "u1",
-      timestamp: new Date().toISOString(),
-      payload: { wordId: "w1", rating: "good", reviewedAt: new Date().toISOString() },
+      timestamp: "2026-07-13T10:00:00.000Z",
+      payload: {
+        wordId: "word-1",
+        rating: "good",
+        reviewedAt: "2026-07-13T10:00:00.000Z",
+      },
     });
-    const client = makeClient();
-    client.auth.getUser = vi.fn().mockResolvedValue({ data: { user: null }, error: new Error("no session") });
-    const result = await processSyncQueue("u1", client);
-    expect(result.processed).toBe(0);
-    expect(result.errors.length).toBeGreaterThan(0);
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(
+        new Response(JSON.stringify({ processed: [event.id], failed: [] }), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        })
+      )
+    );
+
+    const saveAggregate = vi.fn().mockResolvedValue(undefined);
+    enableAutoSync("u1", saveAggregate);
+    window.dispatchEvent(new Event("online"));
+
+    await vi.waitFor(() => expect(getPendingEvents("u1")).toHaveLength(0));
+    expect(saveAggregate).toHaveBeenCalledOnce();
   });
 });

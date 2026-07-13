@@ -11,7 +11,13 @@ export function ProgressBar({ value, max = 100, className, barClassName }: Progr
   const percentage = Math.min(Math.max((value / max) * 100, 0), 100);
 
   return (
-    <div className={cn("h-2 w-full overflow-hidden rounded-full bg-gray-200", className)}>
+    <div
+      role="progressbar"
+      aria-valuemin={0}
+      aria-valuemax={max}
+      aria-valuenow={Math.min(Math.max(value, 0), max)}
+      className={cn("h-2 w-full overflow-hidden rounded-full bg-gray-200", className)}
+    >
       <div
         className={cn("h-full rounded-full bg-primary transition-all duration-300", barClassName)}
         style={{ width: `${percentage}%` }}

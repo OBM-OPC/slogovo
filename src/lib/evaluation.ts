@@ -6,6 +6,7 @@ import {
   RequiredExerciseGroup,
 } from "@/types/learning";
 import { evaluateAnswer } from "./answer-evaluation";
+import { statusToRich } from "./feedback";
 
 export function evaluateTypedAnswer(
   userAnswer: string,
@@ -32,6 +33,7 @@ export function buildExerciseItemResult(params: {
   strict?: boolean;
   status?: ExerciseResultStatus;
   feedback?: string;
+  feedbackStatus?: import("@/types/learning").AnswerFeedbackStatus;
   feedbackNeedsReview?: boolean;
   vocabularyId?: string;
 }): ExerciseItemResult {
@@ -50,6 +52,7 @@ export function buildExerciseItemResult(params: {
     userAnswer: params.userAnswer,
     acceptedAnswers: params.acceptedAnswers,
     feedback: params.feedback,
+    feedbackStatus: params.feedbackStatus ?? statusToRich(status),
     feedbackNeedsReview: params.feedbackNeedsReview,
     durationMs: Math.max(0, params.durationMs),
     startedAt: params.startedAt,

@@ -1,14 +1,7 @@
-import { ExerciseResultStatus } from "@/types/learning";
+import { AnswerFeedbackStatus, ExerciseResultStatus } from "@/types/learning";
+import type { DetailedAnswerEvaluation } from "./answer-evaluation";
 
-export type RichStatus =
-  | "correct"
-  | "correct_with_typo"
-  | "accepted_variant"
-  | "partially_correct"
-  | "wrong_form"
-  | "wrong_word"
-  | "missing_word"
-  | "incorrect";
+export type RichStatus = AnswerFeedbackStatus;
 
 export interface RichFeedback {
   status: RichStatus;
@@ -61,9 +54,10 @@ export function buildRichFeedback(
   normalizedUser?: string,
   matchedAnswer?: string,
   explanation?: string,
-  needsNativeReview = false
+  needsNativeReview = false,
+  richStatusOverride?: RichStatus
 ): RichFeedback {
-  const richStatus = statusToRich(status);
+  const richStatus = richStatusOverride ?? statusToRich(status);
   const bestMatch = matchedAnswer ?? acceptedAnswers[0] ?? "";
 
   return {
@@ -76,4 +70,36 @@ export function buildRichFeedback(
     highlightedExpected: bestMatch,
     needsNativeReview,
   };
+}
+
+export function buildEvaluationFeedback(
+  evaluation: DetailedAnswerEvaluation,
+  acceptedAnswers: string[],
+  explanation?: string,
+  needsNativeReview = false
+): RichFeedback {
+  return buildRichFeedback(
+    evaluation.status,
+    evaluation.normalizedUser,
+    acceptedAnswers,
+    evaluation.normalizedUser,
+    evaluation.matchedAnswer,
+    explanation,
+    needsNativeReview,
+    evaluation.richStatus
+  );
+}
+
+export function formatRichFeedback(feedback: RichFeedback): string {
+  if (feedback.status === "correct" || feedback.status === "accepted_variant") {
+    return feedback.message;
+  }
+  if (feedback.status === "correct_with_typo") {
+    return feedback.matchedAnswer
+      ? `${feedback.message} Schreibweise: ${feedback.matchedAnswer}`
+      : feedback.message;
+  }
+  return feedback.matchedAnswer
+    ? `${feedback.message} Richtige Antwort: ${feedback.matchedAnswer}`
+    : feedback.message;
 }

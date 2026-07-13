@@ -56,6 +56,7 @@ export interface FillInSentence {
   de?: string; // German hint for the full sentence meaning
   explanation?: string;
   grammarTopicSlug?: string;
+  allowOmittedSubjectPronoun?: boolean;
   required?: boolean;
 }
 
@@ -125,6 +126,10 @@ export interface VocabularyProgress {
   lastReviewed?: string;
   intervalIndex: number; // 0,1,2,3,4 → 1,3,7,14,30 days
   easeFactor?: number; // Anki-style ease factor
+  recognitionCorrect?: number;
+  recognitionTotal?: number;
+  productionCorrect?: number;
+  productionTotal?: number;
 }
 
 export type DailyGoal = "light" | "medium" | "intense";

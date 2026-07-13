@@ -17,9 +17,11 @@ import { checkAchievements } from "@/lib/achievements";
 import { vibrateCorrect, vibrateWrong } from "@/lib/haptics";
 import { triggerConfetti, triggerLevelUpConfetti } from "@/lib/confetti";
 import { getLessonsByModule } from "@/lib/content";
-import { processSyncQueue, scheduleSync } from "@/lib/sync";
+import { enableAutoSync, processSyncQueue, scheduleSync } from "@/lib/sync";
 import { addEvent, addLessonAttemptEvent } from "@/lib/sync-queue";
 import { mergeProgress } from "@/lib/progress-merge";
+import { recordProductionAttempt, recordRecognitionAttempt } from "@/lib/mastery-tracking";
+import { trackLearningEvent } from "@/lib/telemetry";
 
 interface ProgressState {
   progress: UserProgress | null;
@@ -30,7 +32,11 @@ interface ProgressState {
   recordLessonAttempt: (attempt: LessonAttempt, vocabulary?: number) => Promise<void>;
   completeModule: (moduleId: string) => Promise<void>;
   reviewVocabulary: (wordId: string, known: boolean) => Promise<void>;
-  reviewVocabularyWithDifficulty: (wordId: string, rating: DifficultyRating) => Promise<void>;
+  reviewVocabularyWithDifficulty: (
+    wordId: string,
+    rating: DifficultyRating,
+    mode?: "recognition" | "production"
+  ) => Promise<void>;
   addStudyTime: (minutes: number, vocabulary?: number) => Promise<void>;
   updateSettings: (settings: Partial<UserProgress["settings"]>) => Promise<void>;
   unlockAchievement: (achievementId: string) => Promise<void>;
@@ -77,6 +83,10 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
 
     saveProgressLocal(finalProgress);
     set({ progress: finalProgress, initialized: true, userId });
+    enableAutoSync(userId, async () => {
+      const latest = get().progress;
+      if (latest) await saveProgressToSupabase(latest);
+    });
 
     // Best-effort remote sync after state is initialized.
     void saveProgressToSupabase(finalProgress);
@@ -144,7 +154,7 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
         },
       },
       recordedAttemptIds: [...state.progress.recordedAttemptIds, attempt.id],
-      streak: attempt.activeTimeSeconds > 0
+      streak: attempt.passed && attempt.itemsAnswered > 0 && attempt.activeTimeSeconds > 0
         ? updateStreakForDate(state.progress.streak, attempt.finishedAt ? new Date(attempt.finishedAt) : new Date())
         : state.progress.streak,
     });
@@ -172,7 +182,6 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
     const updated = persist({
       ...state.progress,
       completedModules: [...state.progress.completedModules, moduleId],
-      streak: updateStreakForDate(state.progress.streak),
     });
 
     saveProgressLocal(updated);
@@ -193,13 +202,13 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
       easeFactor: 2.5,
     };
 
-    const updated = {
+    const updated = persist({
       ...state.progress,
       vocabularyProgress: {
         ...state.progress.vocabularyProgress,
         [wordId]: reviewWord(existing, known),
       },
-    };
+    });
 
     saveProgressLocal(updated);
     set({ progress: updated });
@@ -218,9 +227,10 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
       });
       scheduleSync(state.userId);
     }
+    trackLearningEvent("review_completed", { vocabularyId: wordId, mode: "recognition" });
   },
 
-  reviewVocabularyWithDifficulty: async (wordId: string, rating: DifficultyRating) => {
+  reviewVocabularyWithDifficulty: async (wordId, rating, mode = "recognition") => {
     const state = get();
     if (!state.progress) return;
 
@@ -232,13 +242,17 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
       easeFactor: 2.5,
     };
 
-    const updated = {
+    const reviewed = reviewWordWithDifficulty(existing, rating);
+    const tracked = mode === "production"
+      ? recordProductionAttempt(reviewed, rating !== "repeat")
+      : recordRecognitionAttempt(reviewed, rating !== "repeat");
+    const updated = persist({
       ...state.progress,
       vocabularyProgress: {
         ...state.progress.vocabularyProgress,
-        [wordId]: reviewWordWithDifficulty(existing, rating),
+        [wordId]: tracked,
       },
-    };
+    });
 
     saveProgressLocal(updated);
     set({ progress: updated });
@@ -252,20 +266,24 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
         payload: {
           wordId,
           rating,
+          mode,
           reviewedAt: new Date().toISOString(),
         },
       });
       scheduleSync(state.userId);
     }
+    trackLearningEvent("review_completed", { vocabularyId: wordId, mode });
   },
 
   addStudyTime: async (minutes: number, vocabulary = 0) => {
     const state = get();
     if (!state.progress) return;
+    if (!Number.isFinite(minutes) || minutes <= 0) return;
 
     const today = todayISO();
-    const todayStats = state.progress.dailyStats[today] || { minutes: 0, vocabulary: 0 };
+    const todayStats = state.progress.dailyStats[today] || { minutes: 0, vocabulary: 0, activeSeconds: 0 };
     const currentStreak = state.progress.streak.current;
+    const measuredSeconds = Math.round(minutes * 60);
 
     const updated = persist({
       ...state.progress,
@@ -273,10 +291,11 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
         ...state.progress.dailyStats,
         [today]: {
           minutes: todayStats.minutes + minutes,
+          activeSeconds: (todayStats.activeSeconds ?? Math.round(todayStats.minutes * 60)) + measuredSeconds,
           vocabulary: todayStats.vocabulary + vocabulary,
         },
       },
-      streak: updateStreakForDate(state.progress.streak),
+      streak: measuredSeconds >= 30 ? updateStreakForDate(state.progress.streak) : state.progress.streak,
     });
 
     saveProgressLocal(updated);

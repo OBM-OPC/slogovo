@@ -18,6 +18,25 @@ describe("sync-queue", () => {
     expect(getPendingEvents("u1").length).toBe(1);
   });
 
+  it("assigns a stable device id to events created in this browser", () => {
+    const first = addEvent({
+      type: "vocabulary_review",
+      userId: "u1",
+      timestamp: "2026-07-13T00:00:00Z",
+      payload: { wordId: "w1", rating: "good", reviewedAt: "2026-07-13T00:00:00Z" },
+    });
+    const second = addEvent({
+      type: "vocabulary_review",
+      userId: "u1",
+      timestamp: "2026-07-13T00:01:00Z",
+      payload: { wordId: "w2", rating: "hard", reviewedAt: "2026-07-13T00:01:00Z" },
+    });
+
+    expect(first.deviceId).toBe(second.deviceId);
+    expect(first.id).toMatch(new RegExp(`^${first.deviceId}:`));
+    expect(second.id).toMatch(new RegExp(`^${second.deviceId}:`));
+  });
+
   it("marks events synced", () => {
     const event = addEvent({
       type: "vocabulary_review",
@@ -43,7 +62,7 @@ describe("sync-queue", () => {
     expect(pending[0].errorCount).toBe(1);
   });
 
-  it("marks event synced after three failures", () => {
+  it("keeps an event pending after repeated failures so recovery can retry it", () => {
     const event = addEvent({
       type: "vocabulary_review",
       userId: "u1",
@@ -53,7 +72,9 @@ describe("sync-queue", () => {
     markFailed(event.id, "e1");
     markFailed(event.id, "e2");
     markFailed(event.id, "e3");
-    expect(getPendingEvents("u1").length).toBe(0);
+    expect(getPendingEvents("u1")).toEqual([
+      expect.objectContaining({ id: event.id, errorCount: 3, synced: false }),
+    ]);
   });
 
   it("writes actual lesson result values and deduplicates client retries", () => {

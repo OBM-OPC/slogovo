@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { forgotPasswordSchema } from "@/lib/validations";
+import { logEvent } from "@/lib/structured-log";
 
 export const dynamic = "force-dynamic";
 
@@ -10,6 +11,7 @@ export async function POST(request: Request) {
 
     const result = forgotPasswordSchema.safeParse(body);
     if (!result.success) {
+      logEvent("auth_failure", { errorCode: "AUTH_REJECTED", reason: "validation" });
       return NextResponse.json(
         { error: result.error.issues[0].message },
         { status: 400 }
@@ -24,7 +26,7 @@ export async function POST(request: Request) {
     });
 
     if (error) {
-      console.error("Supabase reset error:", error);
+      logEvent("auth_failure", { errorCode: "AUTH_REJECTED", reason: "reset_request_rejected" });
     }
 
     // Don't reveal if user exists.
@@ -32,8 +34,8 @@ export async function POST(request: Request) {
       { message: "Wenn ein Konto existiert, wurde eine E-Mail gesendet" },
       { status: 200 }
     );
-  } catch (error) {
-    console.error("Forgot password error:", error);
+  } catch {
+    logEvent("auth_failure", { errorCode: "AUTH_SERVER_ERROR", reason: "server" });
     return NextResponse.json(
       { error: "Ein Fehler ist aufgetreten. Bitte versuche es später erneut." },
       { status: 500 }

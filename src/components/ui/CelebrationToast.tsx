@@ -96,6 +96,8 @@ function CelebrationToast({ msg, onDismiss }: { msg: CelebrationMessage; onDismi
 
   return (
     <div
+      role="status"
+      aria-live="polite"
       className={cn(
         "pointer-events-auto flex w-full max-w-md items-center gap-3 rounded-2xl border p-4 shadow-lg backdrop-blur-sm transition-all duration-300",
         bgMap[msg.type],
@@ -108,8 +110,10 @@ function CelebrationToast({ msg, onDismiss }: { msg: CelebrationMessage; onDismi
         {msg.subtitle && <p className="text-xs text-muted">{msg.subtitle}</p>}
       </div>
       <button
+        type="button"
         onClick={onDismiss}
-        className="shrink-0 rounded-full p-1 text-muted transition-colors hover:bg-black/5 hover:text-foreground"
+        aria-label="Meldung schließen"
+        className="min-h-11 min-w-11 shrink-0 rounded-full p-2 text-muted transition-colors hover:bg-black/5 hover:text-foreground"
       >
         <X className="h-4 w-4" />
       </button>

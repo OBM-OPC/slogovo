@@ -1,167 +1,38 @@
-# Slogovo API Documentation
+# Slogovo API
 
-## Authentication
+## Authentication model
 
-All authenticated endpoints require a valid JWT token in the `Cookie: token=<jwt>` header.
+Slogovo uses the supported `@supabase/ssr` flow. The browser submits credentials
+to Slogovo API routes; route handlers create or end the Supabase session and set
+HttpOnly cookies. Browser code never reads access or refresh tokens.
 
-### Register
+Protected pages are checked by middleware with `supabase.auth.getUser()`. Every
+protected API repeats server-side user verification before accessing data. Cookie
+names alone are never treated as proof of authentication.
 
-Create a new user account.
+### Endpoints
 
-**Endpoint:** `POST /api/auth/register`
+- `POST /api/auth/register` — validates `name`, `email`, `password`, and
+  `confirmPassword`, then registers with Supabase Auth.
+- `POST /api/auth/login` — validates credentials and creates the cookie session.
+- `POST /api/auth/logout` — revokes the current session and clears its cookies.
+- `GET /api/auth/me` — returns the verified current user or HTTP 401.
+- `POST /api/auth/forgot-password` — requests a recovery email without revealing
+  whether an account exists.
+- `POST /api/auth/reset-password` — verifies the recovery token before changing
+  the password.
+- `GET /api/progress/load` — returns only the verified user's progress.
+- `POST /api/progress/save` — accepts progress only when its `userId` matches the
+  verified session user; database RLS enforces the same boundary.
 
-**Request Body:**
-```json
-{
-  "name": "Max Mustermann",
-  "email": "max@example.com",
-  "password": "MySecure123!",
-  "confirmPassword": "MySecure123!"
-}
-```
+All JSON failures use `{ "error": "..." }` and an appropriate HTTP status. The
+server does not return provider tokens or raw credentials.
 
-**Response (201):**
-```json
-{
-  "message": "Registrierung erfolgreich",
-  "user": {
-    "id": "...",
-    "email": "max@example.com",
-    "name": "Max Mustermann"
-  }
-}
-```
+## Data authorization
 
-### Login
+All learning records use `user_id = auth.uid()` Row-Level Security policies.
+This includes progress (and its settings/achievements), lesson attempts, exercise
+results, vocabulary review events, daily activity, and offline sync events.
 
-Authenticate an existing user.
-
-**Endpoint:** `POST /api/auth/login`
-
-**Request Body:**
-```json
-{
-  "email": "max@example.com",
-  "password": "MySecure123!"
-}
-```
-
-**Response (200):**
-```json
-{
-  "message": "Login erfolgreich",
-  "user": {
-    "id": "...",
-    "email": "max@example.com",
-    "name": "Max Mustermann"
-  }
-}
-```
-
-**Note:** Sets an HTTP-only cookie `token` with the JWT.
-
-### Logout
-
-Terminate the current session.
-
-**Endpoint:** `POST /api/auth/logout`
-
-**Response (200):**
-```json
-{
-  "message": "Logout erfolgreich"
-}
-```
-
-### Get Current User
-
-Fetch the authenticated user's profile.
-
-**Endpoint:** `GET /api/auth/me`
-
-**Response (200):**
-```json
-{
-  "user": {
-    "id": "...",
-    "email": "max@example.com",
-    "name": "Max Mustermann",
-    "image": null,
-    "displayName": null,
-    "bio": null,
-    "createdAt": "2026-06-29T..."
-  }
-}
-```
-
-### Forgot Password
-
-Request a password reset email.
-
-**Endpoint:** `POST /api/auth/forgot-password`
-
-**Request Body:**
-```json
-{
-  "email": "max@example.com"
-}
-```
-
-**Response (200):**
-```json
-{
-  "message": "Wenn ein Konto existiert, wurde eine E-Mail gesendet"
-}
-```
-
-### Reset Password
-
-Reset password using the token from the email.
-
-**Endpoint:** `POST /api/auth/reset-password`
-
-**Request Body:**
-```json
-{
-  "token": "abc123...",
-  "password": "NewSecure456!"
-}
-```
-
-**Response (200):**
-```json
-{
-  "message": "Passwort erfolgreich zurückgesetzt"
-}
-```
-
-## OAuth
-
-Slogovo supports OAuth via NextAuth.js at `/api/auth/[...nextauth]`.
-
-### Supported Providers
-- Google
-- Apple
-
-### OAuth Flow
-1. Initiate OAuth: `GET /api/auth/signin`
-2. Callback: `GET /api/auth/callback/:provider`
-3. Sign out: `POST /api/auth/signout`
-
-## Error Responses
-
-All errors follow this format:
-
-```json
-{
-  "error": "Human-readable error message"
-}
-```
-
-| Status | Description |
-|--------|-------------|
-| 400 | Bad Request - Validation error |
-| 401 | Unauthorized - Invalid credentials |
-| 404 | Not Found - User not found |
-| 409 | Conflict - User already exists |
-| 500 | Server Error |
+See [security.md](./security.md) for the full trust boundary and verification
+checklist.
