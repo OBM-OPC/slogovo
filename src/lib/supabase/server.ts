@@ -1,5 +1,6 @@
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { secureAuthCookieOptions } from "./cookies";
 
 function getEnv() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -24,14 +25,14 @@ export function createClient() {
       },
       set(name: string, value: string, options: CookieOptions) {
         try {
-          cookieStore.set({ name, value, ...options });
+          cookieStore.set({ name, value, ...secureAuthCookieOptions(options) });
         } catch {
           // The `set` method was called from a Server Component.
         }
       },
       remove(name: string, options: CookieOptions) {
         try {
-          cookieStore.set({ name, value: "", ...options });
+          cookieStore.set({ name, value: "", ...secureAuthCookieOptions(options) });
         } catch {
           // see set comment.
         }

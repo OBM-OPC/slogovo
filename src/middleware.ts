@@ -25,6 +25,13 @@ function isPublicPath(pathname: string): boolean {
   );
 }
 
+function withSessionCookies(source: NextResponse, target: NextResponse): NextResponse {
+  for (const cookie of source.cookies.getAll()) {
+    target.cookies.set(cookie);
+  }
+  return target;
+}
+
 export async function middleware(request: NextRequest) {
   const { response, user } = await updateSession(request);
   const { pathname } = request.nextUrl;
@@ -35,13 +42,22 @@ export async function middleware(request: NextRequest) {
 
   if (!user) {
     if (pathname.startsWith("/api/")) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return withSessionCookies(
+        response,
+        NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+      );
     }
-    return NextResponse.redirect(new URL("/login", request.url));
+    return withSessionCookies(
+      response,
+      NextResponse.redirect(new URL("/login", request.url))
+    );
   }
 
   if (pathname === "/dashboard") {
-    return NextResponse.redirect(new URL("/lernen", request.url));
+    return withSessionCookies(
+      response,
+      NextResponse.redirect(new URL("/lernen", request.url))
+    );
   }
 
   return response;
