@@ -46,10 +46,11 @@ export async function playAudio(
   stopAudio();
 
   if (asset?.url) {
-    return playNativeAudio(asset);
+    const played = await playNativeAudio(asset);
+    if (played) return true;
   }
 
-  // Fallback to TTS.
+  // Missing or failed native audio always falls back to TTS.
   return ttsSpeak(text, progress);
 }
 

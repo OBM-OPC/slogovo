@@ -1,138 +1,74 @@
-import { VocabularyItem } from "@/types";
+import {
+  AudioComprehensionItem,
+  DictationItem,
+  ExerciseResultStatus,
+  ListenExerciseItem,
+  ListenReorderItem,
+  ListenSelectItem,
+  ListenTypeItem,
+} from "@/types";
 import { evaluateAnswer } from "./answer-evaluation";
-import { evaluateGrammarAwareAnswer } from "./grammar-aware-evaluation";
-
-export type ListenFormat =
-  | "listen-select"
-  | "listen-type"
-  | "dictation"
-  | "listen-reorder"
-  | "audio-comprehension";
-
-export interface ListenSelectItem {
-  id: string;
-  audioText: string;
-  options: VocabularyItem[];
-  correctOptionId: string;
-}
-
-export interface ListenTypeItem {
-  id: string;
-  audioText: string;
-  acceptedAnswers: string[];
-}
-
-export interface DictationItem {
-  id: string;
-  audioText: string;
-  wordCount: number;
-}
-
-export interface ListenReorderItem {
-  id: string;
-  audioText: string;
-  correctOrder: string[];
-}
-
-export interface AudioComprehensionItem {
-  id: string;
-  audioText: string;
-  question: string;
-  options: string[];
-  correctOptionIndex: number;
-}
-
-export type ListenItem =
-  | { format: "listen-select"; data: ListenSelectItem }
-  | { format: "listen-type"; data: ListenTypeItem }
-  | { format: "dictation"; data: DictationItem }
-  | { format: "listen-reorder"; data: ListenReorderItem }
-  | { format: "audio-comprehension"; data: AudioComprehensionItem };
 
 export interface ListenResult {
   correct: boolean;
-  status: "correct" | "typo" | "wrong-form" | "wrong" | "skipped";
+  status: ExerciseResultStatus;
   feedback: string;
+  acceptedAnswers: string[];
 }
 
 export function evaluateListenSelect(item: ListenSelectItem, selectedOptionId: string): ListenResult {
+  const correctOption = item.options.find((option) => option.id === item.correctOptionId);
   const correct = selectedOptionId === item.correctOptionId;
   return {
     correct,
     status: correct ? "correct" : "wrong",
-    feedback: correct ? "Richtig!" : `Richtige Antwort: ${item.options.find((o) => o.id === item.correctOptionId)?.de}`,
+    feedback: correct ? "Richtig!" : `Richtige Antwort: ${correctOption?.de ?? correctOption?.bg ?? ""}`,
+    acceptedAnswers: [correctOption?.id ?? item.correctOptionId],
   };
 }
 
-export function evaluateListenType(
-  item: ListenTypeItem,
-  userAnswer: string,
-  grammarOptions?: {
-    pos?: "noun" | "verb" | "adjective" | "adverb" | "other";
-    expectedGender?: "masculine" | "feminine" | "neuter";
-  }
-): ListenResult {
-  if (!grammarOptions) {
-    const status = evaluateAnswer(userAnswer, { acceptedAnswers: item.acceptedAnswers });
-    return {
-      correct: status === "correct" || status === "typo",
-      status,
-      feedback: status === "correct" ? "Richtig!" : `Richtige Antwort: ${item.acceptedAnswers[0]}`,
-    };
-  }
-
-  const status = evaluateGrammarAwareAnswer(userAnswer, {
-    acceptedAnswers: item.acceptedAnswers,
-    ...grammarOptions,
-  });
+export function evaluateListenType(item: ListenTypeItem, userAnswer: string): ListenResult {
+  const status = evaluateAnswer(userAnswer, { acceptedAnswers: item.acceptedAnswers });
   return {
     correct: status === "correct" || status === "typo",
     status,
-    feedback:
-      status === "correct"
-        ? "Richtig!"
-        : status === "wrong-form"
-        ? "Fast – achte auf die grammatikalische Form."
-        : `Richtige Antwort: ${item.acceptedAnswers[0]}`,
+    feedback: status === "correct" ? "Richtig!" : `Richtige Antwort: ${item.acceptedAnswers[0]}`,
+    acceptedAnswers: item.acceptedAnswers,
   };
 }
 
 export function evaluateDictation(item: DictationItem, userAnswer: string): ListenResult {
-  const normalizedAudio = item.audioText
-    .toLowerCase()
-    .replace(/[.,!?;:\-]/g, "")
-    .trim();
-  const normalizedUser = userAnswer
-    .toLowerCase()
-    .replace(/[.,!?;:\-]/g, "")
-    .trim();
-  const correct = normalizedUser === normalizedAudio;
+  const status = evaluateAnswer(userAnswer, { acceptedAnswers: [item.audioText], strict: true });
   return {
-    correct,
-    status: correct ? "correct" : "wrong",
-    feedback: correct ? "Richtig!" : `Richtige Antwort: ${item.audioText}`,
+    correct: status === "correct",
+    status,
+    feedback: status === "correct" ? "Richtig!" : `Richtige Antwort: ${item.audioText}`,
+    acceptedAnswers: [item.audioText],
   };
 }
 
 export function evaluateListenReorder(item: ListenReorderItem, selectedOrder: string[]): ListenResult {
-  const correct =
-    selectedOrder.length === item.correctOrder.length &&
-    selectedOrder.every((w, i) => w === item.correctOrder[i]);
+  const userAnswer = selectedOrder.join(" ");
+  const acceptedAnswer = item.correctOrder.join(" ");
+  const correct = userAnswer === acceptedAnswer;
   return {
     correct,
     status: correct ? "correct" : "wrong",
-    feedback: correct ? "Richtig!" : `Richtige Reihenfolge: ${item.correctOrder.join(" ")}`,
+    feedback: correct ? "Richtig!" : `Richtige Reihenfolge: ${acceptedAnswer}`,
+    acceptedAnswers: [acceptedAnswer],
   };
 }
 
-export function evaluateAudioComprehension(
-  item: AudioComprehensionItem,
-  selectedOptionIndex: number
-): ListenResult {
+export function evaluateAudioComprehension(item: AudioComprehensionItem, selectedOptionIndex: number): ListenResult {
   const correct = selectedOptionIndex === item.correctOptionIndex;
   return {
     correct,
     status: correct ? "correct" : "wrong",
     feedback: correct ? "Richtig!" : `Richtige Antwort: ${item.options[item.correctOptionIndex]}`,
+    acceptedAnswers: [item.options[item.correctOptionIndex]],
   };
+}
+
+export function isProductiveListenItem(item: ListenExerciseItem): boolean {
+  return item.format === "listen-type" || item.format === "dictation" || item.format === "listen-reorder";
 }

@@ -1,42 +1,25 @@
 import { describe, expect, it } from "vitest";
-import { createActiveTimeTracker, msToRoundedMinutes } from "./active-time";
+import { createActiveTimeTracker, msToSeconds } from "./active-time";
 
 describe("createActiveTimeTracker", () => {
-  it("tracks active time across start and pause cycles", () => {
-    const tracker = createActiveTimeTracker();
-    tracker.start();
-    const elapsed1 = tracker.pause();
-    expect(elapsed1).toBeGreaterThanOrEqual(0);
-    tracker.resume();
-    tracker.pause();
-    const total = tracker.stop();
-    expect(total).toBeGreaterThanOrEqual(elapsed1);
+  it("starts on meaningful interaction and records actual seconds", () => {
+    const tracker = createActiveTimeTracker({ idleThresholdMs: 60_000 });
+    tracker.recordActivity(1_000);
+    tracker.recordActivity(31_000);
+    expect(msToSeconds(tracker.stop(31_000))).toBe(30);
   });
 
-  it("returns total including running segment", async () => {
-    const tracker = createActiveTimeTracker();
-    tracker.start();
-    await new Promise((resolve) => setTimeout(resolve, 20));
-    const total = tracker.getTotalMs();
-    expect(total).toBeGreaterThanOrEqual(15);
-    tracker.stop();
+  it("caps prolonged inactivity", () => {
+    const tracker = createActiveTimeTracker({ idleThresholdMs: 60_000 });
+    tracker.start(0);
+    tracker.recordActivity(10 * 60_000);
+    expect(tracker.stop(10 * 60_000)).toBe(60_000);
   });
 
-  it("resets on stop", () => {
+  it("does not add time twice when stopped more than once", () => {
     const tracker = createActiveTimeTracker();
-    tracker.start();
-    tracker.pause();
-    const total = tracker.stop();
-    expect(total).toBeGreaterThanOrEqual(0);
-    expect(tracker.getTotalMs()).toBe(0);
-  });
-});
-
-describe("msToRoundedMinutes", () => {
-  it("rounds to nearest minute", () => {
-    expect(msToRoundedMinutes(0)).toBe(0);
-    expect(msToRoundedMinutes(30000)).toBe(1);
-    expect(msToRoundedMinutes(90000)).toBe(2);
-    expect(msToRoundedMinutes(60000)).toBe(1);
+    tracker.start(0);
+    expect(tracker.stop(10_000)).toBe(10_000);
+    expect(tracker.stop(20_000)).toBe(10_000);
   });
 });

@@ -1,77 +1,89 @@
 "use client";
 
-import { useState } from "react";
-import { SentenceBuilder } from "@/types";
+import { useRef, useState } from "react";
+import { ExerciseItemResult, ExerciseResult, SentenceBuilder } from "@/types";
 import { Button } from "@/components/ui/Button";
-import { useProgressStore } from "@/stores/useProgressStore";
+import { buildExerciseItemResult, buildExerciseResult } from "@/lib/evaluation";
 import { cn } from "@/lib/utils";
 
 interface SentenceBuilderExerciseProps {
+  exerciseId: string;
   sentences: SentenceBuilder[];
-  onComplete: () => void;
+  attemptNumber?: number;
+  onInteraction?: () => void;
+  onComplete: (result: ExerciseResult) => void;
 }
 
-export function SentenceBuilderExercise({ sentences, onComplete }: SentenceBuilderExerciseProps) {
-  const addExerciseResult = useProgressStore((state) => state.addExerciseResult);
+export function SentenceBuilderExercise({
+  exerciseId,
+  sentences,
+  attemptNumber = 1,
+  onInteraction,
+  onComplete,
+}: SentenceBuilderExerciseProps) {
+  const exerciseStartedAt = useRef(new Date().toISOString());
+  const itemStartedAt = useRef(new Date().toISOString());
+  const itemResults = useRef<ExerciseItemResult[]>([]);
   const [current, setCurrent] = useState(0);
   const [selected, setSelected] = useState<string[]>([]);
   const [showResult, setShowResult] = useState(false);
-
   const sentence = sentences[current];
-  const explanation = showResult ? sentence.explanation : undefined;
-  const grammarSlug = showResult ? sentence.grammarTopicSlug : undefined;
-  const available = sentence.words.filter((w) => !selected.includes(w));
-
-  const handleWordClick = (word: string) => {
-    if (showResult) return;
-    setSelected((prev) => [...prev, word]);
-  };
-
-  const handleRemove = (index: number) => {
-    if (showResult) return;
-    setSelected((prev) => prev.filter((_, i) => i !== index));
-  };
+  const available = sentence.words.filter((word) => !selected.includes(word));
+  const isCorrect = selected.length === sentence.correctOrder.length && selected.every((word, index) => word === sentence.correctOrder[index]);
 
   const checkAnswer = () => {
-    const isCorrect =
-      selected.length === sentence.correctOrder.length &&
-      selected.every((w, i) => w === sentence.correctOrder[i]);
+    if (showResult || selected.length !== sentence.correctOrder.length) return;
+    onInteraction?.();
+    const completedAt = new Date().toISOString();
+    itemResults.current.push(buildExerciseItemResult({
+      itemId: sentence.id,
+      userAnswer: selected.join(" "),
+      acceptedAnswers: [sentence.correctOrder.join(" ")],
+      status: isCorrect ? "correct" : "wrong",
+      durationMs: Date.parse(completedAt) - Date.parse(itemStartedAt.current),
+      startedAt: itemStartedAt.current,
+      completedAt,
+      attemptNumber,
+      required: sentence.required,
+      productive: true,
+      feedback: sentence.explanation,
+    }));
     setShowResult(true);
-    addExerciseResult(isCorrect);
   };
 
   const handleNext = () => {
+    onInteraction?.();
     if (current < sentences.length - 1) {
-      setCurrent((c) => c + 1);
+      setCurrent((value) => value + 1);
       setSelected([]);
       setShowResult(false);
-    } else {
-      onComplete();
+      itemStartedAt.current = new Date().toISOString();
+      return;
     }
+    onComplete(buildExerciseResult({
+      exerciseId,
+      exerciseType: "sentence-builder",
+      itemResults: itemResults.current,
+      startedAt: exerciseStartedAt.current,
+    }));
   };
 
   return (
     <div>
       <p className="mb-2 text-muted">Baue den bulgarischen Satz:</p>
       {sentence.de && <p className="mb-4 font-medium">„{sentence.de}“</p>}
-
       <div className="mb-4 min-h-[56px] rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 p-3">
-        {selected.length === 0 ? (
-          <p className="text-center text-sm text-muted">Tippe die Wörter in der richtigen Reihenfolge an.</p>
-        ) : (
+        {selected.length === 0 ? <p className="text-center text-sm text-muted">Tippe die Wörter in der richtigen Reihenfolge an.</p> : (
           <div className="flex flex-wrap gap-2">
-            {selected.map((word, idx) => (
+            {selected.map((word, index) => (
               <button
-                key={`${idx}-${word}`}
-                onClick={() => handleRemove(idx)}
+                key={`${index}-${word}`}
+                type="button"
+                onClick={() => { onInteraction?.(); setSelected((items) => items.filter((_, itemIndex) => itemIndex !== index)); }}
                 disabled={showResult}
                 className={cn(
                   "rounded-lg px-3 py-1.5 text-sm font-medium",
-                  showResult
-                    ? word === sentence.correctOrder[idx]
-                      ? "bg-success/20 text-success"
-                      : "bg-danger/20 text-danger"
-                    : "bg-white shadow-sm hover:bg-gray-100"
+                  showResult ? (word === sentence.correctOrder[index] ? "bg-success/20 text-success" : "bg-danger/20 text-danger") : "bg-white shadow-sm hover:bg-gray-100"
                 )}
               >
                 {word}
@@ -80,12 +92,12 @@ export function SentenceBuilderExercise({ sentences, onComplete }: SentenceBuild
           </div>
         )}
       </div>
-
       <div className="mb-6 flex flex-wrap gap-2">
         {available.map((word) => (
           <button
             key={word}
-            onClick={() => handleWordClick(word)}
+            type="button"
+            onClick={() => { onInteraction?.(); setSelected((items) => [...items, word]); }}
             disabled={showResult}
             className="rounded-lg bg-primary-50 px-3 py-1.5 text-sm font-medium text-primary transition-colors hover:bg-primary-100 disabled:opacity-50"
           >
@@ -93,46 +105,20 @@ export function SentenceBuilderExercise({ sentences, onComplete }: SentenceBuild
           </button>
         ))}
       </div>
-
       {!showResult ? (
-        <Button onClick={checkAnswer} fullWidth disabled={selected.length !== sentence.correctOrder.length}>
-          Prüfen
-        </Button>
+        <Button onClick={checkAnswer} fullWidth disabled={selected.length !== sentence.correctOrder.length}>Prüfen</Button>
       ) : (
         <div className="space-y-3">
-          {explanation && (
-            <div className={cn(
-              "rounded-xl p-4 text-sm",
-              selected.join(" ") === sentence.correctOrder.join(" ")
-                ? "bg-success/10 text-success"
-                : "bg-warm-50 text-muted"
-            )}>
-              <p className="font-medium">{explanation}</p>
-              {grammarSlug && (
-                <a
-                  href={`/grammatik/${grammarSlug}`}
-                  className="mt-2 inline-block text-sm text-primary underline"
-                >
-                  Zum Grammatikthema
-                </a>
-              )}
+          {sentence.explanation && (
+            <div className={cn("rounded-xl p-4 text-sm", isCorrect ? "bg-success/10 text-success" : "bg-warm-50 text-muted")}>
+              <p className="font-medium">{sentence.explanation}</p>
+              {sentence.grammarTopicSlug && <a href={`/grammatik/${sentence.grammarTopicSlug}`} className="mt-2 inline-block text-sm text-primary underline">Zum Grammatikthema</a>}
             </div>
           )}
-          <div
-            className={cn(
-              "rounded-xl p-4 text-center font-medium",
-              selected.join(" ") === sentence.correctOrder.join(" ")
-                ? "bg-success/10 text-success"
-                : "bg-danger/10 text-danger"
-            )}
-          >
-            {selected.join(" ") === sentence.correctOrder.join(" ")
-              ? "Richtig!"
-              : `Richtige Reihenfolge: ${sentence.correctOrder.join(" ")}`}
+          <div className={cn("rounded-xl p-4 text-center font-medium", isCorrect ? "bg-success/10 text-success" : "bg-danger/10 text-danger")}>
+            {isCorrect ? "Richtig!" : `Richtige Reihenfolge: ${sentence.correctOrder.join(" ")}`}
           </div>
-          <Button onClick={handleNext} fullWidth>
-            {current < sentences.length - 1 ? "Weiter" : "Fertig"}
-          </Button>
+          <Button onClick={handleNext} fullWidth>{current < sentences.length - 1 ? "Weiter" : "Fertig"}</Button>
         </div>
       )}
     </div>

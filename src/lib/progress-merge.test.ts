@@ -13,6 +13,7 @@ function baseProgress(userId: string): UserProgress {
     lessonScores: {},
     exerciseStats: { total: 0, correct: 0, wrong: 0, consecutiveCorrect: 0 },
     dailyStats: {},
+    recordedAttemptIds: [],
     settings: {
       dailyGoal: "medium",
       ttsEnabled: true,

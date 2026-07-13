@@ -61,6 +61,7 @@ function rowToProgress(row: Record<string, unknown>, userId: string): UserProgre
       consecutiveCorrect: 0,
     },
     dailyStats: (row.daily_stats as UserProgress["dailyStats"] | undefined) ?? {},
+    recordedAttemptIds: (row.recorded_attempt_ids as string[] | undefined) ?? [],
     settings: (row.settings as UserProgress["settings"] | undefined) ?? {
       dailyGoal: "medium",
       ttsEnabled: true,

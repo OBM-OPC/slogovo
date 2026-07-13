@@ -1,5 +1,7 @@
 import { createClient as createBrowserClient } from "@/lib/supabase/client";
 import { SyncEvent, getPendingEvents, markSynced, markFailed } from "./sync-queue";
+import { attemptToDbRow } from "./lesson-attempts";
+import { flattenExerciseResults } from "./evaluation";
 
 export interface SyncResult {
   processed: number;
@@ -72,27 +74,39 @@ async function sendEvent(supabase: SyncSupabaseClient, event: SyncEvent): Promis
       return !error;
     }
 
-    case "lesson_completed": {
-      const { lessonId, moduleId, level, passed, accuracy, score, xpEarned } = event.payload;
+    case "lesson_attempt": {
+      const { attempt } = event.payload;
       const { error } = await supabase.from("lesson_attempts").upsert(
-        {
-          user_id: event.userId,
-          lesson_id: lessonId,
-          module_id: moduleId,
-          level,
-          passed,
-          accuracy,
-          score,
-          xp_earned: xpEarned,
-          results: [],
-          total_duration_ms: 0,
-          started_at: event.timestamp,
-          completed: true,
-          client_event_id: event.id,
-        },
+        { ...attemptToDbRow(attempt), client_event_id: event.id },
         { onConflict: "user_id, client_event_id" }
       );
-      return !error;
+      if (error) return false;
+
+      for (const item of flattenExerciseResults(attempt.results)) {
+        const clientEventId = `${event.id}:${item.id}`;
+        const { error: itemError } = await supabase.from("exercise_results").upsert(
+          {
+            user_id: event.userId,
+            attempt_id: attempt.id,
+            exercise_id: item.exerciseId,
+            exercise_type: item.exerciseType,
+            item_id: item.itemId,
+            status: item.status,
+            is_passing: item.isPassing,
+            user_answer: item.userAnswer,
+            correct_answers: item.acceptedAnswers,
+            feedback: item.feedback,
+            feedback_needs_review: item.feedbackNeedsReview ?? false,
+            duration_ms: item.durationMs,
+            answered_at: item.completedAt,
+            vocabulary_id: item.vocabularyId,
+            client_event_id: clientEventId,
+          },
+          { onConflict: "user_id, client_event_id" }
+        );
+        if (itemError) return false;
+      }
+      return true;
     }
 
     case "exercise_result": {

@@ -56,10 +56,10 @@ function progressToRow(progress: UserProgress) {
     streak_longest: progress.streak?.longest ?? 0,
     streak_last_study_date: progress.streak?.lastStudyDate ?? null,
     completed_lessons: progress.completedLessons ?? [],
-    mastered_lessons: ((progress as unknown) as Record<string, unknown>).masteredLessons ?? [],
+    mastered_lessons: progress.masteredLessons ?? [],
     completed_modules: progress.completedModules ?? [],
     vocabulary_progress: progress.vocabularyProgress ?? {},
-    lesson_scores: ((progress as unknown) as Record<string, unknown>).lessonScores ?? {},
+    lesson_scores: progress.lessonScores ?? {},
     exercise_stats: progress.exerciseStats ?? {
       total: 0,
       correct: 0,
@@ -67,6 +67,7 @@ function progressToRow(progress: UserProgress) {
       consecutiveCorrect: 0,
     },
     daily_stats: progress.dailyStats ?? {},
+    recorded_attempt_ids: progress.recordedAttemptIds ?? [],
     settings: progress.settings ?? {
       dailyGoal: "medium",
       ttsEnabled: true,

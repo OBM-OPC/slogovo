@@ -1,5 +1,5 @@
 export type SyncEventType =
-  | "lesson_completed"
+  | "lesson_attempt"
   | "exercise_result"
   | "vocabulary_review"
   | "settings_changed";
@@ -14,16 +14,10 @@ export interface BaseSyncEvent {
   errorCount: number;
 }
 
-export interface LessonCompletedEvent extends BaseSyncEvent {
-  type: "lesson_completed";
+export interface LessonAttemptEvent extends BaseSyncEvent {
+  type: "lesson_attempt";
   payload: {
-    lessonId: string;
-    moduleId: string;
-    level: string;
-    passed: boolean;
-    accuracy: number;
-    score: number;
-    xpEarned: number;
+    attempt: import("@/types").LessonAttempt;
   };
 }
 
@@ -57,7 +51,7 @@ export interface SettingsChangedEvent extends BaseSyncEvent {
 }
 
 export type SyncEvent =
-  | LessonCompletedEvent
+  | LessonAttemptEvent
   | ExerciseResultEvent
   | VocabularyReviewEvent
   | SettingsChangedEvent;
@@ -83,17 +77,31 @@ export function generateEventId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
 }
 
-export function addEvent(event: Omit<SyncEvent, "id" | "synced" | "errorCount" | "error">): SyncEvent {
+export function addEvent(
+  event: Omit<SyncEvent, "id" | "synced" | "errorCount" | "error">,
+  eventId = generateEventId()
+): SyncEvent {
+  const queue = loadQueue();
+  const existing = queue.find((queued) => queued.id === eventId);
+  if (existing) return existing;
   const full: SyncEvent = {
     ...event,
-    id: generateEventId(),
+    id: eventId,
     synced: false,
     errorCount: 0,
   } as SyncEvent;
-  const queue = loadQueue();
   queue.push(full);
   saveQueue(queue);
   return full;
+}
+
+export function addLessonAttemptEvent(attempt: import("@/types").LessonAttempt): SyncEvent {
+  return addEvent({
+    type: "lesson_attempt",
+    userId: attempt.userId,
+    timestamp: attempt.finishedAt ?? new Date().toISOString(),
+    payload: { attempt },
+  }, attempt.id);
 }
 
 export function getPendingEvents(userId?: string): SyncEvent[] {

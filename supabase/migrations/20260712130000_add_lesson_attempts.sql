@@ -82,7 +82,11 @@ begin
   new.updated_at = now();
   return new;
 end;
-$$ language plpgsql security definer;
+$$ language plpgsql
+security invoker
+set search_path = pg_catalog, public;
+
+revoke all on function public.set_updated_at() from public, anon, authenticated;
 
 drop trigger if exists set_lesson_attempts_updated_at on public.lesson_attempts;
 create trigger set_lesson_attempts_updated_at

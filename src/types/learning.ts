@@ -1,7 +1,4 @@
-import { VocabularyItem } from "./vocabulary";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const _vocabTypeRef: VocabularyItem | undefined = undefined;
-void _vocabTypeRef;
+import type { VocabularyItem } from "./vocabulary";
 
 export type ExerciseResultStatus =
   | "correct"
@@ -18,61 +15,66 @@ export type ExerciseType =
   | "listen"
   | "typing";
 
-export interface ExerciseResult {
-  /** Stable id of the exercise within the lesson. */
-  exerciseId: string;
-  /** Type of exercise. */
-  exerciseType: ExerciseType;
+export interface ExerciseItemResult {
+  /** Stable id for this answer, used for idempotent synchronization. */
+  id: string;
   /** Id of the specific item/question answered. */
   itemId: string;
-  /** Status of the evaluation. */
   status: ExerciseResultStatus;
-  /** Whether the result counts as passing the item. */
+  /** Whether this answer satisfies the item. */
   isPassing: boolean;
-  /** Normalized user answer, if any. */
   userAnswer?: string;
-  /** Accepted correct answer(s). */
-  correctAnswers?: string[];
-  /** Optional feedback/explanation shown to the learner. */
+  acceptedAnswers: string[];
   feedback?: string;
-  /** Whether the item needs a native review for the feedback text. */
   feedbackNeedsReview?: boolean;
-  /** Milliseconds spent actively on this item. */
   durationMs: number;
-  /** ISO timestamp of the answer. */
-  answeredAt: string;
-  /** Vocabulary item involved, if relevant. */
+  startedAt: string;
+  completedAt: string;
+  attemptNumber: number;
+  hintsUsed: number;
+  required: boolean;
+  productive: boolean;
   vocabularyId?: string;
 }
 
+/**
+ * Authoritative result returned by every rendered exercise component.
+ * Item attempts remain nested so block completion cannot be confused with correctness.
+ */
+export interface ExerciseResult {
+  exerciseId: string;
+  exerciseType: ExerciseType;
+  correctAnswers: number;
+  incorrectAnswers: number;
+  attempts: number;
+  itemResults: ExerciseItemResult[];
+  hintsUsed: number;
+  startedAt: string;
+  completedAt: string;
+}
+
 export interface LessonAttempt {
-  /** Unique attempt id (uuid). */
   id: string;
   userId: string;
   lessonId: string;
   moduleId: string;
   level: string;
-  /** Results for each answered exercise item. */
   results: ExerciseResult[];
-  /** Total active time in milliseconds. */
   totalDurationMs: number;
-  /** ISO timestamp when the attempt started. */
+  activeTimeSeconds: number;
   startedAt: string;
-  /** ISO timestamp when the attempt finished. */
   finishedAt?: string;
-  /** Number of first-try correct answers. */
   firstTryCorrect: number;
-  /** Number of items answered. */
   itemsAnswered: number;
-  /** Whether the attempt met the passing criteria. */
+  correctCount: number;
+  incorrectCount: number;
+  requiredScore: number;
   passed: boolean;
-  /** Whether the attempt was completed (reached summary). */
+  mastered: boolean;
+  /** Reached the end of all lesson screens, independent of pass/mastery. */
   completed: boolean;
-  /** Accuracy as a fraction 0..1. */
   accuracy: number;
-  /** Optional score derived from the evaluator, not UI. */
   score: number;
-  /** XP earned from this attempt. */
   xpEarned: number;
 }
 
@@ -81,11 +83,12 @@ export interface MasteryAttemptSummary {
   attempts: LessonAttempt[];
   bestAccuracy: number;
   passedOnce: boolean;
+  masteredOnce: boolean;
 }
 
 export type EvaluationResult = Pick<
-  ExerciseResult,
-  "status" | "isPassing" | "correctAnswers" | "feedback" | "feedbackNeedsReview"
+  ExerciseItemResult,
+  "status" | "isPassing" | "acceptedAnswers" | "feedback" | "feedbackNeedsReview"
 >;
 
 export interface TypedAnswerEvaluator {
@@ -93,7 +96,59 @@ export interface TypedAnswerEvaluator {
 }
 
 export interface MistakeQueueItem {
-  vocabularyId: string;
-  originalResult: ExerciseResult;
+  exerciseId: string;
+  exerciseType: ExerciseType;
+  itemId: string;
+  originalResult: ExerciseItemResult;
   retryCount: number;
 }
+
+export type ListenFormat =
+  | "listen-select"
+  | "listen-type"
+  | "dictation"
+  | "listen-reorder"
+  | "audio-comprehension";
+
+interface ListenBaseItem {
+  id: string;
+  audioText: string;
+  audioUrl?: string;
+  required?: boolean;
+  vocabularyId?: string;
+}
+
+export interface ListenSelectItem extends ListenBaseItem {
+  format: "listen-select";
+  options: VocabularyItem[];
+  correctOptionId: string;
+}
+
+export interface ListenTypeItem extends ListenBaseItem {
+  format: "listen-type";
+  acceptedAnswers: string[];
+}
+
+export interface DictationItem extends ListenBaseItem {
+  format: "dictation";
+  wordCount?: number;
+}
+
+export interface ListenReorderItem extends ListenBaseItem {
+  format: "listen-reorder";
+  correctOrder: string[];
+}
+
+export interface AudioComprehensionItem extends ListenBaseItem {
+  format: "audio-comprehension";
+  question: string;
+  options: string[];
+  correctOptionIndex: number;
+}
+
+export type ListenExerciseItem =
+  | ListenSelectItem
+  | ListenTypeItem
+  | DictationItem
+  | ListenReorderItem
+  | AudioComprehensionItem;

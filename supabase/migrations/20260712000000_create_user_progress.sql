@@ -1,12 +1,12 @@
--- Progress Schema for Slogovo
--- Run this in Supabase SQL Editor
+-- Migration: create the canonical user progress aggregate table.
+-- This is additive and safe for an empty project. Existing rows are preserved
+-- when the table already exists; later migrations add any missing columns.
 
--- User Progress Table (JSONB for flexible structure)
 create table if not exists public.user_progress (
   id uuid default gen_random_uuid() primary key,
   user_id uuid references auth.users on delete cascade not null unique,
-  streak_current int default 0,
-  streak_longest int default 0,
+  streak_current integer default 0,
+  streak_longest integer default 0,
   streak_last_study_date text,
   completed_lessons text[] default '{}',
   mastered_lessons text[] not null default '{}',
@@ -22,21 +22,23 @@ create table if not exists public.user_progress (
   created_at timestamptz default now()
 );
 
--- Enable RLS
 alter table public.user_progress enable row level security;
 
--- Policies: Users can only CRUD their own progress
+drop policy if exists "Users can view own progress" on public.user_progress;
 create policy "Users can view own progress" on public.user_progress
   for select using (auth.uid() = user_id);
 
+drop policy if exists "Users can insert own progress" on public.user_progress;
 create policy "Users can insert own progress" on public.user_progress
   for insert with check (auth.uid() = user_id);
 
+drop policy if exists "Users can update own progress" on public.user_progress;
 create policy "Users can update own progress" on public.user_progress
   for update using (auth.uid() = user_id);
 
+drop policy if exists "Users can delete own progress" on public.user_progress;
 create policy "Users can delete own progress" on public.user_progress
   for delete using (auth.uid() = user_id);
 
--- Index on user_id for fast lookups
-create index if not exists idx_user_progress_user_id on public.user_progress(user_id);
+create index if not exists idx_user_progress_user_id
+  on public.user_progress(user_id);

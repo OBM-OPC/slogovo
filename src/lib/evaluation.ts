@@ -1,148 +1,214 @@
-import { ExerciseResult, ExerciseResultStatus, ExerciseType } from "@/types/learning";
-
-function normalizeAnswer(input: string): string {
-  return input
-    .toLowerCase()
-    .replace(/[.,!?;:\-]/g, "")
-    .trim()
-    .replace(/\s+/g, " ");
-}
-
-function isTypoOf(user: string, target: string): boolean {
-  // Levenshtein distance of 1 allowed for length >= 4, no typo allowance for very short words.
-  if (user === target) return false; // not a typo, it's exact
-  if (target.length <= 3) return false;
-  const distance = levenshtein(user, target);
-  return distance === 1;
-}
-
-function levenshtein(a: string, b: string): number {
-  const matrix: number[][] = Array.from({ length: b.length + 1 }, () =>
-    Array(a.length + 1).fill(0)
-  );
-  for (let i = 0; i <= a.length; i++) matrix[0][i] = i;
-  for (let j = 0; j <= b.length; j++) matrix[j][0] = j;
-  for (let j = 1; j <= b.length; j++) {
-    for (let i = 1; i <= a.length; i++) {
-      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
-      matrix[j][i] = Math.min(
-        matrix[j][i - 1] + 1,
-        matrix[j - 1][i] + 1,
-        matrix[j - 1][i - 1] + cost
-      );
-    }
-  }
-  return matrix[b.length][a.length];
-}
+import {
+  ExerciseItemResult,
+  ExerciseResult,
+  ExerciseResultStatus,
+  ExerciseType,
+} from "@/types/learning";
+import { evaluateAnswer } from "./answer-evaluation";
 
 export function evaluateTypedAnswer(
   userAnswer: string,
   acceptedAnswers: string[],
-  options: {
-    strict?: boolean;
-    feedback?: string;
-    feedbackNeedsReview?: boolean;
-    vocabularyId?: string;
-  } = {}
+  options: { strict?: boolean } = {}
 ): ExerciseResultStatus {
-  const normalizedUser = normalizeAnswer(userAnswer);
-  if (normalizedUser.length === 0) return "skipped";
-
-  const normalizedTargets = acceptedAnswers.map(normalizeAnswer).filter((a) => a.length > 0);
-  if (normalizedTargets.some((t) => t === normalizedUser)) {
-    return "correct";
-  }
-
-  // Strict mode rejects typo tolerance.
-  if (options.strict) {
-    return "wrong";
-  }
-
-  // Bulgarian wrong-form detection: if answer shares significant letters but is clearly a
-  // morphological variant, mark as wrong-form. This is a heuristic placeholder; real
-  // grammar-aware checking comes in #48.
-  const wrongFormCandidate = normalizedTargets.some((t) => {
-    const common = [...normalizedUser].filter((c, i) => t[i] === c).length;
-    return Math.abs(t.length - normalizedUser.length) <= 2 && common >= Math.min(t.length, normalizedUser.length) / 2;
+  return evaluateAnswer(userAnswer, {
+    acceptedAnswers,
+    strict: options.strict,
   });
-  if (wrongFormCandidate && normalizedTargets.some((t) => isTypoOf(normalizedUser, t))) {
-    return "typo";
-  }
-  if (wrongFormCandidate) {
-    return "wrong-form";
-  }
+}
 
-  if (normalizedTargets.some((t) => isTypoOf(normalizedUser, t))) {
-    return "typo";
-  }
+export function buildExerciseItemResult(params: {
+  itemId: string;
+  userAnswer?: string;
+  acceptedAnswers: string[];
+  durationMs: number;
+  startedAt: string;
+  completedAt?: string;
+  attemptNumber?: number;
+  hintsUsed?: number;
+  required?: boolean;
+  productive?: boolean;
+  strict?: boolean;
+  status?: ExerciseResultStatus;
+  feedback?: string;
+  feedbackNeedsReview?: boolean;
+  vocabularyId?: string;
+}): ExerciseItemResult {
+  const status = params.status ?? evaluateTypedAnswer(
+    params.userAnswer ?? "",
+    params.acceptedAnswers,
+    { strict: params.strict }
+  );
+  const completedAt = params.completedAt ?? new Date().toISOString();
 
-  return "wrong";
+  return {
+    id: crypto.randomUUID(),
+    itemId: params.itemId,
+    status,
+    isPassing: status === "correct" || status === "typo",
+    userAnswer: params.userAnswer,
+    acceptedAnswers: params.acceptedAnswers,
+    feedback: params.feedback,
+    feedbackNeedsReview: params.feedbackNeedsReview,
+    durationMs: Math.max(0, params.durationMs),
+    startedAt: params.startedAt,
+    completedAt,
+    attemptNumber: Math.max(1, params.attemptNumber ?? 1),
+    hintsUsed: Math.max(0, params.hintsUsed ?? 0),
+    required: params.required ?? true,
+    productive: params.productive ?? false,
+    vocabularyId: params.vocabularyId,
+  };
 }
 
 export function buildExerciseResult(params: {
   exerciseId: string;
   exerciseType: ExerciseType;
-  itemId: string;
-  userAnswer: string;
-  acceptedAnswers: string[];
-  durationMs: number;
-  strict?: boolean;
-  feedback?: string;
-  feedbackNeedsReview?: boolean;
-  vocabularyId?: string;
+  itemResults: ExerciseItemResult[];
+  startedAt: string;
+  completedAt?: string;
 }): ExerciseResult {
-  const status = evaluateTypedAnswer(params.userAnswer, params.acceptedAnswers, {
-    strict: params.strict,
-    feedback: params.feedback,
-    feedbackNeedsReview: params.feedbackNeedsReview,
-    vocabularyId: params.vocabularyId,
-  });
+  const completedAt = params.completedAt ?? new Date().toISOString();
+  const correctAnswers = params.itemResults.filter((result) => result.isPassing).length;
+  const incorrectAnswers = params.itemResults.length - correctAnswers;
   return {
     exerciseId: params.exerciseId,
     exerciseType: params.exerciseType,
-    itemId: params.itemId,
-    status,
-    isPassing: status === "correct" || status === "typo",
-    userAnswer: params.userAnswer,
-    correctAnswers: params.acceptedAnswers,
-    feedback: params.feedback,
-    feedbackNeedsReview: params.feedbackNeedsReview,
-    durationMs: Math.max(0, params.durationMs),
-    answeredAt: new Date().toISOString(),
-    vocabularyId: params.vocabularyId,
+    correctAnswers,
+    incorrectAnswers,
+    attempts: params.itemResults.length,
+    itemResults: params.itemResults,
+    hintsUsed: params.itemResults.reduce((sum, result) => sum + result.hintsUsed, 0),
+    startedAt: params.startedAt,
+    completedAt,
   };
 }
+
+export interface FlattenedExerciseItemResult extends ExerciseItemResult {
+  exerciseId: string;
+  exerciseType: ExerciseType;
+}
+
+export function flattenExerciseResults(results: ExerciseResult[]): FlattenedExerciseItemResult[] {
+  return results.flatMap((exercise) =>
+    exercise.itemResults.map((item) => ({
+      ...item,
+      exerciseId: exercise.exerciseId,
+      exerciseType: exercise.exerciseType,
+    }))
+  );
+}
+
+function itemKey(result: FlattenedExerciseItemResult): string {
+  return `${result.exerciseId}:${result.itemId}`;
+}
+
+export function firstItemAttempts(results: ExerciseResult[]): FlattenedExerciseItemResult[] {
+  const first = new Map<string, FlattenedExerciseItemResult>();
+  for (const result of flattenExerciseResults(results)) {
+    const key = itemKey(result);
+    const existing = first.get(key);
+    if (!existing || result.attemptNumber < existing.attemptNumber) {
+      first.set(key, result);
+    }
+  }
+  return [...first.values()];
+}
+
+const SCORE_WEIGHTS: Record<ExerciseResultStatus, number> = {
+  correct: 1,
+  typo: 0.75,
+  "wrong-form": 0.25,
+  wrong: 0,
+  skipped: 0,
+};
 
 export function calculateLessonMetrics(results: ExerciseResult[]): {
   accuracy: number;
   score: number;
   firstTryCorrect: number;
   itemsAnswered: number;
+  correctCount: number;
+  incorrectCount: number;
 } {
-  const itemsAnswered = results.length;
-  const firstTryCorrect = results.filter((r) => r.status === "correct" || r.status === "typo").length;
+  const firstAttempts = firstItemAttempts(results);
+  const allAttempts = flattenExerciseResults(results);
+  const itemsAnswered = firstAttempts.length;
+  const firstTryCorrect = firstAttempts.filter((result) => result.isPassing).length;
   const accuracy = itemsAnswered === 0 ? 0 : firstTryCorrect / itemsAnswered;
+  const weighted = firstAttempts.reduce((sum, result) => sum + SCORE_WEIGHTS[result.status], 0);
+  const score = itemsAnswered === 0 ? 0 : Math.round((weighted / itemsAnswered) * 100);
+  const correctCount = allAttempts.filter((result) => result.isPassing).length;
 
-  // Score weights: correct = 1, typo = 0.75, wrong-form = 0.25, wrong/skipped = 0
-  const weights: Record<ExerciseResultStatus, number> = {
-    correct: 1,
-    typo: 0.75,
-    "wrong-form": 0.25,
-    wrong: 0,
-    skipped: 0,
+  return {
+    accuracy,
+    score,
+    firstTryCorrect,
+    itemsAnswered,
+    correctCount,
+    incorrectCount: allAttempts.length - correctCount,
   };
-  const rawScore = itemsAnswered === 0 ? 0 : results.reduce((sum, r) => sum + weights[r.status], 0) / itemsAnswered;
-  const score = Math.round(rawScore * 100);
-
-  return { accuracy, score, firstTryCorrect, itemsAnswered };
 }
 
-export function lessonPassed(results: ExerciseResult[], minAccuracy = 0.7, minItems = 3): boolean {
-  const { accuracy, itemsAnswered } = calculateLessonMetrics(results);
-  if (itemsAnswered < minItems) return false;
-  return accuracy >= minAccuracy;
+export interface LessonOutcomeOptions {
+  requiredScore: number;
+  completed: boolean;
+  requiresProductive?: boolean;
+  masteryScore?: number;
+}
+
+export interface LessonOutcome {
+  passed: boolean;
+  mastered: boolean;
+  reasons: string[];
+  missingRequiredItems: string[];
+  accuracy: number;
+  score: number;
+}
+
+export function evaluateLessonOutcome(
+  results: ExerciseResult[],
+  options: LessonOutcomeOptions
+): LessonOutcome {
+  const metrics = calculateLessonMetrics(results);
+  const flattened = flattenExerciseResults(results);
+  const required = flattened.filter((result) => result.required);
+  const requiredKeys = new Set(required.map(itemKey));
+  const passedRequiredKeys = new Set(required.filter((result) => result.isPassing).map(itemKey));
+  const missingRequiredItems = [...requiredKeys].filter((key) => !passedRequiredKeys.has(key));
+  const firstAttempts = firstItemAttempts(results);
+  const allWrong = firstAttempts.length > 0 && firstAttempts.every((result) => !result.isPassing);
+  const productiveSatisfied = !options.requiresProductive || flattened.some(
+    (result) => result.productive && result.isPassing
+  );
+  const reasons: string[] = [];
+
+  if (!options.completed) reasons.push("Lesson screens were not completed.");
+  if (firstAttempts.length === 0) reasons.push("No required exercise items were answered.");
+  if (allWrong) reasons.push("All first attempts were incorrect.");
+  if (metrics.score < options.requiredScore) {
+    reasons.push(`Score ${metrics.score} is below required score ${options.requiredScore}.`);
+  }
+  if (missingRequiredItems.length > 0) {
+    reasons.push(`${missingRequiredItems.length} required item(s) were never answered correctly.`);
+  }
+  if (!productiveSatisfied) reasons.push("A required productive exercise was not passed.");
+
+  const passed = reasons.length === 0;
+  const masteryScore = Math.max(options.requiredScore, options.masteryScore ?? 90);
+  const mastered = passed && metrics.score >= masteryScore && metrics.accuracy >= 0.9;
+
+  return {
+    passed,
+    mastered,
+    reasons,
+    missingRequiredItems,
+    accuracy: metrics.accuracy,
+    score: metrics.score,
+  };
 }
 
 export function allAnswersWrong(results: ExerciseResult[]): boolean {
-  return results.length > 0 && results.every((r) => r.status === "wrong" || r.status === "skipped");
+  const firstAttempts = firstItemAttempts(results);
+  return firstAttempts.length > 0 && firstAttempts.every((result) => !result.isPassing);
 }

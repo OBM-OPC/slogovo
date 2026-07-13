@@ -13,6 +13,7 @@ function normalizeProgress(progress: Partial<UserProgress> & { userId?: string }
     userId,
     streak: { ...createDefaultProgress(userId).streak, ...(progress.streak ?? {}) },
     completedLessons: Array.isArray(progress.completedLessons) ? progress.completedLessons : [],
+    masteredLessons: Array.isArray(progress.masteredLessons) ? progress.masteredLessons : [],
     completedModules: Array.isArray(progress.completedModules) ? progress.completedModules : [],
     vocabularyProgress: progress.vocabularyProgress ?? {},
     exerciseStats: {
@@ -20,6 +21,8 @@ function normalizeProgress(progress: Partial<UserProgress> & { userId?: string }
       ...(progress.exerciseStats ?? {}),
     },
     dailyStats: progress.dailyStats ?? {},
+    lessonScores: progress.lessonScores ?? {},
+    recordedAttemptIds: Array.isArray(progress.recordedAttemptIds) ? progress.recordedAttemptIds : [],
     settings: { ...createDefaultProgress(userId).settings, ...(progress.settings ?? {}) },
     achievements: Array.isArray(progress.achievements) ? progress.achievements : [],
   };
@@ -38,10 +41,13 @@ function rowToProgress(row: Record<string, unknown> | null, fallbackUserId: stri
         lastStudyDate: (row.streak_last_study_date ?? streak?.lastStudyDate) as string | undefined,
       },
       completedLessons: row.completed_lessons as string[] | undefined,
+      masteredLessons: row.mastered_lessons as string[] | undefined,
       completedModules: row.completed_modules as string[] | undefined,
       vocabularyProgress: row.vocabulary_progress as UserProgress["vocabularyProgress"] | undefined,
       exerciseStats: row.exercise_stats as UserProgress["exerciseStats"] | undefined,
       dailyStats: row.daily_stats as UserProgress["dailyStats"] | undefined,
+      lessonScores: row.lesson_scores as UserProgress["lessonScores"] | undefined,
+      recordedAttemptIds: row.recorded_attempt_ids as string[] | undefined,
       settings: row.settings as UserProgress["settings"] | undefined,
       achievements: row.achievements as string[] | undefined,
     },
@@ -114,6 +120,7 @@ export function createDefaultProgress(userId: string): UserProgress {
     lessonScores: {},
     exerciseStats: { total: 0, correct: 0, wrong: 0, consecutiveCorrect: 0 },
     dailyStats: {},
+    recordedAttemptIds: [],
     settings: {
       dailyGoal: "medium",
       ttsEnabled: true,

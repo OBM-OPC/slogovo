@@ -40,6 +40,7 @@ export function mergeProgress(local: UserProgress, remote: UserProgress): UserPr
       dailyStats[date] = {
         minutes: Math.max(localDay.minutes, remoteDay.minutes),
         vocabulary: Math.max(localDay.vocabulary, remoteDay.vocabulary),
+        activeSeconds: Math.max(localDay.activeSeconds ?? 0, remoteDay.activeSeconds ?? 0),
       };
     }
   }
@@ -82,6 +83,7 @@ export function mergeProgress(local: UserProgress, remote: UserProgress): UserPr
     achievements,
     settings,
     streak,
+    recordedAttemptIds: union(local.recordedAttemptIds, remote.recordedAttemptIds),
   };
 }
 

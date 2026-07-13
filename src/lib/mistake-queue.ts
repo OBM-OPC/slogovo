@@ -1,18 +1,20 @@
 import { ExerciseResult, MistakeQueueItem } from "@/types/learning";
+import { flattenExerciseResults } from "./evaluation";
 
 export class MistakeQueue {
   private items: MistakeQueueItem[] = [];
 
   constructor(initialResults: ExerciseResult[] = []) {
-    initialResults
-      .filter((r) => !r.isPassing && r.vocabularyId)
-      .forEach((r) => {
-        this.items.push({
-          vocabularyId: r.vocabularyId!,
-          originalResult: r,
-          retryCount: 0,
-        });
+    for (const result of flattenExerciseResults(initialResults)) {
+      if (!result.required || result.isPassing) continue;
+      this.items.push({
+        exerciseId: result.exerciseId,
+        exerciseType: result.exerciseType,
+        itemId: result.itemId,
+        originalResult: result,
+        retryCount: 0,
       });
+    }
   }
 
   hasNext(): boolean {
@@ -28,12 +30,8 @@ export class MistakeQueue {
   }
 
   retry(item: MistakeQueueItem, passed: boolean): void {
-    if (passed) return;
-    if (item.retryCount >= 2) return; // max 3 retries (initial + 2 retries)
-    this.items.push({
-      ...item,
-      retryCount: item.retryCount + 1,
-    });
+    if (passed || item.retryCount >= 1) return;
+    this.items.push({ ...item, retryCount: item.retryCount + 1 });
   }
 
   size(): number {

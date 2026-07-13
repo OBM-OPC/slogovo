@@ -1,75 +1,44 @@
-import { ExerciseResult, ExerciseResultStatus, LessonAttempt } from "@/types/learning";
+import { ExerciseResult, LessonAttempt } from "@/types/learning";
+import { calculateLessonMetrics, evaluateLessonOutcome } from "./evaluation";
 
 export interface MasteryPassConfig {
-  /** Minimum fraction of items that must be answered correctly on first try. */
   minAccuracy: number;
-  /** Minimum number of items that must be answered. */
   minItems: number;
-  /** Maximum allowed wrong-form answers. */
   maxWrongFormRatio: number;
-  /** If true, an all-wrong attempt can never pass regardless of length. */
   rejectAllWrong: boolean;
 }
 
 export const DEFAULT_MASTERY_PASS_CONFIG: MasteryPassConfig = {
-  minAccuracy: 0.7,
-  minItems: 3,
+  minAccuracy: 0.9,
+  minItems: 1,
   maxWrongFormRatio: 0.25,
   rejectAllWrong: true,
-};
-
-const WEIGHTS: Record<ExerciseResultStatus, number> = {
-  correct: 1,
-  typo: 1,
-  "wrong-form": 0.25,
-  wrong: 0,
-  skipped: 0,
 };
 
 export function evaluateMasteryPass(
   results: ExerciseResult[],
   config: MasteryPassConfig = DEFAULT_MASTERY_PASS_CONFIG
 ): { passed: boolean; reasons: string[] } {
-  const reasons: string[] = [];
-
-  if (results.length < config.minItems) {
-    reasons.push(`Not enough items answered (${results.length}/${config.minItems}).`);
-    return { passed: false, reasons };
+  const metrics = calculateLessonMetrics(results);
+  const outcome = evaluateLessonOutcome(results, {
+    completed: true,
+    requiredScore: Math.round(config.minAccuracy * 100),
+    masteryScore: Math.round(config.minAccuracy * 100),
+  });
+  const reasons = [...outcome.reasons];
+  if (metrics.itemsAnswered < config.minItems) {
+    reasons.push(`Not enough items answered (${metrics.itemsAnswered}/${config.minItems}).`);
   }
-
-  if (config.rejectAllWrong && results.every((r) => r.status === "wrong" || r.status === "skipped")) {
-    reasons.push("All answers were wrong or skipped.");
-    return { passed: false, reasons };
-  }
-
-  const firstTryCorrect = results.filter((r) => r.status === "correct" || r.status === "typo").length;
-  const accuracy = results.length === 0 ? 0 : firstTryCorrect / results.length;
-  if (accuracy < config.minAccuracy) {
-    reasons.push(`Accuracy ${(accuracy * 100).toFixed(0)}% is below required ${(config.minAccuracy * 100).toFixed(0)}%.`);
-  }
-
-  const wrongFormCount = results.filter((r) => r.status === "wrong-form").length;
-  const wrongFormRatio = results.length === 0 ? 0 : wrongFormCount / results.length;
-  if (wrongFormRatio > config.maxWrongFormRatio) {
-    reasons.push(`Too many wrong-form answers (${(wrongFormRatio * 100).toFixed(0)}%).`);
-  }
-
-  const passed = reasons.length === 0;
-  if (passed) {
-    reasons.push("Mastery criteria met.");
-  }
-  return { passed, reasons };
+  const passed = outcome.mastered && metrics.itemsAnswered >= config.minItems;
+  return { passed, reasons: passed ? ["Mastery criteria met."] : reasons };
 }
 
-export function attemptPassedMastery(
-  attempt: LessonAttempt,
-  config?: MasteryPassConfig
-): { passed: boolean; reasons: string[] } {
-  return evaluateMasteryPass(attempt.results, config);
+export function attemptPassedMastery(attempt: LessonAttempt): { passed: boolean; reasons: string[] } {
+  return attempt.mastered
+    ? { passed: true, reasons: ["Mastery criteria met."] }
+    : { passed: false, reasons: ["Attempt did not meet mastery criteria."] };
 }
 
 export function calculateWeightedScore(results: ExerciseResult[]): number {
-  if (results.length === 0) return 0;
-  const raw = results.reduce((sum, r) => sum + WEIGHTS[r.status], 0) / results.length;
-  return Math.round(raw * 100);
+  return calculateLessonMetrics(results).score;
 }
