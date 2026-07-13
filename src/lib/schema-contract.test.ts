@@ -13,6 +13,7 @@ describe("progress schema contract", () => {
     const attemptsMigration = read("supabase/migrations/20260712130000_add_lesson_attempts.sql");
     const granularMigration = read("supabase/migrations/20260713010000_add_granular_learning_tables.sql");
     const hardeningMigration = read("supabase/migrations/20260713130000_harden_database_functions.sql");
+    const syncDeviceMigration = read("supabase/migrations/20260713170000_add_sync_device_ids.sql");
     const canonical = read("supabase/progress-schema.sql");
     const generated = read("src/types/database.generated.ts");
     const loadRoute = read("src/app/api/progress/load/route.ts");
@@ -47,6 +48,18 @@ describe("progress schema contract", () => {
       expect(granularMigration).toContain(`alter table public.${table} enable row level security`);
       expect(granularMigration).toContain(`auth.uid() = user_id`);
     }
+
+    for (const table of [
+      "vocabulary_review_events",
+      "daily_activity",
+      "offline_events",
+      "lesson_attempts",
+      "exercise_results",
+    ]) {
+      expect(syncDeviceMigration).toContain(`alter table public.${table}`);
+    }
+    expect(syncDeviceMigration).toContain("device_id text not null default 'legacy'");
+    expect(generated).toContain("device_id: string");
 
     // User settings and achievements are columns on the RLS-protected aggregate row.
     for (const column of ["settings", "achievements"]) {

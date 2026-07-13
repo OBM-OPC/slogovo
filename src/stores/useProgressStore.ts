@@ -17,7 +17,7 @@ import { checkAchievements } from "@/lib/achievements";
 import { vibrateCorrect, vibrateWrong } from "@/lib/haptics";
 import { triggerConfetti, triggerLevelUpConfetti } from "@/lib/confetti";
 import { getLessonsByModule } from "@/lib/content";
-import { processSyncQueue, scheduleSync } from "@/lib/sync";
+import { enableAutoSync, processSyncQueue, scheduleSync } from "@/lib/sync";
 import { addEvent, addLessonAttemptEvent } from "@/lib/sync-queue";
 import { mergeProgress } from "@/lib/progress-merge";
 
@@ -77,6 +77,10 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
 
     saveProgressLocal(finalProgress);
     set({ progress: finalProgress, initialized: true, userId });
+    enableAutoSync(userId, async () => {
+      const latest = get().progress;
+      if (latest) await saveProgressToSupabase(latest);
+    });
 
     // Best-effort remote sync after state is initialized.
     void saveProgressToSupabase(finalProgress);

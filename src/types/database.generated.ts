@@ -52,6 +52,7 @@ export interface Database {
           score: number;
           xp_earned: number;
           client_event_id: string | null;
+          device_id: string;
           created_at: string;
           updated_at: string;
         };
@@ -82,6 +83,7 @@ export interface Database {
           answered_at: string;
           vocabulary_id: string | null;
           client_event_id: string | null;
+          device_id: string;
           created_at: string;
         };
         Insert: Partial<Database["public"]["Tables"]["exercise_results"]["Row"]> & {
@@ -93,6 +95,71 @@ export interface Database {
           status: string;
         };
         Update: Partial<Database["public"]["Tables"]["exercise_results"]["Row"]>;
+        Relationships: [];
+      };
+      vocabulary_review_events: {
+        Row: {
+          id: string;
+          user_id: string;
+          word_id: string;
+          rating: string;
+          reviewed_at: string;
+          client_event_id: string;
+          device_id: string;
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["vocabulary_review_events"]["Row"]> & {
+          user_id: string;
+          word_id: string;
+          rating: string;
+          client_event_id: string;
+          device_id: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["vocabulary_review_events"]["Row"]>;
+        Relationships: [];
+      };
+      daily_activity: {
+        Row: {
+          id: string;
+          user_id: string;
+          date: string;
+          minutes: number;
+          vocabulary_count: number;
+          client_event_id: string;
+          device_id: string;
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["daily_activity"]["Row"]> & {
+          user_id: string;
+          date: string;
+          client_event_id: string;
+          device_id: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["daily_activity"]["Row"]>;
+        Relationships: [];
+      };
+      offline_events: {
+        Row: {
+          id: string;
+          user_id: string;
+          event_type: string;
+          payload: Json;
+          client_event_id: string;
+          device_id: string;
+          synced: boolean;
+          error_count: number;
+          last_error: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["offline_events"]["Row"]> & {
+          user_id: string;
+          event_type: string;
+          payload: Json;
+          client_event_id: string;
+          device_id: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["offline_events"]["Row"]>;
         Relationships: [];
       };
     };

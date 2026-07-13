@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { UserProgress } from "@/types";
+import { mergeProgress } from "@/lib/progress-merge";
+import { progressToRow, rowToProgress } from "@/lib/progress-serialization";
 
 export const dynamic = "force-dynamic";
 
@@ -20,13 +22,25 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Ungültige Daten" }, { status: 400 });
     }
 
-    const { userId, ...rest } = progressToRow(progress);
+    const { data: existing, error: loadError } = await supabase
+      .from("user_progress")
+      .select("*")
+      .eq("user_id", user.id)
+      .maybeSingle();
+    if (loadError) {
+      return NextResponse.json(
+        { error: "Fehler beim Zusammenführen", details: loadError.message },
+        { status: 500 }
+      );
+    }
+
+    const remote = rowToProgress(existing as Record<string, unknown> | null, user.id);
+    const merged = remote ? mergeProgress(progress, remote) : progress;
     const { error } = await supabase
       .from("user_progress")
       .upsert(
         {
-          user_id: userId,
-          ...rest,
+          ...progressToRow(merged),
           updated_at: new Date().toISOString(),
         },
         { onConflict: "user_id" }
@@ -39,7 +53,7 @@ export async function POST(request: Request) {
       );
     }
 
-    return NextResponse.json({ success: true }, { status: 200 });
+    return NextResponse.json({ success: true, progress: merged }, { status: 200 });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     return NextResponse.json(
@@ -47,33 +61,4 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
-}
-
-function progressToRow(progress: UserProgress) {
-  return {
-    userId: progress.userId,
-    streak_current: progress.streak?.current ?? 0,
-    streak_longest: progress.streak?.longest ?? 0,
-    streak_last_study_date: progress.streak?.lastStudyDate ?? null,
-    completed_lessons: progress.completedLessons ?? [],
-    mastered_lessons: progress.masteredLessons ?? [],
-    completed_modules: progress.completedModules ?? [],
-    vocabulary_progress: progress.vocabularyProgress ?? {},
-    lesson_scores: progress.lessonScores ?? {},
-    exercise_stats: progress.exerciseStats ?? {
-      total: 0,
-      correct: 0,
-      wrong: 0,
-      consecutiveCorrect: 0,
-    },
-    daily_stats: progress.dailyStats ?? {},
-    recorded_attempt_ids: progress.recordedAttemptIds ?? [],
-    settings: progress.settings ?? {
-      dailyGoal: "medium",
-      ttsEnabled: true,
-      showLatin: true,
-      speechRate: 0.9,
-    },
-    achievements: progress.achievements ?? [],
-  };
 }
