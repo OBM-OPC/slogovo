@@ -1,14 +1,19 @@
 export type Level = "A1" | "A2" | "B1" | "B2" | "C1";
 export type DifficultyRating = "repeat" | "hard" | "good" | "easy";
 
-export interface VocabularyItem {
-  id: string;
-  de: string;
-  bg: string;
-  bgLatin?: string;
-  audio?: string;
-  category?: string;
-}
+export type {
+  VocabularyItem,
+  PartOfSpeech,
+  GrammaticalGender,
+  VerbAspect,
+} from "./vocabulary";
+import type { VocabularyItem } from "./vocabulary";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const _vocabularyTypeRef: VocabularyItem | undefined = undefined;
+void _vocabularyTypeRef;
+
+export * from "./learning";
+export * from "./speaking";
 
 export interface GrammarExample {
   bg: string;
@@ -38,6 +43,8 @@ export interface QuizQuestion {
   options: string[];
   correctOptionIndex: number;
   bg?: string;
+  explanation?: string;
+  grammarTopicSlug?: string;
 }
 
 export interface FillInSentence {
@@ -47,12 +54,16 @@ export interface FillInSentence {
   answers: string[]; // accepted alternatives
   bg?: string;
   de?: string; // German hint for the full sentence meaning
+  explanation?: string;
+  grammarTopicSlug?: string;
 }
 
 export interface MatchingPair {
   id: string;
   de: string;
   bg: string;
+  explanation?: string;
+  grammarTopicSlug?: string;
 }
 
 export interface SentenceBuilder {
@@ -61,6 +72,8 @@ export interface SentenceBuilder {
   correctOrder: string[];
   bg?: string;
   de?: string;
+  explanation?: string;
+  grammarTopicSlug?: string;
 }
 
 export interface Exercise {
@@ -127,8 +140,10 @@ export interface UserProgress {
   userId: string;
   streak: Streak;
   completedLessons: string[];
+  masteredLessons: string[];
   completedModules: string[];
   vocabularyProgress: Record<string, VocabularyProgress>;
+  lessonScores: Record<string, number>;
   exerciseStats: {
     total: number;
     correct: number;

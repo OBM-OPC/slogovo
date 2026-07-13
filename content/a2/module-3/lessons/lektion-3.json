@@ -11,55 +11,55 @@
       "id": "a2m3l3-1",
       "de": "die Reservierung",
       "bg": "резервацията",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m3l3-2",
       "de": "das Zimmer",
       "bg": "стаята",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m3l3-3",
       "de": "der Schlüssel",
       "bg": "ключът",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m3l3-4",
       "de": "das Frühstück",
       "bg": "закуската",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m3l3-5",
       "de": "die Rezeption",
       "bg": "рецепцията",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m3l3-6",
       "de": "das WLAN",
       "bg": "безжичната мрежа",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m3l3-7",
       "de": "klimatisiert",
       "bg": "с климатик",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m3l3-8",
       "de": "die Aussicht",
       "bg": "изгледът",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m3l3-9",
       "de": "die Klimaanlage",
       "bg": "климатикът",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     }
   ],
   "grammar": {

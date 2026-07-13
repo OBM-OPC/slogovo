@@ -1,3 +1,5 @@
+"use client";
+
 import { create } from "zustand";
 import { UserProgress, Streak, DifficultyRating } from "@/types";
 import {
@@ -14,6 +16,9 @@ import { checkAchievements } from "@/lib/achievements";
 import { vibrateCorrect, vibrateWrong } from "@/lib/haptics";
 import { triggerConfetti, triggerLevelUpConfetti } from "@/lib/confetti";
 import { getLessonsByModule } from "@/lib/content";
+import { processSyncQueue, scheduleSync } from "@/lib/sync";
+import { addEvent, generateEventId } from "@/lib/sync-queue";
+import { mergeProgress } from "@/lib/progress-merge";
 
 interface ProgressState {
   progress: UserProgress | null;
@@ -30,7 +35,7 @@ interface ProgressState {
   updateSettings: (settings: Partial<UserProgress["settings"]>) => Promise<void>;
   unlockAchievement: (achievementId: string) => Promise<void>;
   resetProgress: () => Promise<void>;
-  syncNow: () => Promise<void>;
+  syncNow: () => Promise<import("@/lib/sync").SyncResult | undefined>;
 }
 
 function updateStreak(progress: UserProgress): Streak {
@@ -76,6 +81,24 @@ function persist(updated: UserProgress): UserProgress {
   return updated;
 }
 
+function queueLessonCompleted(
+  userId: string,
+  lessonId: string,
+  moduleId: string,
+  passed: boolean,
+  accuracy: number,
+  score: number,
+  xpEarned: number
+): void {
+  addEvent({
+    type: "lesson_completed",
+    userId,
+    timestamp: new Date().toISOString(),
+    payload: { lessonId, moduleId, level: "A1", passed, accuracy, score, xpEarned },
+  });
+  scheduleSync(userId);
+}
+
 export const useProgressStore = create<ProgressState>((set, get) => ({
   progress: null,
   initialized: false,
@@ -91,11 +114,8 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
 
     let finalProgress: UserProgress;
     if (fromLocal && fromRemote) {
-      // Prefer whichever copy has more completed lessons. This prevents an empty
-      // or stale Supabase row from wiping real local progress on page load.
-      finalProgress = fromLocal.completedLessons.length >= fromRemote.completedLessons.length
-        ? fromLocal
-        : fromRemote;
+      // Merge local and remote progress so no device drops valid data.
+      finalProgress = mergeProgress(fromLocal, fromRemote);
     } else {
       finalProgress = fromLocal ?? fromRemote ?? (await createInitialProgress(userId));
     }
@@ -105,6 +125,7 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
 
     // Best-effort remote sync after state is initialized.
     void saveProgressToSupabase(finalProgress);
+    void processSyncQueue(userId);
   },
 
   syncNow: async () => {
@@ -113,8 +134,10 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
 
     set({ syncing: true });
     saveProgressLocal(state.progress);
+    const syncResult = await processSyncQueue(state.userId);
     await saveProgressToSupabase(state.progress);
     set({ syncing: false });
+    return syncResult;
   },
 
   completeLesson: async (lessonId: string) => {
@@ -144,8 +167,40 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
     set({ progress: updated });
     await saveProgressToSupabase(updated);
 
+    if (state.userId) {
+      queueLessonCompleted(state.userId, lessonId, lessonModuleId, true, 1, 100, 10);
+    }
+
     if (updated.completedLessons.length > completedCountBefore) {
       triggerLevelUpConfetti();
+    }
+  },
+
+  masterLesson: async (lessonId: string, score = 100) => {
+    const state = get();
+    if (!state.progress) return;
+    if (state.progress.masteredLessons.includes(lessonId)) return;
+
+    const previousBest = state.progress.lessonScores[lessonId] ?? 0;
+    const updated = persist({
+      ...state.progress,
+      masteredLessons: [...state.progress.masteredLessons, lessonId],
+      completedLessons: state.progress.completedLessons.includes(lessonId)
+        ? state.progress.completedLessons
+        : [...state.progress.completedLessons, lessonId],
+      lessonScores: {
+        ...state.progress.lessonScores,
+        [lessonId]: Math.max(previousBest, score),
+      },
+      streak: updateStreak(state.progress),
+    });
+
+    saveProgressLocal(updated);
+    set({ progress: updated });
+    await saveProgressToSupabase(updated);
+
+    if (state.userId) {
+      queueLessonCompleted(state.userId, lessonId, "mastery", true, score / 100, score, 10);
     }
   },
 
@@ -163,6 +218,10 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
     saveProgressLocal(updated);
     set({ progress: updated });
     await saveProgressToSupabase(updated);
+
+    if (state.userId) {
+      queueLessonCompleted(state.userId, `module-${moduleId}`, moduleId, true, 1, 100, 10);
+    }
   },
 
   reviewVocabulary: async (wordId: string, known: boolean) => {
@@ -188,6 +247,20 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
     saveProgressLocal(updated);
     set({ progress: updated });
     await saveProgressToSupabase(updated);
+
+    if (state.userId) {
+      addEvent({
+        type: "vocabulary_review",
+        userId: state.userId,
+        timestamp: new Date().toISOString(),
+        payload: {
+          wordId,
+          rating: known ? "good" : "repeat",
+          reviewedAt: new Date().toISOString(),
+        },
+      });
+      scheduleSync(state.userId);
+    }
   },
 
   reviewVocabularyWithDifficulty: async (wordId: string, rating: DifficultyRating) => {
@@ -213,6 +286,20 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
     saveProgressLocal(updated);
     set({ progress: updated });
     await saveProgressToSupabase(updated);
+
+    if (state.userId) {
+      addEvent({
+        type: "vocabulary_review",
+        userId: state.userId,
+        timestamp: new Date().toISOString(),
+        payload: {
+          wordId,
+          rating,
+          reviewedAt: new Date().toISOString(),
+        },
+      });
+      scheduleSync(state.userId);
+    }
   },
 
   addExerciseResult: async (correct: boolean) => {
@@ -246,6 +333,23 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
     saveProgressLocal(updated);
     set({ progress: updated });
     await saveProgressToSupabase(updated);
+
+    if (state.userId) {
+      addEvent({
+        type: "exercise_result",
+        userId: state.userId,
+        timestamp: new Date().toISOString(),
+        payload: {
+          attemptId: generateEventId(),
+          exerciseId: "exercise",
+          exerciseType: "mixed",
+          itemId: generateEventId(),
+          status: correct ? "correct" : "wrong",
+          durationMs: 0,
+        },
+      });
+      scheduleSync(state.userId);
+    }
   },
 
   addStudyTime: async (minutes: number, vocabulary = 0) => {
@@ -272,6 +376,10 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
     set({ progress: updated });
     await saveProgressToSupabase(updated);
 
+    if (state.userId) {
+      queueLessonCompleted(state.userId, `daily-${today}`, "daily", true, 1, 100, 10);
+    }
+
     if (updated.streak.current > currentStreak && updated.streak.current > 0 && updated.streak.current % 7 === 0) {
       triggerConfetti({ scalar: 1 + updated.streak.current * 0.02 });
     }
@@ -289,6 +397,16 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
     saveProgressLocal(updated);
     set({ progress: updated });
     await saveProgressToSupabase(updated);
+
+    if (state.userId) {
+      addEvent({
+        type: "settings_changed",
+        userId: state.userId,
+        timestamp: new Date().toISOString(),
+        payload: { settings: updated.settings },
+      });
+      scheduleSync(state.userId);
+    }
   },
 
   unlockAchievement: async (achievementId: string) => {

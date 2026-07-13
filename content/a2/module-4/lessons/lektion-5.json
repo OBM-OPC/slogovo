@@ -11,55 +11,55 @@
       "id": "a2m4l5-1",
       "de": "der Unfall",
       "bg": "инцидентът",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m4l5-2",
       "de": "verletzt",
       "bg": "наранен",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m4l5-3",
       "de": "die Erste Hilfe",
       "bg": "първа помощ",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m4l5-4",
       "de": "die Notrufnummer",
       "bg": "номерът за спешни случаи",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m4l5-5",
       "de": "brennen",
       "bg": "горя",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m4l5-6",
       "de": "rufen",
       "bg": "викам",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m4l5-7",
       "de": "helfen",
       "bg": "помагам",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m4l5-8",
       "de": "die Verbrennung",
       "bg": "изгарянето",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     },
     {
       "id": "a2m4l5-9",
       "de": "die Schnittwunde",
       "bg": "порезът",
-      "bgLatin": ""
+      "bgLatin": "NATIVE_REVIEW_NEEDED"
     }
   ],
   "grammar": {
