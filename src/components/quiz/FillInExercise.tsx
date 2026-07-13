@@ -68,7 +68,7 @@ export function FillInExercise({
 
   return (
     <div>
-      <p className="mb-4 text-lg font-medium">Ergänze den Satz:</p>
+      <p className="mb-4 text-lg font-medium">Ergänze die Antwort:</p>
       {sentence.de && <p className="mb-2 text-center text-base italic text-muted">{sentence.de}</p>}
       <div className="mb-6 rounded-xl bg-gray-50 p-4 text-center text-xl">
         {sentence.parts.map((part, index) => (
@@ -84,7 +84,7 @@ export function FillInExercise({
         value={input}
         onChange={(event) => { onInteraction?.(); setInput(event.target.value); }}
         disabled={showResult}
-        placeholder="Bulgarisches Wort eingeben"
+        placeholder="Antwort eingeben"
         className={cn(
           "input mb-4 text-center text-lg",
           showResult ? (isCorrect ? "border-success" : "border-danger") : ""

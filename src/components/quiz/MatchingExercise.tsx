@@ -22,7 +22,6 @@ export function MatchingExercise({
 }: MatchingExerciseProps) {
   const exerciseStartedAt = useRef(new Date().toISOString());
   const itemStartedAt = useRef(new Map(pairs.map((pair) => [pair.id, new Date().toISOString()])));
-  const itemAttempts = useRef(new Map<string, number>());
   const itemResults = useRef<ExerciseItemResult[]>([]);
   const [selectedDe, setSelectedDe] = useState<string | null>(null);
   const [matched, setMatched] = useState<Set<string>>(new Set());
@@ -43,8 +42,6 @@ export function MatchingExercise({
     const selectedValue = selectedDe;
     const isCorrect = selectedPair.bg === bg;
     const completedAt = new Date().toISOString();
-    const localAttempt = (itemAttempts.current.get(selectedPair.id) ?? 0) + 1;
-    itemAttempts.current.set(selectedPair.id, localAttempt);
     itemResults.current.push(buildExerciseItemResult({
       itemId: selectedPair.id,
       userAnswer: bg,
@@ -53,7 +50,9 @@ export function MatchingExercise({
       durationMs: Date.parse(completedAt) - Date.parse(itemStartedAt.current.get(selectedPair.id) ?? completedAt),
       startedAt: itemStartedAt.current.get(selectedPair.id) ?? completedAt,
       completedAt,
-      attemptNumber: attemptNumber + localAttempt - 1,
+      // Selections inside one matching screen belong to the same lesson-flow attempt.
+      // Deferred retries increment the attempt number after the screen completes.
+      attemptNumber,
       required: selectedPair.required,
       productive: false,
       feedback: selectedPair.explanation,
