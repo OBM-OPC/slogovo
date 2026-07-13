@@ -2,10 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, CheckCircle2, RotateCcw, XCircle } from "lucide-react";
+import { ArrowLeft, RotateCcw } from "lucide-react";
 import { ExerciseResult, Lesson, LessonAttempt } from "@/types";
 import { Button } from "@/components/ui/Button";
 import { ExerciseEngine } from "@/components/quiz/ExerciseEngine";
+import { LessonSummary } from "@/components/lesson/LessonSummary";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { SpeakButton } from "@/components/ui/SpeakButton";
 import { VocabularyList } from "@/components/vocabulary/VocabularyList";
@@ -190,29 +191,13 @@ export function LessonView({ lesson, moduleId, nextLessonId, context }: LessonVi
       )}
 
       {section === "summary" && attempt && (
-        <section className="card text-center">
-          <div className={`mb-4 inline-flex rounded-full p-4 ${attempt.passed ? "bg-success/10 text-success" : "bg-danger/10 text-danger"}`}>
-            {attempt.passed ? <CheckCircle2 className="h-10 w-10" /> : <XCircle className="h-10 w-10" />}
-          </div>
-          <h2 className="mb-2 text-xl font-bold">
-            {attempt.mastered ? "Lektion gemeistert!" : attempt.passed ? "Lektion bestanden!" : "Noch nicht bestanden"}
-          </h2>
-          <p className="mb-6 text-muted">{attempt.passed ? lesson.summary : `Benötigt: ${requiredScore} Punkte. Versuche die Lektion erneut.`}</p>
-          <div className="mb-6 grid grid-cols-2 gap-3">
-            <div className="rounded-xl bg-gray-50 p-3"><p className="text-2xl font-bold">{attempt.score}</p><p className="text-xs text-muted">Punkte</p></div>
-            <div className="rounded-xl bg-gray-50 p-3"><p className="text-2xl font-bold">{Math.round(attempt.accuracy * 100)}%</p><p className="text-xs text-muted">Genauigkeit</p></div>
-            <div className="rounded-xl bg-gray-50 p-3"><p className="text-2xl font-bold">{attempt.correctCount}/{attempt.correctCount + attempt.incorrectCount}</p><p className="text-xs text-muted">Antworten</p></div>
-            <div className="rounded-xl bg-gray-50 p-3"><p className="text-2xl font-bold">{attempt.activeTimeSeconds}s</p><p className="text-xs text-muted">aktive Zeit</p></div>
-          </div>
-          <div className="space-y-3">
-            {!attempt.passed && <Button onClick={() => window.location.reload()} fullWidth>Erneut versuchen</Button>}
-            {attempt.passed && nextLessonId ? (
-              <Link href={`/kurs/${lesson.moduleId}/${nextLessonId}/`}><Button fullWidth>Nächste Lektion</Button></Link>
-            ) : (
-              <Link href="/kurs/"><Button fullWidth variant={attempt.passed || passedPreviously ? "primary" : "outline"}>Zurück zum Kurs</Button></Link>
-            )}
-          </div>
-        </section>
+        <LessonSummary
+          attempt={attempt}
+          lesson={lesson}
+          nextLessonId={nextLessonId}
+          passedPreviously={passedPreviously}
+          onRetry={() => window.location.reload()}
+        />
       )}
     </div>
   );
