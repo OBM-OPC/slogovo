@@ -57,12 +57,13 @@ export default function LoginForm() {
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-sm font-medium text-foreground mb-2">
+            <label htmlFor="login-email" className="block text-sm font-medium text-foreground mb-2">
               E-Mail
             </label>
             <div className="relative">
               <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-warm-400" />
               <input
+                id="login-email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -74,12 +75,13 @@ export default function LoginForm() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-foreground mb-2">
+            <label htmlFor="login-password" className="block text-sm font-medium text-foreground mb-2">
               Passwort
             </label>
             <div className="relative">
               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-warm-400" />
               <input
+                id="login-password"
                 type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -98,8 +100,9 @@ export default function LoginForm() {
           </div>
 
           <div className="flex items-center justify-between text-sm">
-            <label className="flex items-center gap-2 text-muted cursor-pointer">
+            <label htmlFor="remember-login" className="flex items-center gap-2 text-muted cursor-pointer">
               <input
+                id="remember-login"
                 type="checkbox"
                 className="h-4 w-4 rounded border-warm-200 text-primary focus:ring-primary/30"
               />
