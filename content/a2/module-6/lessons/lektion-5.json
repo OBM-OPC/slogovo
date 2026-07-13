@@ -10,62 +10,52 @@
     {
       "id": "a2m6l5-1",
       "de": "der Streit",
-      "bg": "спорът",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "спорът"
     },
     {
       "id": "a2m6l5-2",
       "de": "diskutieren",
-      "bg": "дискутирам",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "дискутирам"
     },
     {
       "id": "a2m6l5-3",
       "de": "zuhören",
-      "bg": "слушам",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "слушам"
     },
     {
       "id": "a2m6l5-4",
       "de": "die Meinung",
-      "bg": "мнението",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "мнението"
     },
     {
       "id": "a2m6l5-5",
       "de": "einverstanden",
-      "bg": "съгласен",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "съгласен"
     },
     {
       "id": "a2m6l5-6",
       "de": "widersprechen",
-      "bg": "възразявам",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "възразявам"
     },
     {
       "id": "a2m6l5-7",
       "de": "entschuldigen",
-      "bg": "извинявам се",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "извинявам се"
     },
     {
       "id": "a2m6l5-8",
       "de": "verzeihen",
-      "bg": "прощавам",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "прощавам"
     },
     {
       "id": "a2m6l5-9",
       "de": "die Lösung",
-      "bg": "решението",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "решението"
     },
     {
       "id": "a2m6l5-10",
       "de": "kompromiss",
-      "bg": "компромисът",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "компромисът"
     }
   ],
   "grammar": {

@@ -10,50 +10,42 @@
     {
       "id": "a2m5l2-1",
       "de": "der Lebenslauf",
-      "bg": "автобиографията",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "автобиографията"
     },
     {
       "id": "a2m5l2-2",
       "de": "das Anschreiben",
-      "bg": "мотивационното писмо",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "мотивационното писмо"
     },
     {
       "id": "a2m5l2-3",
       "de": "die Stelle",
-      "bg": "позицията",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "позицията"
     },
     {
       "id": "a2m5l2-4",
       "de": "die Erfahrung",
-      "bg": "опитът",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "опитът"
     },
     {
       "id": "a2m5l2-5",
       "de": "die Ausbildung",
-      "bg": "обучението",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "обучението"
     },
     {
       "id": "a2m5l2-6",
       "de": "die Fähigkeit",
-      "bg": "умението",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "умението"
     },
     {
       "id": "a2m5l2-7",
       "de": "die Sprachkenntnis",
-      "bg": "езиковите познания",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "езиковите познания"
     },
     {
       "id": "a2m5l2-8",
       "de": "das Vorstellungsgespräch",
-      "bg": "интервюто",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "интервюто"
     }
   ],
   "grammar": {

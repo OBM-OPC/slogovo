@@ -10,56 +10,47 @@
     {
       "id": "a2m3l2-1",
       "de": "der Zug",
-      "bg": "влакът",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "влакът"
     },
     {
       "id": "a2m3l2-2",
       "de": "der Bahnhof",
-      "bg": "гарата",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "гарата"
     },
     {
       "id": "a2m3l2-3",
       "de": "der Wagen",
-      "bg": "вагонът",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "вагонът"
     },
     {
       "id": "a2m3l2-4",
       "de": "der Platz",
-      "bg": "мястото",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "мястото"
     },
     {
       "id": "a2m3l2-5",
       "de": "der Schaffner",
-      "bg": "кондукторът",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "кондукторът"
     },
     {
       "id": "a2m3l2-6",
       "de": "die Fahrkarte",
-      "bg": "билетът",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "билетът"
     },
     {
       "id": "a2m3l2-7",
       "de": "umsteigen",
-      "bg": "прекачвам се",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "прекачвам се"
     },
     {
       "id": "a2m3l2-8",
       "de": "die Ankunft",
-      "bg": "пристигането",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "пристигането"
     },
     {
       "id": "a2m3l2-9",
       "de": "die Abfahrt",
-      "bg": "тръгването",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "тръгването"
     }
   ],
   "grammar": {

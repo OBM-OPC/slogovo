@@ -10,56 +10,47 @@
     {
       "id": "a2m3l5-1",
       "de": "geradeaus",
-      "bg": "направо",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "направо"
     },
     {
       "id": "a2m3l5-2",
       "de": "links",
-      "bg": "наляво",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "наляво"
     },
     {
       "id": "a2m3l5-3",
       "de": "rechts",
-      "bg": "надясно",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "надясно"
     },
     {
       "id": "a2m3l5-4",
       "de": "die Kreuzung",
-      "bg": "кръстовището",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "кръстовището"
     },
     {
       "id": "a2m3l5-5",
       "de": "die Ampel",
-      "bg": "светофарът",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "светофарът"
     },
     {
       "id": "a2m3l5-6",
       "de": "die Ecke",
-      "bg": "ъгълът",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "ъгълът"
     },
     {
       "id": "a2m3l5-7",
       "de": "weit",
-      "bg": "далеч",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "далеч"
     },
     {
       "id": "a2m3l5-8",
       "de": "nah",
-      "bg": "близо",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "близо"
     },
     {
       "id": "a2m3l5-9",
       "de": "die Richtung",
-      "bg": "посоката",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "посоката"
     }
   ],
   "grammar": {

@@ -10,62 +10,52 @@
     {
       "id": "a2m6l4-1",
       "de": "die Liebe",
-      "bg": "любовта",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "любовта"
     },
     {
       "id": "a2m6l4-2",
       "de": "verliebt",
-      "bg": "влюбен",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "влюбен"
     },
     {
       "id": "a2m6l4-3",
       "de": "das Date",
-      "bg": "свиданието",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "свиданието"
     },
     {
       "id": "a2m6l4-4",
       "de": "die Rose",
-      "bg": "розата",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "розата"
     },
     {
       "id": "a2m6l4-5",
       "de": "das Geschenk",
-      "bg": "подаръкът",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "подаръкът"
     },
     {
       "id": "a2m6l4-6",
       "de": "küssen",
-      "bg": "целувам",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "целувам"
     },
     {
       "id": "a2m6l4-7",
       "de": "umarmen",
-      "bg": "прегръщам",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "прегръщам"
     },
     {
       "id": "a2m6l4-8",
       "de": "vermissen",
-      "bg": "скучая",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "скучая"
     },
     {
       "id": "a2m6l4-9",
       "de": "die Hochzeit",
-      "bg": "сватбата",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "сватбата"
     },
     {
       "id": "a2m6l4-10",
       "de": "der Jahrestag",
-      "bg": "годишнината",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "годишнината"
     }
   ],
   "grammar": {

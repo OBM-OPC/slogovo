@@ -18,7 +18,7 @@
   ],
   "grammar": {
     "title": "Das Verb 'sein' — съм",
-    "explanation": "Das bulgarische Verb für 'sein' wird im Präsens fast immer weggelassen. Man sagt 'Аз съм от Германия' oder einfach 'От Германия съм'.",
+    "explanation": "Die Präsensformen des bulgarischen Verbs 'съм' (sein) werden normalerweise verwendet. Das Subjektpronomen kann entfallen, wenn Person und Bezug aus Verbform und Kontext klar sind: 'Аз съм от Германия' oder 'От Германия съм'.",
     "examples": [
       { "bg": "Аз съм от Германия.", "de": "Ich bin aus Deutschland.", "bgLatin": "As säm ot Germanija." },
       { "bg": "Аз се казвам Мария.", "de": "Ich heiße Maria.", "bgLatin": "As se kaswam Marija." }

@@ -10,74 +10,62 @@
     {
       "id": "a2m2l1-1",
       "de": "das Gemüse",
-      "bg": "зеленчукът",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "зеленчукът"
     },
     {
       "id": "a2m2l1-2",
       "de": "das Obst",
-      "bg": "плодът",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "плодът"
     },
     {
       "id": "a2m2l1-3",
       "de": "das Brot",
-      "bg": "хлябът",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "хлябът"
     },
     {
       "id": "a2m2l1-4",
       "de": "die Milch",
-      "bg": "млякото",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "млякото"
     },
     {
       "id": "a2m2l1-5",
       "de": "der Käse",
-      "bg": "сиренето",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "сиренето"
     },
     {
       "id": "a2m2l1-6",
       "de": "das Fleisch",
-      "bg": "месото",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "месото"
     },
     {
       "id": "a2m2l1-7",
       "de": "der Fisch",
-      "bg": "рибата",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "рибата"
     },
     {
       "id": "a2m2l1-8",
       "de": "die Eier",
-      "bg": "яйцата",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "яйцата"
     },
     {
       "id": "a2m2l1-9",
       "de": "das Öl",
-      "bg": "олиото",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "олиото"
     },
     {
       "id": "a2m2l1-10",
       "de": "der Zucker",
-      "bg": "захарта",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "захарта"
     },
     {
       "id": "a2m2l1-11",
       "de": "der Salz",
-      "bg": "солта",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "солта"
     },
     {
       "id": "a2m2l1-12",
       "de": "das Mehl",
-      "bg": "брашното",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "брашното"
     }
   ],
   "grammar": {

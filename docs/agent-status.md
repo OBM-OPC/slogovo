@@ -1,5 +1,103 @@
 # Slogovo controlled-development status
 
+Last updated: 2026-07-13 15:49 UTC
+
+## Active run — Phase 1 content correctness gate
+
+- Current branch: `fix/phase-1-content-correctness`, based on `main` commit `1eb0f66c0a333854fb9e8e295d3b63aeb12007cf`.
+- Implementation commit: `43f05672606444b6900af972a10482f623587665`.
+- Remote branches inspected: only `main`; no implementation branch or open pull request exists.
+- PR #95 was squash-merged before this run as `1eb0f66c0a333854fb9e8e295d3b63aeb12007cf`; its branch was deleted.
+- Latest GitHub Actions result: post-merge `main` run `29262028156` completed successfully.
+- All 18 open issues inspected: #71, #70, #69, #68, #67, #66, #65, #64, #63, #62, #61, #35, #34, #33, #32, #31, #30, and #28. Issue #29 is closed after PR #95.
+- Concurrent-run check: no additional worktree, Git lock, Slogovo coding process, visible Slogovo session, or subagent was found. Session visibility is restricted to the current session tree.
+
+### Selected milestone
+
+Selected issue: #28 — Phase 1 content correctness and validation.
+
+Reasoning: the Phase 2 scoring milestone is merged and issue #29 is closed. The highest-priority unblocked learner-facing defect is now the explicit Phase 1 correctness gap: the landing page contains the Russian ending `начинающих`, and both the first `съм` lesson and grammar reference incorrectly claim that the present-tense copula is usually omitted. The existing validator also permits incomplete grammar, missing A1 transliteration, and native-review placeholders to reach a production build.
+
+Scope:
+
+- Correct the landing-page Bulgarian label to `Български за начинаещи`.
+- Replace the inaccurate `съм` explanations and ungrammatical omission examples with accurate present-tense guidance in lesson content and the grammar reference.
+- Make required lesson narrative and grammar fields production-blocking rather than warnings.
+- Require non-empty `bgLatin` for A1 vocabulary and reject unresolved native-review markers.
+- Validate the static grammar-topic registry so incomplete grammar reference content also fails `npm run validate:content` and the production build.
+- Add focused regression and validation tests.
+
+Out of scope:
+
+- A full native-speaker review of all 60 lessons, bulk vocabulary enrichment, transliteration-system redesign, new exercise types, database changes, environment changes, and production actions.
+
+Dependencies:
+
+- `src/app/page.tsx`, `content/a1/module-1/lessons/lektion-2.json`, `src/lib/content.ts`, `src/lib/content-validation.ts`, `scripts/validate-content.ts`, and focused tests.
+
+Risks:
+
+- Tightening warnings into errors can expose latent content gaps across the full inventory.
+- Grammar-topic validation must remain generic and avoid hard-coding only the two known corrections.
+- Copy corrections must not introduce unsupported linguistic claims.
+
+Acceptance criteria:
+
+- The landing page displays `Български за начинаещи` and no longer contains the Russian ending.
+- The lesson and grammar reference explain that present-tense forms of `съм` are normally required, while subject pronouns may be omitted when context is clear.
+- Missing A1 `bgLatin`, unresolved `NATIVE_REVIEW_NEEDED`, `needsNativeReview: true`, and incomplete lesson or grammar content fail validation.
+- Every registered grammar topic is included in content validation.
+- Focused tests and the complete type-check, lint, unit-test, content-validation, and production-build suite pass.
+- Exactly one implementation branch and one pull request are used.
+
+### Work completed
+
+- Completed the required local, GitHub branch/PR, all-open-issue, Actions, and concurrent-run preflight.
+- Confirmed PR #95 and post-merge CI are green and no milestone remains active.
+- Audited the current Phase 1 types, filesystem inventory, validator, content guidelines, landing copy, first `съм` lesson, and grammar reference.
+- Selected and recorded this single coherent milestone before implementation changes.
+- Corrected the landing label from the Russian `Български за начинающих` to Bulgarian `Български за начинаещи`.
+- Corrected the first `съм` lesson and grammar reference to teach that present-tense copula forms normally remain while the subject pronoun may be omitted; removed three ungrammatical omission examples and corrected `Той е добре.` to German `Ihm geht es gut.`.
+- Made missing lesson introductions, summaries, grammar titles, explanations, and examples production-blocking validation errors.
+- Required a non-empty `bgLatin` reading aid for every A1 vocabulary item and made unresolved native-review flags and markers production-blocking.
+- Removed 245 unresolved optional A2 transliteration placeholders from 26 lesson files rather than fabricating unreviewed Latin forms; A2 transliteration remains optional under the documented policy.
+- Added validation for all nine registered grammar topics, including unique IDs/slugs and complete titles, descriptions, sections, explanations, and bilingual examples.
+- Added focused regression tests for the known linguistic corrections and validator tests for A1 transliteration, native-review blockers, incomplete lesson content, grammar-topic completeness, and duplicate topic identity.
+- Full validation passed: type-check, lint, 26 test files / 114 tests, content validation with 12 modules / 60 lessons / 9 grammar topics and 0 errors / 0 warnings, production build with 99 static pages, and `git diff --check`.
+- No database schema, Supabase data, production environment, Vercel setting, or secret was changed.
+- Committed the implementation, pushed the sole branch, and opened pull request #96: https://github.com/OBM-OPC/slogovo/pull/96
+- Confirmed PR #96 is non-draft and mergeable with no reviews or requested changes at head `d7160b7dfe45e8c9ee192417351a57b0abf250ed`.
+- GitHub Actions validation run `29263751960` and the Vercel preview deployment completed successfully for PR #96.
+
+### Work remaining
+
+- Commit and push this final delivery status.
+- Verify the resulting documentation-only PR head receives green GitHub Actions and Vercel checks.
+- Squash-merge PR #96 and delete the branch only if every automatic-merge condition remains satisfied; otherwise stop and report the blocker.
+
+### Commands executed in this run
+
+- Local Git status, branch, remote, worktree, lock, process, and repository-history inspection.
+- GitHub API inspection of all remote branches, open pull requests, all 18 open issues and bodies, PR #95, and the latest Actions runs.
+- OpenClaw cron history, visible-session, and subagent inspection.
+- Read-only audit of content types, registry, validator, tests, guidelines, landing copy, lesson content, and grammar topics.
+- `git switch -c fix/phase-1-content-correctness`.
+- Focused Vitest run for content validation and known corrections (2 files / 18 tests passed).
+- `npm run validate:content` (initially identified 245 unresolved A2 placeholders; final run passed with 12 modules, 60 lessons, 9 grammar topics, 0 errors, and 0 warnings).
+- Bulk mechanical removal of optional `NATIVE_REVIEW_NEEDED` A2 transliteration fields from 26 lesson files.
+- `npm run type-check` (passed).
+- `npm run lint` (passed with no warnings or errors).
+- `npm test` (26 test files and 114 tests passed).
+- `npm run build` (passed; content validation ran first and 99 static pages were generated).
+- `git diff --check` (passed).
+- `git commit -m "fix: enforce Phase 1 content correctness"`.
+- `git commit -m "docs: record Phase 1 validation results"`.
+- `git push -u origin fix/phase-1-content-correctness`.
+- GitHub API pull request creation (opened #96).
+- GitHub API inspection of PR merge state, reviews, check runs, commit status, GitHub Actions, and Vercel preview.
+
+---
+
 Last updated: 2026-07-13 15:20 UTC
 
 ## Active run — Phase 2 required exercise groups

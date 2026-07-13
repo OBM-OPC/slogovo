@@ -10,50 +10,42 @@
     {
       "id": "a2m3l4-1",
       "de": "die Sehenswürdigkeit",
-      "bg": "забележителността",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "забележителността"
     },
     {
       "id": "a2m3l4-2",
       "de": "die Kirche",
-      "bg": "църквата",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "църквата"
     },
     {
       "id": "a2m3l4-3",
       "de": "das Museum",
-      "bg": "музеят",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "музеят"
     },
     {
       "id": "a2m3l4-4",
       "de": "die Altstadt",
-      "bg": "старият град",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "старият град"
     },
     {
       "id": "a2m3l4-5",
       "de": "der Strand",
-      "bg": "плажът",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "плажът"
     },
     {
       "id": "a2m3l4-6",
       "de": "der Berg",
-      "bg": "планината",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "планината"
     },
     {
       "id": "a2m3l4-7",
       "de": "die Wanderung",
-      "bg": "разходката",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "разходката"
     },
     {
       "id": "a2m3l4-8",
       "de": "die Führung",
-      "bg": "екскурзоводът",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "екскурзоводът"
     }
   ],
   "grammar": {

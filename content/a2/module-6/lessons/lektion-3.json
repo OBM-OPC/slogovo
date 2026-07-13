@@ -10,74 +10,62 @@
     {
       "id": "a2m6l3-1",
       "de": "glücklich",
-      "bg": "щастлив",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "щастлив"
     },
     {
       "id": "a2m6l3-2",
       "de": "traurig",
-      "bg": "тъжен",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "тъжен"
     },
     {
       "id": "a2m6l3-3",
       "de": "wütend",
-      "bg": "ядосан",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "ядосан"
     },
     {
       "id": "a2m6l3-4",
       "de": "ängstlich",
-      "bg": "страхлив",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "страхлив"
     },
     {
       "id": "a2m6l3-5",
       "de": "aufgeregt",
-      "bg": "вълнуван",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "вълнуван"
     },
     {
       "id": "a2m6l3-6",
       "de": "gelangweilt",
-      "bg": "отегчен",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "отегчен"
     },
     {
       "id": "a2m6l3-7",
       "de": "stolz",
-      "bg": "горд",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "горд"
     },
     {
       "id": "a2m6l3-8",
       "de": "eifersüchtig",
-      "bg": "ревнив",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "ревнив"
     },
     {
       "id": "a2m6l3-9",
       "de": "entspannt",
-      "bg": "спокоен",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "спокоен"
     },
     {
       "id": "a2m6l3-10",
       "de": "nervös",
-      "bg": "нервен",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "нервен"
     },
     {
       "id": "a2m6l3-11",
       "de": "erschöpft",
-      "bg": "изтощен",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "изтощен"
     },
     {
       "id": "a2m6l3-12",
       "de": "überrascht",
-      "bg": "изненадан",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "изненадан"
     }
   ],
   "grammar": {
