@@ -123,6 +123,86 @@ describe("validateModules", () => {
     const issues = validateModules([moduleMeta], [lesson]);
     expect(warnings(issues).some((i) => i.message.includes("bgLatin is present but empty"))).toBe(true);
   });
+
+  it("accepts a valid required exercise group", () => {
+    const moduleMeta = makeModule("a1-modul-1", [{ lessonId: "a1-modul-1-lektion-1", title: "T" }]);
+    const lesson = makeLesson({
+      exercises: [{
+        id: "ex1",
+        type: "quiz",
+        title: "Q",
+        data: [{ id: "q1", question: "Q?", options: ["a", "b"], correctOptionIndex: 0 }],
+      }],
+      requiredExerciseGroups: [{ id: "core", exerciseIds: ["ex1"] }],
+    });
+
+    expect(errors(validateModules([moduleMeta], [lesson]))).toHaveLength(0);
+  });
+
+  it("rejects unknown exercises and impossible required group minimums", () => {
+    const moduleMeta = makeModule("a1-modul-1", [{ lessonId: "a1-modul-1-lektion-1", title: "T" }]);
+    const lesson = makeLesson({
+      exercises: [{
+        id: "ex1",
+        type: "quiz",
+        title: "Q",
+        data: [{ id: "q1", question: "Q?", options: ["a", "b"], correctOptionIndex: 0 }],
+      }],
+      requiredExerciseGroups: [{
+        id: "core",
+        exerciseIds: ["ex1", "missing"],
+        minimumPassed: 3,
+      }],
+    });
+    const messages = errors(validateModules([moduleMeta], [lesson])).map((issue) => issue.message);
+
+    expect(messages.some((message) => message.includes("unknown exercise 'missing'"))).toBe(true);
+    expect(messages.some((message) => message.includes("minimumPassed"))).toBe(true);
+  });
+
+  it("rejects missing, duplicate, and internally duplicated group identifiers", () => {
+    const moduleMeta = makeModule("a1-modul-1", [{ lessonId: "a1-modul-1-lektion-1", title: "T" }]);
+    const lesson = makeLesson({
+      exercises: [{
+        id: "ex1",
+        type: "quiz",
+        title: "Q",
+        data: [{ id: "q1", question: "Q?", options: ["a", "b"], correctOptionIndex: 0 }],
+      }],
+      requiredExerciseGroups: [
+        { id: "", exerciseIds: [] },
+        { id: "core", exerciseIds: ["ex1", "ex1"] },
+        { id: "core", exerciseIds: ["ex1"] },
+      ],
+    });
+    const messages = errors(validateModules([moduleMeta], [lesson])).map((issue) => issue.message);
+
+    expect(messages.some((message) => message.includes("group id is missing"))).toBe(true);
+    expect(messages.some((message) => message.includes("duplicate required exercise group id"))).toBe(true);
+    expect(messages.some((message) => message.includes("duplicate exercise ids"))).toBe(true);
+  });
+
+  it("rejects a required group that only references optional items", () => {
+    const moduleMeta = makeModule("a1-modul-1", [{ lessonId: "a1-modul-1-lektion-1", title: "T" }]);
+    const lesson = makeLesson({
+      exercises: [{
+        id: "optional-exercise",
+        type: "quiz",
+        title: "Q",
+        data: [{
+          id: "q1",
+          question: "Q?",
+          options: ["a", "b"],
+          correctOptionIndex: 0,
+          required: false,
+        }],
+      }],
+      requiredExerciseGroups: [{ id: "core", exerciseIds: ["optional-exercise"] }],
+    });
+    const messages = errors(validateModules([moduleMeta], [lesson])).map((issue) => issue.message);
+
+    expect(messages.some((message) => message.includes("without required items"))).toBe(true);
+  });
 });
 
 describe("listen exercise validation", () => {

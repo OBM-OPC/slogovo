@@ -76,6 +76,7 @@ export function LessonView({ lesson, moduleId, nextLessonId, context }: LessonVi
       completed: true,
       requiredScore,
       requiresProductive,
+      requiredExerciseGroups: lesson.requiredExerciseGroups,
     });
     setAttempt(finalAttempt);
     setSection("summary");
