@@ -1,6 +1,91 @@
 # Slogovo controlled-development status
 
-Last updated: 2026-07-13 14:02 UTC
+Last updated: 2026-07-13 14:53 UTC
+
+## Active run — Phase 2 performance summary
+
+- Current branch: `feat/phase-2-performance-summary`, based on `main` commit `765897f8dc951f83636f9f02136beba9a59c250d`.
+- Implementation commit: `3644c3a68db4064ae6bd3c25875604d7e4406684`.
+- Remote branches inspected: only `main`; no implementation branch existed before this run.
+- Open pull requests inspected: none.
+- Latest GitHub Actions result: post-merge `main` run `29256497796` completed successfully for `765897f`.
+- Concurrent-run check: no additional worktree, Git lock, Slogovo coding process, or active cron run was found. The 45-minute development cron is temporarily disabled for this interactive run and will be re-enabled at handoff.
+- All 19 open issues inspected: #71, #70, #69, #68, #67, #66, #65, #64, #63, #62, #61, #35, #34, #33, #32, #31, #30, #29, and #28.
+
+### Selected milestone
+
+Selected issue: #29 — Phase 2 lesson scoring around mastery.
+
+Reasoning: structured exercise results, real pass/mastery gates, historical attempts, active time, and alternative-type deferred retries are now integrated. The highest-priority remaining concrete Phase 2 gap is the required learner-facing performance summary: the domain helper calculates score and vocabulary buckets, but `LessonView` bypasses it and does not show strongest/weakest skill, mastered and weak items, or a calculated recommended next action.
+
+Scope:
+
+- Make the lesson performance summary the authoritative presentation model for completed attempts.
+- Calculate per-skill performance from first attempts without allowing retries to inflate skill accuracy.
+- Expose strongest skill, weakest skill, weak vocabulary, mastered vocabulary, active time, and a deterministic recommended next action.
+- Render those calculated values in the actual lesson summary screen for passed and failed attempts.
+- Add focused domain and component tests proving real attempt values reach the UI.
+
+Out of scope:
+
+- Scoring-threshold changes, new exercise types, dashboard redesign, Phase 8 work, production database changes, environment changes, and production actions.
+
+Dependencies:
+
+- `src/lib/lesson-summary.ts`, `src/lib/evaluation.ts`, `src/components/lesson/LessonView.tsx`, the authoritative `LessonAttempt` model, and existing vocabulary IDs on item results.
+
+Risks:
+
+- Retry results could inflate skill metrics unless only first logical item attempts are used.
+- Some items lack vocabulary IDs, so skill metrics must remain useful independently of vocabulary buckets.
+- Summary labels and recommendations must be deterministic and must not overstate mastery.
+
+Acceptance criteria:
+
+- Summary accuracy, score, counts, XP, and active time come from the persisted `LessonAttempt`.
+- Strongest and weakest skills are calculated from first logical item attempts with stable tie-breaking.
+- Weak and mastered vocabulary IDs are exposed without counting later retries as first-try mastery.
+- Recommended next action differs appropriately for failure, pass-with-weak-items, and clean pass/mastery.
+- `LessonView` renders real summary values, strongest/weakest skill, vocabulary outcomes, and the recommended action.
+- Focused tests and the full type-check, lint, unit-test, content-validation, and production-build suite pass.
+- Exactly one implementation branch and one pull request are used.
+
+### Active work
+
+- Completed the controlled preflight and full issue audit.
+- Selected and recorded this single coherent milestone before changing implementation code.
+- Made `buildLessonPerformanceSummary` the authoritative presentation model for persisted attempt score, accuracy, counts, XP, and active time.
+- Added retry-safe per-skill performance based on first logical item attempts, with stable strongest/weakest selection.
+- Classified weak and mastered vocabulary without allowing successful deferred retries to overwrite first-attempt learning evidence.
+- Added deterministic recommendations for failed attempts, passed attempts with weak vocabulary, and clean passes/mastery.
+- Extracted and wired the live `LessonSummary` component into `LessonView`, including actionable retry/continue controls.
+- Added domain and component coverage for retry-safe metrics, failure, pass-with-weak-items, clean mastery, actual time/XP, and rendered navigation.
+- Clean install completed with 520 packages installed and 521 audited; the existing audit reports 6 dependency vulnerabilities (1 moderate, 5 high) outside this milestone.
+- Full validation passed: type-check, lint, 25 test files / 100 tests, content validation with 12 modules and 60 lessons / 0 errors / 0 warnings, production build with 99 static pages, and `git diff --check`.
+- No Supabase migration, production data, environment, Vercel setting, or secret action was performed.
+
+### Work remaining
+
+- Commit this status update, push the sole implementation branch, and open exactly one pull request.
+- Verify the final pull-request head receives green GitHub Actions and Vercel checks.
+- Squash-merge and delete the branch only if every automatic-merge condition remains satisfied; otherwise stop and report the blocker.
+
+### Commands executed in this run
+
+- Local Git status, branch, worktree, lock, process, and remote inspections.
+- OpenClaw cron state inspection and temporary disablement to prevent overlapping coding runs.
+- GitHub inspection of all branches, open pull requests, all 19 open issues and bodies, and latest Actions runs.
+- Read-only source, content, test, workflow, and prior status inspection.
+- `git switch -c feat/phase-2-performance-summary`.
+- Focused Vitest runs for `src/lib/lesson-summary.test.ts` and `src/components/lesson/LessonSummary.test.tsx` (6 tests passed in the final focused run).
+- `npm ci` (520 packages installed; 521 audited).
+- `npm run type-check` (passed).
+- `npm run lint` (passed with no warnings or errors).
+- `npm test` (25 test files and 100 tests passed).
+- `npm run validate:content` (12 module files and 60 lesson files; 0 errors and 0 warnings).
+- `npm run build` (passed; content validation ran first and 99 static pages were generated).
+- `git diff --check` (passed).
+- `git commit -m "feat: show real lesson performance summary"`.
 
 ## Run state
 
