@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { ExerciseItemResult, ExerciseResult, ListenExerciseItem } from "@/types";
 import { Button } from "@/components/ui/Button";
 import { useProgressSafe } from "@/hooks/useProgressSafe";
-import { playAudio } from "@/lib/audio";
+import { playAudioDetailed, type AudioSource, type AudioSpeed } from "@/lib/audio";
 import { buildExerciseItemResult, buildExerciseResult } from "@/lib/evaluation";
 import {
   evaluateAudioComprehension,
@@ -14,6 +14,7 @@ import {
   evaluateListenType,
   isProductiveListenItem,
   ListenResult,
+  remainingReorderWords,
 } from "@/lib/listen-exercise";
 import { cn } from "@/lib/utils";
 
@@ -42,17 +43,31 @@ export function ListenExercise({
   const [selectedOrder, setSelectedOrder] = useState<string[]>([]);
   const [result, setResult] = useState<ListenResult | null>(null);
   const [audioState, setAudioState] = useState<"idle" | "loading" | "error">("idle");
+  const [activeSpeed, setActiveSpeed] = useState<AudioSpeed | null>(null);
+  const [audioSource, setAudioSource] = useState<AudioSource>("none");
+  const [revealCount, setRevealCount] = useState(0);
   const item = items[current];
 
-  const play = async () => {
+  const play = async (speed: AudioSpeed) => {
     onInteraction?.();
     setAudioState("loading");
-    const ok = await playAudio(
+    setActiveSpeed(speed);
+    const playback = await playAudioDetailed(
       item.audioText,
       progress,
-      item.audioUrl ? { id: item.id, url: item.audioUrl, isNative: true } : undefined
+      item.audioUrl || item.slowAudioUrl || item.offlineAudioUrl ? {
+        id: item.id,
+        url: item.audioUrl,
+        slowUrl: item.slowAudioUrl,
+        offlineUrl: item.offlineAudioUrl,
+        cacheKey: item.audioCacheKey,
+        isNative: true,
+      } : undefined,
+      speed
     );
-    setAudioState(ok ? "idle" : "error");
+    setAudioSource(playback.source);
+    setAudioState(playback.ok ? "idle" : "error");
+    setActiveSpeed(null);
   };
 
   const submit = (evaluation: ListenResult, userAnswer: string) => {
@@ -105,6 +120,9 @@ export function ListenExercise({
       setSelectedOrder([]);
       setResult(null);
       setAudioState("idle");
+      setActiveSpeed(null);
+      setAudioSource("none");
+      setRevealCount(0);
       itemStartedAt.current = new Date().toISOString();
       return;
     }
@@ -122,7 +140,7 @@ export function ListenExercise({
       const typing = target?.tagName === "INPUT" || target?.tagName === "TEXTAREA";
       if (!typing && event.code === "Space") {
         event.preventDefault();
-        void play();
+        void play("normal");
       }
       if (!typing && /^[1-9]$/.test(event.key)) selectOption(Number(event.key) - 1);
     };
@@ -149,7 +167,7 @@ export function ListenExercise({
       </>;
     }
     if (item.format === "listen-reorder") {
-      const remaining = item.correctOrder.filter((word) => !selectedOrder.includes(word));
+      const remaining = remainingReorderWords(item.correctOrder, selectedOrder);
       return <>
         <div className="mb-3 min-h-12 rounded-xl border-2 border-dashed border-gray-300 p-3">
           {selectedOrder.map((word, index) => (
@@ -175,13 +193,45 @@ export function ListenExercise({
     </>;
   };
 
+  const sourceLabel: Record<AudioSource, string> = {
+    native: "Native Aufnahme",
+    cache: "Gespeicherte Aufnahme",
+    offline: "Offline-Aufnahme",
+    tts: "TTS-Ersatzstimme",
+    none: "",
+  };
+  const maxReveals = item.revealText ? Math.max(0, item.maxReveals ?? 1) : 0;
+  const canReveal = !result && revealCount < maxReveals;
+
   return (
     <div>
       <p className="mb-3 text-sm text-muted">Höre genau zu. Leertaste: Audio wiederholen.</p>
-      <Button onClick={() => void play()} fullWidth variant="outline" disabled={audioState === "loading"}>
-        {audioState === "loading" ? "Audio wird abgespielt…" : "Audio abspielen"}
-      </Button>
+      <div className="grid grid-cols-2 gap-2">
+        <Button onClick={() => void play("normal")} fullWidth variant="outline" disabled={audioState === "loading"}>
+          {activeSpeed === "normal" ? "Wird abgespielt…" : "Normal abspielen"}
+        </Button>
+        <Button onClick={() => void play("slow")} fullWidth variant="outline" disabled={audioState === "loading"}>
+          {activeSpeed === "slow" ? "Wird abgespielt…" : "Langsam abspielen"}
+        </Button>
+      </div>
+      {audioSource !== "none" && audioState !== "error" && (
+        <p aria-live="polite" className="mt-2 text-center text-xs text-muted">Quelle: {sourceLabel[audioSource]}</p>
+      )}
       {audioState === "error" && <p role="alert" className="mt-2 text-sm text-danger">Audio konnte nicht abgespielt werden. Bitte versuche es erneut.</p>}
+      {maxReveals > 0 && (
+        <div className="mt-3 rounded-xl bg-gray-50 p-3 text-center text-sm">
+          {revealCount > 0 && <p className="mb-2 font-medium">Hinweis: {item.revealText}</p>}
+          {canReveal && (
+            <button
+              type="button"
+              className="font-medium text-primary underline underline-offset-2"
+              onClick={() => { onInteraction?.(); setRevealCount((count) => count + 1); }}
+            >
+              Hinweis anzeigen ({maxReveals - revealCount} übrig)
+            </button>
+          )}
+        </div>
+      )}
       <div className="mt-5 space-y-2">{renderAnswer()}</div>
       {result && (
         <div className="mt-4 space-y-3">

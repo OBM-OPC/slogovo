@@ -89,6 +89,16 @@ export function evaluateListenReorder(item: ListenReorderItem, selectedOrder: st
   };
 }
 
+/** Multiset subtraction keeps repeated words available exactly as often as authored. */
+export function remainingReorderWords(correctOrder: string[], selectedOrder: string[]): string[] {
+  const remaining = [...correctOrder];
+  for (const selected of selectedOrder) {
+    const index = remaining.indexOf(selected);
+    if (index >= 0) remaining.splice(index, 1);
+  }
+  return remaining;
+}
+
 export function evaluateAudioComprehension(item: AudioComprehensionItem, selectedOptionIndex: number): ListenResult {
   const correct = selectedOptionIndex === item.correctOptionIndex;
   return {

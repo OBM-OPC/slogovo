@@ -345,6 +345,17 @@ function validateListen(items: ListenExerciseItem[], path: string, issues: Conte
     if (!isNonEmptyString(item.audioText)) {
       issues.push({ path: itemPath, message: "listen audioText is missing", severity: "error" });
     }
+    for (const field of ["audioUrl", "slowAudioUrl", "offlineAudioUrl", "audioCacheKey", "revealText"] as const) {
+      if (item[field] !== undefined && !isNonEmptyString(item[field])) {
+        issues.push({ path: itemPath, message: `listen ${field} must be a non-empty string`, severity: "error" });
+      }
+    }
+    if (item.maxReveals !== undefined && (!Number.isInteger(item.maxReveals) || item.maxReveals < 0)) {
+      issues.push({ path: itemPath, message: "listen maxReveals must be a non-negative integer", severity: "error" });
+    }
+    if (item.maxReveals !== undefined && !isNonEmptyString(item.revealText)) {
+      issues.push({ path: itemPath, message: "listen maxReveals requires revealText", severity: "error" });
+    }
     if (
       "allowOmittedSubjectPronoun" in item
       && item.allowOmittedSubjectPronoun !== undefined

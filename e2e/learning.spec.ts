@@ -21,6 +21,7 @@ test("opens the adaptive daily session from the primary learning action", async 
   await expect(page.getByRole("heading", { name: "Heute lernen" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Session starten" })).toBeEnabled();
   await expect(page.getByText("Adaptive Session")).toBeVisible();
+  await expect(page.getByText("Sprechen", { exact: true })).toBeVisible();
 });
 
 test("starts a lesson, retries one failed item, passes, syncs, and restores on another device", async ({ page, browser, request }) => {

@@ -57,8 +57,7 @@ export function DailySessionClient() {
       recentWordIds,
       grammarWeaknesses: currentGrammarWeaknesses(progress),
       includeListening: true,
-      // Speaking becomes part of this same sequence when Phase 7 enables it.
-      includeSpeaking: false,
+      includeSpeaking: true,
     });
   }, [progress]);
   const [activePlan, setActivePlan] = useState<DailyPlan | null>(null);
@@ -119,6 +118,7 @@ export function DailySessionClient() {
       ["Neu", plan.newItems.length],
       ["Hören", plan.listeningItems.length],
       ["Produktion", plan.productiveItems.length],
+      ["Sprechen", plan.speakingItems.length],
     ];
     return (
       <main className="animate-fade-in px-4 py-6 safe-top">
@@ -181,6 +181,10 @@ export function DailySessionClient() {
           <Mic className="mx-auto mb-4 h-10 w-10 text-primary" />
           <p className="mb-2 text-muted">Sprich laut:</p>
           <p className="mb-6 text-3xl font-bold">{current.word.bg}</p>
+          <div className="mb-4"><SpeakButton text={current.word.bg} progress={progress} label="Beispiel anhören" /></div>
+          <p className="mb-5 rounded-xl bg-gray-50 p-3 text-sm text-muted">
+            Bewerte dich selbst: Slogovo vergibt noch keine automatische Aussprache-Punktzahl.
+          </p>
           <div className="grid grid-cols-2 gap-2">
             <Button onClick={() => void advance("repeat")} variant="outline"><RotateCcw className="h-4 w-4" /> Nochmal</Button>
             <Button onClick={() => void advance("good")}><Check className="h-4 w-4" /> Geschafft</Button>

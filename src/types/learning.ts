@@ -135,7 +135,18 @@ export type ListenFormat =
 interface ListenBaseItem {
   id: string;
   audioText: string;
+  /** Authored normal-speed recording. TTS remains the final fallback. */
   audioUrl?: string;
+  /** Optional authored slow recording; normal audio is slowed when absent. */
+  slowAudioUrl?: string;
+  /** Optional app-bundled/downloaded recording used when the network asset fails. */
+  offlineAudioUrl?: string;
+  /** Stable key for Cache Storage, independent from a signed remote URL. */
+  audioCacheKey?: string;
+  /** An authored hint; the transcript is never revealed implicitly. */
+  revealText?: string;
+  /** Maximum number of times the authored hint can be revealed. */
+  maxReveals?: number;
   required?: boolean;
   vocabularyId?: string;
 }

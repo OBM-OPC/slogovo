@@ -5,6 +5,7 @@ import {
   evaluateListenReorder,
   evaluateListenSelect,
   evaluateListenType,
+  remainingReorderWords,
 } from "./listen-exercise";
 
 const options = [
@@ -62,5 +63,12 @@ describe("listen exercise evaluation", () => {
         "съм тук"
       )
     ).toMatchObject({ correct: true, richStatus: "accepted_variant" });
+  });
+
+  it("preserves duplicate tokens while a reorder answer is assembled", () => {
+    expect(remainingReorderWords(["аз", "съм", "аз"], ["аз"]))
+      .toEqual(["съм", "аз"]);
+    expect(remainingReorderWords(["аз", "съм", "аз"], ["аз", "съм", "аз"]))
+      .toEqual([]);
   });
 });

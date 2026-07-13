@@ -308,6 +308,12 @@ describe("listen exercise validation", () => {
             id: "l1",
             format: "audio-comprehension",
             audioText: "Как си?",
+            audioUrl: "/audio/how-are-you.mp3",
+            slowAudioUrl: "/audio/how-are-you-slow.mp3",
+            offlineAudioUrl: "/offline/how-are-you.mp3",
+            audioCacheKey: "how-are-you-v1",
+            revealText: "Frage nach dem Befinden",
+            maxReveals: 1,
             question: "L?",
             options: ["a", "b"],
             correctOptionIndex: 0,
@@ -317,5 +323,28 @@ describe("listen exercise validation", () => {
     });
     const issues = validateModules([moduleMeta], [lesson]);
     expect(errors(issues)).toHaveLength(0);
+  });
+
+  it("rejects invalid audio and reveal metadata", () => {
+    const moduleMeta = makeModule("a1-modul-1", [{ lessonId: "a1-modul-1-lektion-1", title: "T" }]);
+    const lesson = makeLesson({
+      exercises: [{
+        id: "ex1",
+        type: "listen" as Exercise["type"],
+        title: "L",
+        data: [{
+          id: "l1",
+          format: "listen-type",
+          audioText: "Здравей",
+          audioUrl: "",
+          maxReveals: 2,
+          acceptedAnswers: ["Здравей"],
+        }],
+      }],
+    });
+
+    const messages = errors(validateModules([moduleMeta], [lesson])).map((issue) => issue.message);
+    expect(messages).toContain("listen audioUrl must be a non-empty string");
+    expect(messages).toContain("listen maxReveals requires revealText");
   });
 });
