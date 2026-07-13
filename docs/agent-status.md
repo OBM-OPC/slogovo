@@ -1,12 +1,12 @@
 # Slogovo controlled-development status
 
-Last updated: 2026-07-13 19:06 UTC
+Last updated: 2026-07-13 19:22 UTC
 
 ## Complete-backlog program
 
 - Current branch: `feat/complete-slogovo-backlog`
 - Base commit: `29bcf6a11fb39e86786327ef722ac9ee14e8a019`
-- Current implementation commit: `d46feec` (`feat(evaluation): unify typed answer feedback`); preceding sync/auth commits: `f7edc1d` and `124c231`.
+- Current implementation commit: `82bdded` (`refactor(learning): enforce server-side domain rules`); preceding evaluation/sync/auth commits: `d46feec`, `f7edc1d`, and `124c231`.
 - Draft pull request: #97, `feat/complete-slogovo-backlog` to `main`.
 - GitHub state at restart: exactly the Draft PR and backlog branch above plus `main`; PR CI run `29265699487` passed on the prior remote head `6b3ed5e`; latest `main` CI run `29264112422` passed.
 - Concurrent-run state: the legacy 45-minute single-milestone worker is disabled; no second worktree, Git lock, implementation process, branch, or pull request exists.
@@ -18,9 +18,9 @@ Last updated: 2026-07-13 19:06 UTC
 | --- | --- | --- | --- |
 | P0 | #31 Phase 4 authentication and security | Closed complete | Removed the JavaScript-readable custom session mirror, centralized browser auth calls behind same-origin APIs, retained Supabase SSR cookie refresh, verified protected routes and API session checks, documented secret handling, and expanded cookie/middleware/RLS contract coverage. |
 | P0 | #32 Phase 5 reliable progress synchronization | Closed complete | Added authenticated server sync, bounded shared schemas, server-side lesson-outcome recalculation, stable device/event IDs, non-lossy server merges, preserved review history, reconnection retry, idempotent conflict indexes, and multi-device/duplicate/recovery tests. |
-| P1 | #30 Phase 3 answer evaluation and feedback | Complete on branch; PR CI pending | All typed lesson/listening/vocabulary paths now share one detailed evaluator with Unicode/punctuation/quote normalization, authored variants, optional pronouns, explicit transliteration, typo and grammar handling, persisted rich feedback statuses, specific UI feedback, and focused domain/component tests. |
+| P1 | #30 Phase 3 answer evaluation and feedback | Closed complete | All typed lesson/listening/vocabulary paths now share one detailed evaluator with Unicode/punctuation/quote normalization, authored variants, optional pronouns, explicit transliteration, typo and grammar handling, persisted rich feedback statuses, specific UI feedback, and focused domain/component tests. |
 | P1 | #71 Milestone 1 audit and Phase 1/2 plan | Already implemented; verification pending | PRs #91–#96 provide structured results, real scoring, all-wrong protection, content validation, retry flow, schema work, and tests. Consolidate architecture/data-flow audit evidence and close only after the current full verification. |
-| P1 | #68 Learning-domain architecture rules | Partially implemented | Strict TypeScript and domain modules exist, but server-side authoritative validation, structured logging/error rules, duplicate-evaluator removal, and review enforcement are incomplete. |
+| P1 | #68 Learning-domain architecture rules | Complete on branch; PR CI pending | Added bounded shared schemas, content-backed server answer/attempt validation, typed learning errors, safe structured logs, stable-ID/idempotency enforcement, explicit mastery fields, architecture documentation, and the learning review checklist; removed unaudited standalone result mutation. |
 | P2 | #67 Migration rules and database type workflow | Partially implemented | Additive migrations, RLS, schema contract tests, and generated types exist. Add a documented migration/type-generation/rollback/backfill workflow and enforce schema consistency. |
 | P2 | #65 Full automated testing strategy | Partially implemented | Strong unit/domain coverage and some component tests exist. Missing Playwright setup and required auth/protected-route/lesson/review/sync/restore E2E coverage; several exercise components lack direct tests. |
 | P2 | #66 Course content quality report | Open | Validator counts modules/lessons and rejects structural faults, but no `content:report` command or author-facing coverage/audio/productive-content report exists. |
@@ -31,7 +31,7 @@ Last updated: 2026-07-13 19:06 UTC
 | P3 | #62 Lesson interface/mobile/accessibility | Partially implemented | Keyboard handling and some live states exist. Complete mobile ergonomics, Bulgarian input assistance, loading/empty/recovery states, screen-reader labels, focus behavior, and reduced-motion coverage remain. |
 | P3 | #63 Gamification based on learning metrics | Partially implemented | Attempts now use real score/time and anti-click-through gates, but achievement/XP/streak rules and UI still need an explicit anti-farming real-learning model. |
 | P3 | #64 Progress dashboard mastery metrics | Open | Existing progress UI does not expose the full event-based receptive/productive/grammar/listening/weak-area/improvement model or complete states. |
-| P3 | #70 Development delivery template | Open | CI exists, but no repository PR/issue template covers the required findings, plan, risks, implementation, validation, manual tests, remaining work, and definition-of-done warning. |
+| P3 | #70 Development delivery template | Complete on branch; PR CI pending | Added the repository PR template with findings, proposal, risks, implementation, full validation matrix, manual tests, remaining work, learning-domain review rules, and the functional definition-of-done warning. |
 | P3 | #35 Phase 8 tracker | Partially implemented | Parent tracker for #61–#64 plus cross-page state/accessibility work; complete only after its child acceptance criteria are verified. |
 
 No issue is currently classified as duplicate or obsolete. Potential owner blockers will be recorded per issue without stopping unrelated work. Native-speaker approval is required only if implementation would introduce or materially revise uncertain Bulgarian content; paid analytics/monitoring activation and production actions remain owner-only.
@@ -46,15 +46,17 @@ No issue is currently classified as duplicate or obsolete. Potential owner block
 
 ### Current work
 
-- Current issue: #68 learning-domain architecture rules.
-- Completed and closed issues: #31 and #32. Completed issue pending final PR CI and GitHub closure: #30.
+- Current issue: #67 migration and database-type workflow.
+- Completed and closed issues: #30, #31, and #32. Completed issues pending final PR CI and GitHub closure: #68 and #70.
 - Completed in this run: restarted from the interrupted working tree without discarding changes; repeated repository/GitHub/CI/concurrency preflight; re-inspected all 17 open issue bodies; finished the Phase 4 auth increment in commit `124c231`; finished the Phase 5 synchronization increment in commit `f7edc1d`.
 - Phase 4 details: Supabase SSR remains the only session authority; refresh tokens stay in HTTP-only Supabase cookies; custom mirrored auth cookies and direct browser auth calls were removed; protected routes/APIs verify `getUser`; RLS coverage for attempts, results, review/activity/offline history, aggregate settings, and achievements is enforced by migrations and schema-contract tests; security/API documentation was corrected.
 - Phase 5 details: browser queue writes now go through authenticated `/api/sync`; incoming batches are schema-bounded; lesson outcome fields are recalculated on the server; progress saves merge with the current server row; camel-case API progress no longer resets during deserialization; stable device/event IDs are persisted; failed events remain queued; browser reconnect retries events and the aggregate snapshot; duplicate and two-device review events remain distinct and idempotent.
 - Phase 3 details: replaced duplicated evaluation/Levenshtein paths with one detailed evaluator; normalized Unicode, whitespace, punctuation, and quote variants; accepted only authored alternatives and transliterations; added opt-in subject-pronoun omission; distinguished correct-with-typo, accepted-variant, wrong-form, missing-word, and incorrect feedback; wired fill-in, typed listening/dictation, and vocabulary typing; persisted feedback status independently from scoring status; added author-option validation and component/domain tests.
+- Architecture details: the server now maps every submitted lesson item back to authored content, recalculates item correctness/feedback and attempt duration, derives required/productive flags and accepted answers, rejects omitted required first attempts, unknown IDs, invalid retry types, and unaudited standalone result writes, then recalculates score/pass/mastery/XP. Progress and sync requests use bounded Zod schemas; validation failures use stable error codes and safe structured logs. Strict mastery fields replaced unchecked casts, and spaced-repetition updates preserve them.
+- Delivery-template details: `.github/pull_request_template.md` now requires findings, proposal, risks, implementation, lint/type/unit/component/E2E/content/build validation, manual tests, remaining work, the learning-domain review checklist, and an explicit warning against UI-only completion claims.
 - Blocked issues: none yet.
 - Commands run at restart: Git status/log/worktree/branch/lock/process inspection; OpenClaw cron inspection; GitHub REST inspection of all remote branches, the open Draft PR, all 17 issue bodies, reviews, and recent Actions; auth/sync source, store, migration, schema, and test audits; focused Vitest runs; full validation; `git diff --check`; logical commits.
-- Validation on `d46feec`: lint passed with no warnings; type-check passed; 34 test files / 141 tests passed; content validation passed for 12 modules / 60 lessons / 9 grammar topics with 0 errors and 0 warnings; production build passed with 99 static pages; `git diff --check` passed.
+- Validation on `82bdded`: lint passed with no warnings; type-check passed; 37 test files / 149 tests passed; content validation passed for 12 modules / 60 lessons / 9 grammar topics with 0 errors and 0 warnings; focused post-inventory tests passed; production build passed with 99 static pages; `git diff --check` passed.
 - Vercel: latest known production deployment is available; no setting or deployment action performed in this run.
 - Supabase: added local additive migrations for sync device IDs and rich answer feedback status and updated generated-style types; no production migration, data, environment, or secret action performed.
 - Owner decisions required: none at present.
