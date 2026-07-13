@@ -1,6 +1,6 @@
 # Slogovo controlled-development status
 
-Last updated: 2026-07-13 15:17 UTC
+Last updated: 2026-07-13 15:20 UTC
 
 ## Active run — Phase 2 required exercise groups
 
@@ -61,11 +61,15 @@ Acceptance criteria:
 - Clean install completed with 520 packages installed and 521 audited; the existing audit reports 6 dependency vulnerabilities (1 moderate, 5 high) outside this milestone.
 - Full validation passed: type-check, lint, 25 test files / 108 tests, content validation with 12 modules and 60 lessons / 0 errors / 0 warnings, production build with 99 static pages, and `git diff --check`.
 - No existing lesson content, database schema, production data, environment, Vercel setting, or secret was changed.
+- Committed implementation and status updates, pushed the sole branch, and opened pull request #95: https://github.com/OBM-OPC/slogovo/pull/95
+- Confirmed PR #95 is non-draft and mergeable with no requested changes at implementation head `9fc6024b7c2ae590ff155ce3b9a842f3ba03a943`.
+- GitHub Actions validation run `29261724871` and the Vercel preview deployment completed successfully for PR #95.
 
 ### Work remaining
 
-- Commit this status update, push the sole branch, and open exactly one pull request configured to close #29.
-- Verify final GitHub Actions and Vercel checks, then auto-merge and delete the branch only if every safeguard passes.
+- Commit and push this final delivery status.
+- Verify the resulting final PR head receives green GitHub Actions and Vercel checks.
+- Squash-merge PR #95 and delete the branch only if every automatic-merge condition remains satisfied; otherwise stop and report the blocker.
 
 ### Commands executed in this run
 
@@ -81,6 +85,10 @@ Acceptance criteria:
 - `npm run build` (passed; content validation ran first and 99 static pages were generated).
 - `git diff --check` (passed).
 - `git commit -m "feat: enforce required exercise groups"`.
+- `git commit -m "docs: record required group milestone"`.
+- `git push -u origin feat/phase-2-required-groups`.
+- `gh pr create --base main --head feat/phase-2-required-groups` (opened #95).
+- `gh pr checks 95 --watch` (GitHub Actions and Vercel passed for `9fc6024`).
 
 ## Active run — Phase 2 performance summary
 
