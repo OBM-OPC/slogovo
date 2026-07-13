@@ -1,5 +1,62 @@
 # Slogovo controlled-development status
 
+Last updated: 2026-07-13 16:14 UTC
+
+## Complete-backlog program
+
+- Current branch: `feat/complete-slogovo-backlog`
+- Base commit: `29bcf6a11fb39e86786327ef722ac9ee14e8a019`
+- Draft pull request: pending initial status commit
+- GitHub state at start: no open pull request; only remote `main`; latest `main` CI run `29264112422` passed.
+- Concurrent-run state: the legacy 45-minute single-milestone worker is disabled; no second worktree, Git lock, implementation process, branch, or pull request exists.
+- Production boundaries: no production migration, data, environment, secret, DNS, paid-service, or deployment action is authorized.
+
+### Complete open-issue inventory
+
+| Priority | Issue | Classification | Current evidence and remaining acceptance work |
+| --- | --- | --- | --- |
+| P0 | #31 Phase 4 authentication and security | Partially implemented | Supabase SSR clients, middleware refresh, server `getUser`, ignored `.env`, migrations and RLS exist. Audit every protected page/API and all required data domains; add missing auth/RLS integration coverage and security documentation. |
+| P0 | #32 Phase 5 reliable progress synchronization | Partially implemented | Stable sync events, offline queue, granular tables, merge helpers, and duplicate tests exist. Verify live store/API integration, multi-device preservation, vocabulary history, retry recovery, and end-to-end sync behavior. |
+| P1 | #30 Phase 3 answer evaluation and feedback | Partially implemented | Shared evaluator and rich-feedback helpers exist, but duplicated grammar heuristics remain and live components still display exact-match feedback that can disagree with structured results. Add authored variants/optional pronouns/permitted transliteration, authoritative rich statuses, specific feedback, and complete component integration/tests. |
+| P1 | #71 Milestone 1 audit and Phase 1/2 plan | Already implemented; verification pending | PRs #91–#96 provide structured results, real scoring, all-wrong protection, content validation, retry flow, schema work, and tests. Consolidate architecture/data-flow audit evidence and close only after the current full verification. |
+| P1 | #68 Learning-domain architecture rules | Partially implemented | Strict TypeScript and domain modules exist, but server-side authoritative validation, structured logging/error rules, duplicate-evaluator removal, and review enforcement are incomplete. |
+| P2 | #67 Migration rules and database type workflow | Partially implemented | Additive migrations, RLS, schema contract tests, and generated types exist. Add a documented migration/type-generation/rollback/backfill workflow and enforce schema consistency. |
+| P2 | #65 Full automated testing strategy | Partially implemented | Strong unit/domain coverage and some component tests exist. Missing Playwright setup and required auth/protected-route/lesson/review/sync/restore E2E coverage; several exercise components lack direct tests. |
+| P2 | #66 Course content quality report | Open | Validator counts modules/lessons and rejects structural faults, but no `content:report` command or author-facing coverage/audio/productive-content report exists. |
+| P2 | #33 Adaptive daily learning session | Partially implemented | UI-independent planner tests exist, but the dashboard does not expose a complete authoritative “Heute lernen” flow and recognition/production mastery inputs are incomplete. |
+| P2 | #34 Listening and pronunciation | Partially implemented | Five listening formats render with structured scoring, keyboard input, audio errors, native/TTS fallback. Slow/reveal controls, cache/offline coexistence, real production content, replay telemetry, and usable speaking flow remain. |
+| P2 | #69 Privacy-conscious analytics and monitoring | Open | Sync events cover some learning actions, but no documented privacy-reviewed analytics schema or complete error/event monitoring pipeline exists. External paid monitoring remains optional and must not be enabled automatically. |
+| P3 | #61 Product navigation areas | Open | Current navigation exposes overlapping course/dashboard/settings paths and lacks the requested Lernen/Wiederholen/Sprechen/Fehler/Wortschatz/Fortschritt product model. |
+| P3 | #62 Lesson interface/mobile/accessibility | Partially implemented | Keyboard handling and some live states exist. Complete mobile ergonomics, Bulgarian input assistance, loading/empty/recovery states, screen-reader labels, focus behavior, and reduced-motion coverage remain. |
+| P3 | #63 Gamification based on learning metrics | Partially implemented | Attempts now use real score/time and anti-click-through gates, but achievement/XP/streak rules and UI still need an explicit anti-farming real-learning model. |
+| P3 | #64 Progress dashboard mastery metrics | Open | Existing progress UI does not expose the full event-based receptive/productive/grammar/listening/weak-area/improvement model or complete states. |
+| P3 | #70 Development delivery template | Open | CI exists, but no repository PR/issue template covers the required findings, plan, risks, implementation, validation, manual tests, remaining work, and definition-of-done warning. |
+| P3 | #35 Phase 8 tracker | Partially implemented | Parent tracker for #61–#64 plus cross-page state/accessibility work; complete only after its child acceptance criteria are verified. |
+
+No issue is currently classified as duplicate or obsolete. Potential owner blockers will be recorded per issue without stopping unrelated work. Native-speaker approval is required only if implementation would introduce or materially revise uncertain Bulgarian content; paid analytics/monitoring activation and production actions remain owner-only.
+
+### Dependency and execution order
+
+1. P0 security/auth (#31), then persistence/sync (#32).
+2. Authoritative evaluation/domain rules (#30, #68), then migration/type workflow (#67).
+3. Testing and content observability foundations (#65, #66, #70, #71).
+4. Adaptive daily flow (#33), listening/speaking (#34), and privacy-conscious analytics (#69).
+5. Navigation, lesson ergonomics, gamification, and progress dashboard (#61–#64), then parent tracker #35.
+
+### Current work
+
+- Current issue: #31 authentication/security audit and closure of concrete gaps.
+- Next planned issue: #32 progress synchronization.
+- Completed in this run: repository/GitHub/CI/concurrency preflight, all 17 issue bodies inspected, complete initial classification and dependency order recorded, legacy worker disabled, single long-lived branch created.
+- Blocked issues: none yet.
+- Commands run: Git status/worktree/branch/lock/process inspection; open PR/remote branch/latest Actions inspection; full issue-body inspection; source/migration/test/docs inventory; legacy cron disable; `git checkout main`; `git pull --ff-only`; `git checkout -b feat/complete-slogovo-backlog`.
+- Validation: no implementation change yet; baseline latest GitHub Actions is green. Full local baseline follows after the initial Draft PR is opened.
+- Vercel: latest known production deployment is available; no setting or deployment action performed in this run.
+- Supabase: migrations and RLS files inspected locally; no production action performed.
+- Owner decisions required: none at present.
+
+---
+
 Last updated: 2026-07-13 15:49 UTC
 
 ## Active run — Phase 1 content correctness gate
