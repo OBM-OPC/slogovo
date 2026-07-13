@@ -1,95 +1,109 @@
 "use client";
 
-import { useState } from "react";
-import { QuizQuestion } from "@/types";
+import { useRef, useState } from "react";
+import { ExerciseItemResult, ExerciseResult, QuizQuestion } from "@/types";
 import { Button } from "@/components/ui/Button";
+import { buildExerciseItemResult, buildExerciseResult } from "@/lib/evaluation";
 import { cn } from "@/lib/utils";
-import { useProgressStore } from "@/stores/useProgressStore";
 
 interface QuizExerciseProps {
+  exerciseId: string;
   questions: QuizQuestion[];
-  onComplete: () => void;
+  attemptNumber?: number;
+  onInteraction?: () => void;
+  onComplete: (result: ExerciseResult) => void;
 }
 
-export function QuizExercise({ questions, onComplete }: QuizExerciseProps) {
-  const addExerciseResult = useProgressStore((state) => state.addExerciseResult);
+export function QuizExercise({
+  exerciseId,
+  questions,
+  attemptNumber = 1,
+  onInteraction,
+  onComplete,
+}: QuizExerciseProps) {
+  const exerciseStartedAt = useRef(new Date().toISOString());
+  const itemStartedAt = useRef(new Date().toISOString());
+  const itemResults = useRef<ExerciseItemResult[]>([]);
   const [current, setCurrent] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [showResult, setShowResult] = useState(false);
-
   const question = questions[current];
 
   const handleSelect = (index: number) => {
     if (showResult) return;
+    onInteraction?.();
+    const completedAt = new Date().toISOString();
+    itemResults.current.push(buildExerciseItemResult({
+      itemId: question.id,
+      userAnswer: question.options[index],
+      acceptedAnswers: [question.options[question.correctOptionIndex]],
+      status: index === question.correctOptionIndex ? "correct" : "wrong",
+      durationMs: Date.parse(completedAt) - Date.parse(itemStartedAt.current),
+      startedAt: itemStartedAt.current,
+      completedAt,
+      attemptNumber,
+      required: question.required,
+      productive: false,
+    }));
     setSelected(index);
     setShowResult(true);
-    const isCorrect = index === question.correctOptionIndex;
-    if (isCorrect) {
-      // count could be tracked here for analytics
-    }
-    addExerciseResult(isCorrect);
   };
 
   const handleNext = () => {
+    onInteraction?.();
     if (current < questions.length - 1) {
-      setCurrent((c) => c + 1);
+      setCurrent((value) => value + 1);
       setSelected(null);
       setShowResult(false);
-    } else {
-      onComplete();
+      itemStartedAt.current = new Date().toISOString();
+      return;
     }
+    onComplete(buildExerciseResult({
+      exerciseId,
+      exerciseType: "quiz",
+      itemResults: itemResults.current,
+      startedAt: exerciseStartedAt.current,
+    }));
   };
 
   return (
     <div>
       <p className="mb-4 text-lg font-medium">{question.question}</p>
-      {question.bg && (
-        <p className="mb-4 text-xl font-semibold text-primary">{question.bg}</p>
-      )}
+      {question.bg && <p className="mb-4 text-xl font-semibold text-primary">{question.bg}</p>}
       <div className="space-y-2">
-        {question.options.map((option, idx) => {
-          const isSelected = selected === idx;
-          const isCorrect = idx === question.correctOptionIndex;
-          const stateClass =
-            showResult && isCorrect
-              ? "border-success bg-success/10 text-success"
-              : showResult && isSelected && !isCorrect
+        {question.options.map((option, index) => {
+          const isSelected = selected === index;
+          const isCorrect = index === question.correctOptionIndex;
+          const stateClass = showResult && isCorrect
+            ? "border-success bg-success/10 text-success"
+            : showResult && isSelected
               ? "border-danger bg-danger/10 text-danger"
               : isSelected
-              ? "border-primary bg-primary/10 text-primary"
-              : "border-gray-200 bg-white hover:bg-gray-50";
-
+                ? "border-primary bg-primary/10 text-primary"
+                : "border-gray-200 bg-white hover:bg-gray-50";
           return (
             <button
-              key={idx}
-              onClick={() => handleSelect(idx)}
+              key={option}
+              type="button"
+              onClick={() => handleSelect(index)}
               disabled={showResult}
-              className={cn(
-                "w-full rounded-xl border-2 p-4 text-left font-medium transition-colors",
-                stateClass
-              )}
+              className={cn("w-full rounded-xl border-2 p-4 text-left font-medium transition-colors", stateClass)}
             >
               {option}
             </button>
           );
         })}
       </div>
-
       {showResult && (
         <div className="mt-6 space-y-3">
           {question.explanation && (
             <div className={cn(
               "rounded-xl p-4 text-sm",
-              selected === question.correctOptionIndex
-                ? "bg-success/10 text-success"
-                : "bg-warm-50 text-muted"
+              selected === question.correctOptionIndex ? "bg-success/10 text-success" : "bg-warm-50 text-muted"
             )}>
               <p className="font-medium">{question.explanation}</p>
               {question.grammarTopicSlug && (
-                <a
-                  href={`/grammatik/${question.grammarTopicSlug}`}
-                  className="mt-2 inline-block text-sm text-primary underline"
-                >
+                <a href={`/grammatik/${question.grammarTopicSlug}`} className="mt-2 inline-block text-sm text-primary underline">
                   Zum Grammatikthema
                 </a>
               )}

@@ -1,67 +1,90 @@
 "use client";
 
-import { useState } from "react";
-import { MatchingPair } from "@/types";
-import { useProgressStore } from "@/stores/useProgressStore";
+import { useRef, useState } from "react";
+import { ExerciseItemResult, ExerciseResult, MatchingPair } from "@/types";
+import { buildExerciseItemResult, buildExerciseResult } from "@/lib/evaluation";
 import { cn, shuffleArray } from "@/lib/utils";
 
 interface MatchingExerciseProps {
+  exerciseId: string;
   pairs: MatchingPair[];
-  onComplete: () => void;
+  attemptNumber?: number;
+  onInteraction?: () => void;
+  onComplete: (result: ExerciseResult) => void;
 }
 
-export function MatchingExercise({ pairs, onComplete }: MatchingExerciseProps) {
-  const addExerciseResult = useProgressStore((state) => state.addExerciseResult);
+export function MatchingExercise({
+  exerciseId,
+  pairs,
+  attemptNumber = 1,
+  onInteraction,
+  onComplete,
+}: MatchingExerciseProps) {
+  const exerciseStartedAt = useRef(new Date().toISOString());
+  const itemStartedAt = useRef(new Map(pairs.map((pair) => [pair.id, new Date().toISOString()])));
+  const itemAttempts = useRef(new Map<string, number>());
+  const itemResults = useRef<ExerciseItemResult[]>([]);
   const [selectedDe, setSelectedDe] = useState<string | null>(null);
   const [matched, setMatched] = useState<Set<string>>(new Set());
   const [wrong, setWrong] = useState<Set<string>>(new Set());
-
-  const [bgOptions, setBgOptions] = useState<string[]>(() => shuffleArray(pairs.map((p) => p.bg)));
-
-  const [, setAnyWrong] = useState(false);
   const [lastExplanation, setLastExplanation] = useState<{ text?: string; grammarTopicSlug?: string }>({});
-  const showExplanation = lastExplanation.text || lastExplanation.grammarTopicSlug;
+  const [bgOptions] = useState(() => shuffleArray(pairs.map((pair) => pair.bg)));
 
   const handleDeClick = (de: string) => {
-    if (selectedDe === de) {
-      setSelectedDe(null);
-    } else {
-      setSelectedDe(de);
-    }
+    onInteraction?.();
+    setSelectedDe((current) => current === de ? null : de);
   };
 
   const handleBgClick = (bg: string) => {
     if (!selectedDe || matched.has(selectedDe)) return;
-    const pair = pairs.find((p) => p.de === selectedDe);
-    const isCorrect = pair?.bg === bg;
-    if (isCorrect) {
-      setMatched((prev) => new Set([...prev, selectedDe]));
-      setLastExplanation({ text: pair?.explanation, grammarTopicSlug: pair?.grammarTopicSlug });
-      setSelectedDe(null);
-    } else {
-      setWrong((prev) => new Set([...prev, selectedDe, bg]));
-      setAnyWrong(true);
-      const rightPair = pairs.find((p) => p.de === selectedDe);
-      setLastExplanation({
-        text: rightPair?.explanation,
-        grammarTopicSlug: rightPair?.grammarTopicSlug,
-      });
-      setTimeout(() => {
-        setWrong((prev) => {
-          const next = new Set(prev);
-          next.delete(selectedDe);
-          next.delete(bg);
-          return next;
-        });
-      }, 600);
-      setSelectedDe(null);
-    }
-    addExerciseResult(isCorrect);
+    onInteraction?.();
+    const selectedPair = pairs.find((pair) => pair.de === selectedDe);
+    if (!selectedPair) return;
+    const selectedValue = selectedDe;
+    const isCorrect = selectedPair.bg === bg;
+    const completedAt = new Date().toISOString();
+    const localAttempt = (itemAttempts.current.get(selectedPair.id) ?? 0) + 1;
+    itemAttempts.current.set(selectedPair.id, localAttempt);
+    itemResults.current.push(buildExerciseItemResult({
+      itemId: selectedPair.id,
+      userAnswer: bg,
+      acceptedAnswers: [selectedPair.bg],
+      status: isCorrect ? "correct" : "wrong",
+      durationMs: Date.parse(completedAt) - Date.parse(itemStartedAt.current.get(selectedPair.id) ?? completedAt),
+      startedAt: itemStartedAt.current.get(selectedPair.id) ?? completedAt,
+      completedAt,
+      attemptNumber: attemptNumber + localAttempt - 1,
+      required: selectedPair.required,
+      productive: false,
+      feedback: selectedPair.explanation,
+    }));
+    itemStartedAt.current.set(selectedPair.id, completedAt);
+    setLastExplanation({ text: selectedPair.explanation, grammarTopicSlug: selectedPair.grammarTopicSlug });
+    setSelectedDe(null);
 
-    if (matched.size + (isCorrect ? 1 : 0) === pairs.length) {
-      setBgOptions([]);
-      onComplete();
+    if (isCorrect) {
+      const nextMatched = new Set([...matched, selectedValue]);
+      setMatched(nextMatched);
+      if (nextMatched.size === pairs.length) {
+        onComplete(buildExerciseResult({
+          exerciseId,
+          exerciseType: "matching",
+          itemResults: itemResults.current,
+          startedAt: exerciseStartedAt.current,
+        }));
+      }
+      return;
     }
+
+    setWrong((current) => new Set([...current, selectedValue, bg]));
+    window.setTimeout(() => {
+      setWrong((current) => {
+        const next = new Set(current);
+        next.delete(selectedValue);
+        next.delete(bg);
+        return next;
+      });
+    }, 600);
   };
 
   return (
@@ -72,17 +95,15 @@ export function MatchingExercise({ pairs, onComplete }: MatchingExerciseProps) {
           {pairs.map((pair) => (
             <button
               key={pair.id}
+              type="button"
               disabled={matched.has(pair.de)}
               onClick={() => handleDeClick(pair.de)}
               className={cn(
                 "w-full rounded-xl border-2 p-3 text-left text-sm font-medium transition-colors",
-                matched.has(pair.de)
-                  ? "border-success bg-success/10 text-success"
-                  : selectedDe === pair.de
-                  ? "border-primary bg-primary/10 text-primary"
-                  : wrong.has(pair.de)
-                  ? "border-danger bg-danger/10 text-danger"
-                  : "border-gray-200 bg-white hover:bg-gray-50"
+                matched.has(pair.de) ? "border-success bg-success/10 text-success"
+                  : selectedDe === pair.de ? "border-primary bg-primary/10 text-primary"
+                    : wrong.has(pair.de) ? "border-danger bg-danger/10 text-danger"
+                      : "border-gray-200 bg-white hover:bg-gray-50"
               )}
             >
               {pair.de}
@@ -90,35 +111,32 @@ export function MatchingExercise({ pairs, onComplete }: MatchingExerciseProps) {
           ))}
         </div>
         <div className="space-y-2">
-          {bgOptions.map((bg) => (
-            <button
-              key={bg}
-              disabled={matched.has(pairs.find((p) => p.bg === bg)?.de || "")}
-              onClick={() => handleBgClick(bg)}
-              className={cn(
-                "w-full rounded-xl border-2 p-3 text-center text-base font-medium transition-colors",
-                matched.has(pairs.find((p) => p.bg === bg)?.de || "")
-                  ? "border-success bg-success/10 text-success"
-                  : wrong.has(bg)
-                  ? "border-danger bg-danger/10 text-danger"
-                  : "border-gray-200 bg-white hover:bg-gray-50"
-              )}
-            >
-              {bg}
-            </button>
-          ))}
+          {bgOptions.map((bg) => {
+            const de = pairs.find((pair) => pair.bg === bg)?.de ?? "";
+            return (
+              <button
+                key={bg}
+                type="button"
+                disabled={matched.has(de)}
+                onClick={() => handleBgClick(bg)}
+                className={cn(
+                  "w-full rounded-xl border-2 p-3 text-center text-base font-medium transition-colors",
+                  matched.has(de) ? "border-success bg-success/10 text-success"
+                    : wrong.has(bg) ? "border-danger bg-danger/10 text-danger"
+                      : "border-gray-200 bg-white hover:bg-gray-50"
+                )}
+              >
+                {bg}
+              </button>
+            );
+          })}
         </div>
       </div>
-      {showExplanation && (
+      {(lastExplanation.text || lastExplanation.grammarTopicSlug) && (
         <div className="mt-4 rounded-xl bg-warm-50 p-4 text-sm text-muted">
-          <p className="font-medium">{lastExplanation.text}</p>
+          {lastExplanation.text && <p className="font-medium">{lastExplanation.text}</p>}
           {lastExplanation.grammarTopicSlug && (
-            <a
-              href={`/grammatik/${lastExplanation.grammarTopicSlug}`}
-              className="mt-2 inline-block text-sm text-primary underline"
-            >
-              Zum Grammatikthema
-            </a>
+            <a href={`/grammatik/${lastExplanation.grammarTopicSlug}`} className="mt-2 inline-block text-sm text-primary underline">Zum Grammatikthema</a>
           )}
         </div>
       )}

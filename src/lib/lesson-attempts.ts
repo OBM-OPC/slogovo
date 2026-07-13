@@ -1,7 +1,8 @@
 import { ExerciseResult, LessonAttempt } from "@/types/learning";
-import { calculateLessonMetrics, lessonPassed } from "./evaluation";
+import { calculateLessonMetrics, evaluateLessonOutcome } from "./evaluation";
 
 export interface CreateLessonAttemptInput {
+  id?: string;
   userId: string;
   lessonId: string;
   moduleId: string;
@@ -11,30 +12,43 @@ export interface CreateLessonAttemptInput {
   startedAt: string;
   finishedAt?: string;
   completed: boolean;
-  xpMultiplier?: number;
+  requiredScore: number;
+  requiresProductive?: boolean;
+  masteryScore?: number;
 }
 
 export function createLessonAttempt(input: CreateLessonAttemptInput): LessonAttempt {
-  const { accuracy, score, firstTryCorrect, itemsAnswered } = calculateLessonMetrics(input.results);
-  const passed = input.completed && lessonPassed(input.results);
-  const xpEarned = passed ? Math.max(10, Math.round(score * 0.5)) : 0;
+  const metrics = calculateLessonMetrics(input.results);
+  const outcome = evaluateLessonOutcome(input.results, {
+    completed: input.completed,
+    requiredScore: input.requiredScore,
+    requiresProductive: input.requiresProductive,
+    masteryScore: input.masteryScore,
+  });
+  const totalDurationMs = Math.max(0, input.totalDurationMs);
+  const xpEarned = outcome.passed ? Math.max(10, Math.round(metrics.score * 0.5)) : 0;
 
   return {
-    id: crypto.randomUUID(),
+    id: input.id ?? crypto.randomUUID(),
     userId: input.userId,
     lessonId: input.lessonId,
     moduleId: input.moduleId,
     level: input.level,
     results: input.results,
-    totalDurationMs: Math.max(0, input.totalDurationMs),
+    totalDurationMs,
+    activeTimeSeconds: Math.round(totalDurationMs / 1000),
     startedAt: input.startedAt,
     finishedAt: input.finishedAt,
-    firstTryCorrect,
-    itemsAnswered,
-    passed,
+    firstTryCorrect: metrics.firstTryCorrect,
+    itemsAnswered: metrics.itemsAnswered,
+    correctCount: metrics.correctCount,
+    incorrectCount: metrics.incorrectCount,
+    requiredScore: input.requiredScore,
+    passed: outcome.passed,
+    mastered: outcome.mastered,
     completed: input.completed,
-    accuracy,
-    score,
+    accuracy: metrics.accuracy,
+    score: metrics.score,
     xpEarned,
   };
 }
@@ -46,13 +60,18 @@ export function attemptToDbRow(attempt: LessonAttempt): Record<string, unknown> 
     lesson_id: attempt.lessonId,
     module_id: attempt.moduleId,
     level: attempt.level,
-    results: JSON.stringify(attempt.results),
+    results: attempt.results,
     total_duration_ms: attempt.totalDurationMs,
+    active_time_seconds: attempt.activeTimeSeconds,
     started_at: attempt.startedAt,
     finished_at: attempt.finishedAt,
     first_try_correct: attempt.firstTryCorrect,
     items_answered: attempt.itemsAnswered,
+    correct_count: attempt.correctCount,
+    incorrect_count: attempt.incorrectCount,
+    required_score: attempt.requiredScore,
     passed: attempt.passed,
+    mastered: attempt.mastered,
     completed: attempt.completed,
     accuracy: attempt.accuracy,
     score: attempt.score,
@@ -61,6 +80,7 @@ export function attemptToDbRow(attempt: LessonAttempt): Record<string, unknown> 
 }
 
 export function dbRowToAttempt(row: Record<string, unknown>): LessonAttempt {
+  const totalDurationMs = Number(row.total_duration_ms ?? 0);
   return {
     id: String(row.id),
     userId: String(row.user_id),
@@ -68,12 +88,17 @@ export function dbRowToAttempt(row: Record<string, unknown>): LessonAttempt {
     moduleId: String(row.module_id),
     level: String(row.level),
     results: (Array.isArray(row.results) ? row.results : JSON.parse(String(row.results ?? "[]"))) as ExerciseResult[],
-    totalDurationMs: Number(row.total_duration_ms ?? 0),
+    totalDurationMs,
+    activeTimeSeconds: Number(row.active_time_seconds ?? Math.round(totalDurationMs / 1000)),
     startedAt: String(row.started_at),
     finishedAt: row.finished_at ? String(row.finished_at) : undefined,
     firstTryCorrect: Number(row.first_try_correct ?? 0),
     itemsAnswered: Number(row.items_answered ?? 0),
+    correctCount: Number(row.correct_count ?? 0),
+    incorrectCount: Number(row.incorrect_count ?? 0),
+    requiredScore: Number(row.required_score ?? 70),
     passed: Boolean(row.passed),
+    mastered: Boolean(row.mastered),
     completed: Boolean(row.completed),
     accuracy: Number(row.accuracy ?? 0),
     score: Number(row.score ?? 0),

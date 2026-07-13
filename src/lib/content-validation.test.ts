@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { validateModules, ContentValidationIssue } from "./content-validation";
-import { Exercise, Lesson, ModuleMeta, QuizQuestion } from "@/types";
+import { Exercise, Lesson, ModuleMeta } from "@/types";
 
 function makeModule(moduleId: string, lessons: { lessonId: string; title: string; duration?: string }[]): ModuleMeta {
   return {
@@ -125,8 +125,8 @@ describe("validateModules", () => {
   });
 });
 
-describe("unsupported exercise type", () => {
-  it("flags empty listen exercise data as missing", () => {
+describe("listen exercise validation", () => {
+  it("accepts a fully renderable listen exercise", () => {
     const moduleMeta = makeModule("a1-modul-1", [{ lessonId: "a1-modul-1-lektion-1", title: "T" }]);
     const lesson = makeLesson({
       exercises: [
@@ -134,11 +134,18 @@ describe("unsupported exercise type", () => {
           id: "ex1",
           type: "listen" as Exercise["type"],
           title: "L",
-          data: [{ id: "l1", question: "L?", options: ["a", "b"], correctOptionIndex: 0 } as unknown as QuizQuestion],
+          data: [{
+            id: "l1",
+            format: "audio-comprehension",
+            audioText: "Как си?",
+            question: "L?",
+            options: ["a", "b"],
+            correctOptionIndex: 0,
+          }],
         },
       ],
     });
     const issues = validateModules([moduleMeta], [lesson]);
-    expect(issues.some((i) => i.message.includes("not yet supported"))).toBe(true);
+    expect(errors(issues)).toHaveLength(0);
   });
 });

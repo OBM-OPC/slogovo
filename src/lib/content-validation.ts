@@ -1,4 +1,4 @@
-import { Exercise, ExerciseType, FillInSentence, Lesson, MatchingPair, ModuleMeta, QuizQuestion, SentenceBuilder, VocabularyItem } from "@/types";
+import { Exercise, ExerciseType, FillInSentence, Lesson, ListenExerciseItem, MatchingPair, ModuleMeta, QuizQuestion, SentenceBuilder, VocabularyItem } from "@/types";
 
 export interface ContentValidationIssue {
   path: string;
@@ -119,7 +119,7 @@ function validateExercise(exercise: Exercise, path: string, issues: ContentValid
       validateSentenceBuilder(exercise.data as SentenceBuilder[], path, issues);
       break;
     case "listen":
-      validateListen(exercise.data as unknown[], path, issues);
+      validateListen(exercise.data as ListenExerciseItem[], path, issues);
       break;
   }
 }
@@ -244,8 +244,31 @@ function validateSentenceBuilder(sentences: SentenceBuilder[], path: string, iss
   });
 }
 
-function validateListen(_items: unknown[], path: string, issues: ContentValidationIssue[]): void {
-  issues.push({ path, message: "listen exercises are not yet supported by the engine", severity: "warning" });
+function validateListen(items: ListenExerciseItem[], path: string, issues: ContentValidationIssue[]): void {
+  const ids = new Set<string>();
+  items.forEach((item, index) => {
+    const itemPath = `${path}/data[${index}]`;
+    if (!isNonEmptyString(item.id) || ids.has(item.id)) {
+      issues.push({ path: itemPath, message: "listen item id is missing or duplicated", severity: "error" });
+    }
+    ids.add(item.id);
+    if (!isNonEmptyString(item.audioText)) {
+      issues.push({ path: itemPath, message: "listen audioText is missing", severity: "error" });
+    }
+    if (item.format === "listen-select") {
+      if (item.options.length < 2 || !item.options.some((option) => option.id === item.correctOptionId)) {
+        issues.push({ path: itemPath, message: "listen-select options or correctOptionId are invalid", severity: "error" });
+      }
+    } else if (item.format === "listen-type" && item.acceptedAnswers.length === 0) {
+      issues.push({ path: itemPath, message: "listen-type acceptedAnswers are missing", severity: "error" });
+    } else if (item.format === "listen-reorder" && item.correctOrder.length === 0) {
+      issues.push({ path: itemPath, message: "listen-reorder correctOrder is missing", severity: "error" });
+    } else if (item.format === "audio-comprehension") {
+      if (item.options.length < 2 || item.correctOptionIndex < 0 || item.correctOptionIndex >= item.options.length) {
+        issues.push({ path: itemPath, message: "audio-comprehension options are invalid", severity: "error" });
+      }
+    }
+  });
 }
 
 export function validateModules(moduleMetas: ModuleMeta[], lessons: Lesson[]): ContentValidationIssue[] {

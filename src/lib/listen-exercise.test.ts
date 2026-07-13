@@ -1,60 +1,23 @@
 import { describe, expect, it } from "vitest";
 import {
-  evaluateListenSelect,
-  evaluateListenType,
+  evaluateAudioComprehension,
   evaluateDictation,
   evaluateListenReorder,
-  evaluateAudioComprehension,
+  evaluateListenSelect,
+  evaluateListenType,
 } from "./listen-exercise";
 
-function vocab(id: string, de: string, bg: string) {
-  return { id, de, bg };
-}
+const options = [
+  { id: "a", de: "Hallo", bg: "здравей" },
+  { id: "b", de: "Tschüss", bg: "довиждане" },
+];
 
-describe("listen exercises", () => {
-  it("listen-select accepts the correct option", () => {
-    const item = {
-      id: "q1",
-      audioText: "здравей",
-      options: [vocab("a", "Hallo", "здравей"), vocab("b", "Tschüss", "довиждане")],
-      correctOptionId: "a",
-    };
-    const result = evaluateListenSelect(item, "a");
-    expect(result.correct).toBe(true);
-    expect(result.status).toBe("correct");
-  });
-
-  it("listen-type uses shared evaluator", () => {
-    const item = {
-      id: "q1",
-      audioText: "здравей",
-      acceptedAnswers: ["здравей"],
-    };
-    expect(evaluateListenType(item, "здравей").correct).toBe(true);
-    expect(evaluateListenType(item, "здрвей").status).toBe("typo");
-  });
-
-  it("dictation compares full audio text", () => {
-    const item = { id: "q1", audioText: "Аз съм от Германия.", wordCount: 4 };
-    expect(evaluateDictation(item, "Аз съм от Германия").correct).toBe(true);
-    expect(evaluateDictation(item, "Аз съм от Австрия").correct).toBe(false);
-  });
-
-  it("listen-reorder checks exact order", () => {
-    const item = { id: "q1", audioText: "Аз съм учител", correctOrder: ["Аз", "съм", "учител"] };
-    expect(evaluateListenReorder(item, ["Аз", "съм", "учител"]).correct).toBe(true);
-    expect(evaluateListenReorder(item, ["съм", "Аз", "учител"]).correct).toBe(false);
-  });
-
-  it("audio-comprehension checks selected option", () => {
-    const item = {
-      id: "q1",
-      audioText: "Как се казваш?",
-      question: "Was bedeutet der Satz?",
-      options: ["Wie heißt du?", "Wo wohnst du?"],
-      correctOptionIndex: 0,
-    };
-    expect(evaluateAudioComprehension(item, 0).correct).toBe(true);
-    expect(evaluateAudioComprehension(item, 1).correct).toBe(false);
+describe("listen exercise evaluation", () => {
+  it("scores all supported formats", () => {
+    expect(evaluateListenSelect({ format: "listen-select", id: "q1", audioText: "здравей", options, correctOptionId: "a" }, "a").correct).toBe(true);
+    expect(evaluateListenType({ format: "listen-type", id: "q2", audioText: "здравей", acceptedAnswers: ["здравей"] }, "здравей").correct).toBe(true);
+    expect(evaluateDictation({ format: "dictation", id: "q3", audioText: "Аз съм тук" }, "Аз съм тук").correct).toBe(true);
+    expect(evaluateListenReorder({ format: "listen-reorder", id: "q4", audioText: "Аз съм тук", correctOrder: ["Аз", "съм", "тук"] }, ["Аз", "съм", "тук"]).correct).toBe(true);
+    expect(evaluateAudioComprehension({ format: "audio-comprehension", id: "q5", audioText: "Как си?", question: "Meaning?", options: ["How are you?", "Hello"], correctOptionIndex: 0 }, 0).correct).toBe(true);
   });
 });

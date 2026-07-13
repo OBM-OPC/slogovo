@@ -1,17 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Lesson } from "@/types";
-import { useProgressSafe } from "@/hooks/useProgressSafe";
-import { useProgressStore } from "@/stores/useProgressStore";
+import { ArrowLeft, CheckCircle2, RotateCcw, XCircle } from "lucide-react";
+import { ExerciseResult, Lesson, LessonAttempt } from "@/types";
 import { Button } from "@/components/ui/Button";
-import { ProgressBar } from "@/components/ui/ProgressBar";
-import { VocabularyList } from "@/components/vocabulary/VocabularyList";
 import { ExerciseEngine } from "@/components/quiz/ExerciseEngine";
+import { ProgressBar } from "@/components/ui/ProgressBar";
 import { SpeakButton } from "@/components/ui/SpeakButton";
-import { ArrowLeft, CheckCircle2 } from "lucide-react";
+import { VocabularyList } from "@/components/vocabulary/VocabularyList";
+import { useProgressSafe } from "@/hooks/useProgressSafe";
+import { createActiveTimeTracker } from "@/lib/active-time";
 import { getModuleById } from "@/lib/content";
+import { createInitialExerciseRuns, createRetryRuns, ExerciseRun } from "@/lib/lesson-flow";
+import { createLessonAttempt } from "@/lib/lesson-attempts";
+import { useProgressStore } from "@/stores/useProgressStore";
 
 interface LessonViewProps {
   lesson: Lesson;
@@ -20,38 +23,86 @@ interface LessonViewProps {
   context: { moduleId: string; moduleTitle: string; lessonIndex: number; totalLessons: number } | null;
 }
 
+type LessonSection = "intro" | "vocab" | "grammar" | "exercise" | "retry" | "summary";
+
 export function LessonView({ lesson, moduleId, nextLessonId, context }: LessonViewProps) {
   const progress = useProgressSafe();
-  const completeLesson = useProgressStore((state) => state.completeLesson);
-  const addStudyTime = useProgressStore((state) => state.addStudyTime);
+  const recordLessonAttempt = useProgressStore((state) => state.recordLessonAttempt);
+  const moduleMeta = getModuleById(moduleId);
+  const requiredScore = moduleMeta?.requiredScore ?? 70;
+  const requiresProductive = lesson.requiresProductive ?? moduleMeta?.requiresProductive ?? false;
+  const initialRuns = useRef(createInitialExerciseRuns(lesson.exercises));
+  const activeTime = useRef(createActiveTimeTracker({ idleThresholdMs: 60_000 }));
+  const attemptStartedAt = useRef(new Date().toISOString());
+  const [section, setSection] = useState<LessonSection>("intro");
+  const [runs, setRuns] = useState<ExerciseRun[]>(initialRuns.current);
+  const [runIndex, setRunIndex] = useState(0);
+  const [results, setResults] = useState<ExerciseResult[]>([]);
+  const [attempt, setAttempt] = useState<LessonAttempt | null>(null);
 
-  const [section, setSection] = useState<"intro" | "vocab" | "grammar" | "exercise" | "summary">("intro");
-  const [exerciseIndex, setExerciseIndex] = useState(0);
-  const [exerciseScore, setExerciseScore] = useState(0);
-  const isCompleted = progress.completedLessons.includes(lesson.lessonId);
-
-  const moduleTitle = context?.moduleTitle ?? getModuleById(moduleId)?.title ?? moduleId;
+  const moduleTitle = context?.moduleTitle ?? moduleMeta?.title ?? moduleId;
   const lessonNumber = context?.lessonIndex ?? 0;
   const totalLessons = context?.totalLessons ?? 0;
+  const currentRun = runs[runIndex];
+  const passedPreviously = progress.completedLessons.includes(lesson.lessonId);
 
-  const markLessonComplete = async () => {
-    if (isCompleted) return;
-    await completeLesson(lesson.lessonId);
-    await addStudyTime(15, lesson.vocabulary.length);
+  const interact = () => activeTime.current.recordActivity();
+
+  useEffect(() => {
+    const tracker = activeTime.current;
+    const onVisibilityChange = () => {
+      if (document.hidden) tracker.pause();
+    };
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      tracker.pause();
+    };
+  }, []);
+
+  const finishAttempt = async (finalResults: ExerciseResult[]) => {
+    interact();
+    const finishedAt = new Date().toISOString();
+    const finalAttempt = createLessonAttempt({
+      userId: progress.userId,
+      lessonId: lesson.lessonId,
+      moduleId: lesson.moduleId,
+      level: lesson.level,
+      results: finalResults,
+      totalDurationMs: activeTime.current.stop(),
+      startedAt: attemptStartedAt.current,
+      finishedAt,
+      completed: true,
+      requiredScore,
+      requiresProductive,
+    });
+    setAttempt(finalAttempt);
+    setSection("summary");
+    await recordLessonAttempt(finalAttempt, lesson.vocabulary.length);
   };
 
-  const handleExerciseComplete = async () => {
-    setExerciseScore((prev) => prev + 1);
-    if (exerciseIndex < lesson.exercises.length - 1) {
-      setExerciseIndex((prev) => prev + 1);
-    } else {
-      setSection("summary");
-      await markLessonComplete();
+  const handleExerciseComplete = async (result: ExerciseResult) => {
+    interact();
+    const finalResults = [...results, result];
+    const retryRuns = currentRun ? createRetryRuns(currentRun.exercise, result) : [];
+    const nextRuns = retryRuns.length > 0 ? [...runs, ...retryRuns] : runs;
+    const nextIndex = runIndex + 1;
+    setResults(finalResults);
+    setRuns(nextRuns);
+
+    if (nextIndex < nextRuns.length) {
+      setRunIndex(nextIndex);
+      if (runIndex === initialRuns.current.length - 1 && nextRuns.slice(nextIndex).some((run) => run.retry)) {
+        setSection("retry");
+      }
+      return;
     }
+    await finishAttempt(finalResults);
   };
 
   const sections = ["intro", "vocab", "grammar", "exercise", "summary"] as const;
-  const currentSectionIndex = sections.indexOf(section);
+  const visibleSection = section === "retry" ? "exercise" : section;
+  const currentSectionIndex = sections.indexOf(visibleSection);
 
   return (
     <div className="animate-fade-in px-4 py-6 safe-top">
@@ -59,28 +110,22 @@ export function LessonView({ lesson, moduleId, nextLessonId, context }: LessonVi
         <Link href="/kurs/" className="rounded-full bg-gray-100 p-2 text-muted hover:bg-gray-200">
           <ArrowLeft className="h-5 w-5" />
         </Link>
-        <div className="flex-1 min-w-0">
-          <p className="text-xs text-muted truncate">
-            {moduleTitle} · Lektion {lessonNumber}/{totalLessons}
-          </p>
-          <h1 className="text-xl font-bold truncate">{lesson.title}</h1>
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-xs text-muted">{moduleTitle} · Lektion {lessonNumber}/{totalLessons}</p>
+          <h1 className="truncate text-xl font-bold">{lesson.title}</h1>
         </div>
       </header>
 
       <div className="mb-6">
         <ProgressBar value={currentSectionIndex + 1} max={sections.length} />
-        <p className="mt-1 text-right text-xs text-muted">
-          Schritt {currentSectionIndex + 1} von {sections.length}
-        </p>
+        <p className="mt-1 text-right text-xs text-muted">Schritt {currentSectionIndex + 1} von {sections.length}</p>
       </div>
 
       {section === "intro" && (
         <section className="card">
           <h2 className="mb-2 text-lg font-semibold">Einführung</h2>
           <p className="mb-6 text-muted">{lesson.introduction}</p>
-          <Button onClick={() => setSection("vocab")} fullWidth>
-            Los geht&apos;s
-          </Button>
+          <Button onClick={() => { interact(); setSection("vocab"); }} fullWidth>Los geht&apos;s</Button>
         </section>
       )}
 
@@ -91,11 +136,7 @@ export function LessonView({ lesson, moduleId, nextLessonId, context }: LessonVi
             <span className="text-xs text-muted">{lesson.vocabulary.length} Wörter</span>
           </div>
           <VocabularyList items={lesson.vocabulary} />
-          <div className="mt-6">
-            <Button onClick={() => setSection("grammar")} fullWidth>
-              Weiter zur Grammatik
-            </Button>
-          </div>
+          <div className="mt-6"><Button onClick={() => { interact(); setSection("grammar"); }} fullWidth>Weiter zur Grammatik</Button></div>
         </section>
       )}
 
@@ -104,93 +145,72 @@ export function LessonView({ lesson, moduleId, nextLessonId, context }: LessonVi
           <h2 className="mb-2 text-lg font-semibold">{lesson.grammar.title}</h2>
           <p className="mb-4 text-muted">{lesson.grammar.explanation}</p>
           <div className="mb-6 space-y-3">
-            {lesson.grammar.examples.map((example, i) => (
-              <div
-                key={i}
-                className="rounded-xl border border-gray-100 bg-gray-50 p-4"
-              >
+            {lesson.grammar.examples.map((example, index) => (
+              <div key={`${example.bg}-${index}`} className="rounded-xl border border-gray-100 bg-gray-50 p-4">
                 <p className="mb-1 text-lg font-medium">{example.bg}</p>
                 <p className="text-sm text-muted">{example.de}</p>
-                {progress.settings.showLatin && example.bgLatin && (
-                  <p className="text-xs text-muted">{example.bgLatin}</p>
-                )}
-                <div className="mt-2"
-                >
-                  <SpeakButton text={example.bg} progress={progress} variant="inline" label="Anhören" />
-                </div>
+                {progress.settings.showLatin && example.bgLatin && <p className="text-xs text-muted">{example.bgLatin}</p>}
+                <div className="mt-2"><SpeakButton text={example.bg} progress={progress} variant="inline" label="Anhören" /></div>
               </div>
             ))}
           </div>
-          <Button onClick={async () => {
-            if (lesson.exercises.length === 0) {
-              setSection("summary");
-              await markLessonComplete();
-            } else {
-              setSection("exercise");
-            }
+          <Button onClick={() => {
+            interact();
+            if (lesson.exercises.length === 0) void finishAttempt([]);
+            else setSection("exercise");
           }} fullWidth>
-            {lesson.exercises.length === 0 ? "Lektion abschließen" : "Übungen starten"}
+            {lesson.exercises.length === 0 ? "Ergebnis anzeigen" : "Übungen starten"}
           </Button>
         </section>
       )}
 
-      {section === "exercise" && lesson.exercises[exerciseIndex] && (
+      {section === "exercise" && currentRun && (
         <section className="card">
           <div className="mb-4 flex items-center justify-between">
-            <span className="text-sm text-muted">
-              Übung {exerciseIndex + 1} von {lesson.exercises.length}
-            </span>
-            <ProgressBar
-              value={exerciseIndex + 1}
-              max={lesson.exercises.length}
-              className="w-24"
-            />
+            <span className="text-sm text-muted">Übung {Math.min(runIndex + 1, initialRuns.current.length)} von {initialRuns.current.length}</span>
+            <ProgressBar value={Math.min(runIndex + 1, initialRuns.current.length)} max={initialRuns.current.length} className="w-24" />
           </div>
           <ExerciseEngine
-            exercise={lesson.exercises[exerciseIndex]}
-            onComplete={handleExerciseComplete}
+            key={`${currentRun.exercise.id}-${currentRun.attemptNumber}-${runIndex}`}
+            exercise={currentRun.exercise}
+            attemptNumber={currentRun.attemptNumber}
+            onInteraction={interact}
+            onComplete={(result) => void handleExerciseComplete(result)}
           />
         </section>
       )}
 
-      {section === "summary" && (
+      {section === "retry" && (
         <section className="card text-center">
-          <div className="mb-4 inline-flex rounded-full bg-success/10 p-4 text-success">
-            <CheckCircle2 className="h-10 w-10" />
+          <div className="mb-4 inline-flex rounded-full bg-warm-50 p-4 text-primary"><RotateCcw className="h-8 w-8" /></div>
+          <h2 className="mb-2 text-xl font-bold">Fehler wiederholen</h2>
+          <p className="mb-6 text-muted">Die fehlgeschlagenen Pflichtaufgaben kommen jetzt noch einmal. Das Abschließen der Bildschirme allein zählt nicht als bestanden.</p>
+          <Button onClick={() => { interact(); setSection("exercise"); }} fullWidth>Wiederholung starten</Button>
+        </section>
+      )}
+
+      {section === "summary" && attempt && (
+        <section className="card text-center">
+          <div className={`mb-4 inline-flex rounded-full p-4 ${attempt.passed ? "bg-success/10 text-success" : "bg-danger/10 text-danger"}`}>
+            {attempt.passed ? <CheckCircle2 className="h-10 w-10" /> : <XCircle className="h-10 w-10" />}
           </div>
-          <h2 className="mb-2 text-xl font-bold">{isCompleted ? "Lektion abgeschlossen!" : "Geschafft!"}</h2>
-          <p className="mb-6 text-muted">{lesson.summary}</p>
+          <h2 className="mb-2 text-xl font-bold">
+            {attempt.mastered ? "Lektion gemeistert!" : attempt.passed ? "Lektion bestanden!" : "Noch nicht bestanden"}
+          </h2>
+          <p className="mb-6 text-muted">{attempt.passed ? lesson.summary : `Benötigt: ${requiredScore} Punkte. Versuche die Lektion erneut.`}</p>
           <div className="mb-6 grid grid-cols-2 gap-3">
-            <div className="rounded-xl bg-gray-50 p-3">
-              <p className="text-2xl font-bold">{lesson.vocabulary.length}</p>
-              <p className="text-xs text-muted">neue Vokabeln</p>
-            </div>
-            <div className="rounded-xl bg-gray-50 p-3">
-              <p className="text-2xl font-bold">{exerciseScore}</p>
-              <p className="text-xs text-muted">Übungspunkte</p>
-            </div>
+            <div className="rounded-xl bg-gray-50 p-3"><p className="text-2xl font-bold">{attempt.score}</p><p className="text-xs text-muted">Punkte</p></div>
+            <div className="rounded-xl bg-gray-50 p-3"><p className="text-2xl font-bold">{Math.round(attempt.accuracy * 100)}%</p><p className="text-xs text-muted">Genauigkeit</p></div>
+            <div className="rounded-xl bg-gray-50 p-3"><p className="text-2xl font-bold">{attempt.correctCount}/{attempt.correctCount + attempt.incorrectCount}</p><p className="text-xs text-muted">Antworten</p></div>
+            <div className="rounded-xl bg-gray-50 p-3"><p className="text-2xl font-bold">{attempt.activeTimeSeconds}s</p><p className="text-xs text-muted">aktive Zeit</p></div>
           </div>
           <div className="space-y-3">
-            {!isCompleted && (
-              <Button
-                onClick={markLessonComplete}
-                fullWidth
-              >
-                Als abgeschlossen markieren
-              </Button>
-            )}
-            {nextLessonId ? (
-              <Link href={`/kurs/${lesson.moduleId}/${nextLessonId}/`}>
-                <Button fullWidth variant={isCompleted ? "primary" : "outline"}>Nächste Lektion</Button>
-              </Link>
+            {!attempt.passed && <Button onClick={() => window.location.reload()} fullWidth>Erneut versuchen</Button>}
+            {attempt.passed && nextLessonId ? (
+              <Link href={`/kurs/${lesson.moduleId}/${nextLessonId}/`}><Button fullWidth>Nächste Lektion</Button></Link>
             ) : (
-              <Link href="/kurs/">
-                <Button fullWidth variant={isCompleted ? "primary" : "outline"}>Zurück zum Kurs</Button>
-              </Link>
+              <Link href="/kurs/"><Button fullWidth variant={attempt.passed || passedPreviously ? "primary" : "outline"}>Zurück zum Kurs</Button></Link>
             )}
-            <Link href="/kurs/">
-              <Button variant="outline" fullWidth>Kursübersicht</Button>
-            </Link>
           </div>
         </section>
       )}

@@ -1,69 +1,71 @@
 export interface ActiveTimeTracker {
-  start(): void;
-  pause(): number; // returns elapsed ms since start/resume
-  resume(): void;
-  stop(): number; // returns total elapsed ms
-  getTotalMs(): number;
+  start(atMs?: number): void;
+  recordActivity(atMs?: number): void;
+  pause(atMs?: number): number;
+  resume(atMs?: number): void;
+  stop(atMs?: number): number;
+  getTotalMs(atMs?: number): number;
 }
 
-export function createActiveTimeTracker(): ActiveTimeTracker {
+export interface ActiveTimeOptions {
+  /** Gaps beyond this threshold are treated as inactivity. */
+  idleThresholdMs?: number;
+}
+
+export function createActiveTimeTracker(options: ActiveTimeOptions = {}): ActiveTimeTracker {
+  const idleThresholdMs = options.idleThresholdMs ?? 60_000;
   let totalMs = 0;
-  let lastStart: number | null = null;
+  let lastActivity: number | null = null;
   let running = false;
 
-  function now(): number {
-    return Date.now();
+  const now = (atMs?: number) => atMs ?? Date.now();
+
+  function capture(atMs?: number): number {
+    if (!running || lastActivity === null) return 0;
+    const current = now(atMs);
+    const elapsed = Math.max(0, Math.min(current - lastActivity, idleThresholdMs));
+    totalMs += elapsed;
+    lastActivity = current;
+    return elapsed;
   }
 
   return {
-    start() {
+    start(atMs) {
+      if (running) return;
+      lastActivity = now(atMs);
+      running = true;
+    },
+    recordActivity(atMs) {
       if (!running) {
-        lastStart = now();
-        running = true;
+        this.start(atMs);
+        return;
       }
+      capture(atMs);
     },
-    pause() {
-      if (running && lastStart !== null) {
-        const elapsed = now() - lastStart;
-        totalMs += elapsed;
-        running = false;
-        lastStart = null;
-        return elapsed;
-      }
-      return 0;
-    },
-    resume() {
-      if (!running) {
-        lastStart = now();
-        running = true;
-      }
-    },
-    stop() {
-      this.pause();
-      const result = totalMs;
-      totalMs = 0;
+    pause(atMs) {
+      const elapsed = capture(atMs);
       running = false;
-      lastStart = null;
-      return result;
+      lastActivity = null;
+      return elapsed;
     },
-    getTotalMs() {
-      if (running && lastStart !== null) {
-        return totalMs + (now() - lastStart);
-      }
+    resume(atMs) {
+      if (!running) this.start(atMs);
+    },
+    stop(atMs) {
+      this.pause(atMs);
       return totalMs;
+    },
+    getTotalMs(atMs) {
+      if (!running || lastActivity === null) return totalMs;
+      return totalMs + Math.max(0, Math.min(now(atMs) - lastActivity, idleThresholdMs));
     },
   };
 }
 
 export function msToRoundedMinutes(ms: number): number {
-  return Math.round(ms / 60000);
+  return Math.round(ms / 60_000);
 }
 
 export function msToSeconds(ms: number): number {
   return Math.round(ms / 1000);
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function _keepMsToSeconds(): void {
-  void msToSeconds(0);
 }

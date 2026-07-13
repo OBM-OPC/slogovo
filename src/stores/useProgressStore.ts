@@ -1,7 +1,7 @@
 "use client";
 
 import { create } from "zustand";
-import { UserProgress, Streak, DifficultyRating } from "@/types";
+import { UserProgress, DifficultyRating, LessonAttempt } from "@/types";
 import {
   loadProgressLocal,
   saveProgressLocal,
@@ -11,13 +11,14 @@ import {
   createDefaultProgress,
 } from "@/lib/progress-db";
 import { todayISO } from "@/lib/utils";
+import { updateStreakForDate } from "@/lib/streak";
 import { reviewWord, reviewWordWithDifficulty } from "@/lib/spaced-repetition";
 import { checkAchievements } from "@/lib/achievements";
 import { vibrateCorrect, vibrateWrong } from "@/lib/haptics";
 import { triggerConfetti, triggerLevelUpConfetti } from "@/lib/confetti";
 import { getLessonsByModule } from "@/lib/content";
 import { processSyncQueue, scheduleSync } from "@/lib/sync";
-import { addEvent, generateEventId } from "@/lib/sync-queue";
+import { addEvent, addLessonAttemptEvent } from "@/lib/sync-queue";
 import { mergeProgress } from "@/lib/progress-merge";
 
 interface ProgressState {
@@ -26,48 +27,15 @@ interface ProgressState {
   syncing: boolean;
   userId: string | null;
   init: (userId: string) => Promise<void>;
-  completeLesson: (lessonId: string) => Promise<void>;
+  recordLessonAttempt: (attempt: LessonAttempt, vocabulary?: number) => Promise<void>;
   completeModule: (moduleId: string) => Promise<void>;
   reviewVocabulary: (wordId: string, known: boolean) => Promise<void>;
   reviewVocabularyWithDifficulty: (wordId: string, rating: DifficultyRating) => Promise<void>;
-  addExerciseResult: (correct: boolean) => Promise<void>;
   addStudyTime: (minutes: number, vocabulary?: number) => Promise<void>;
   updateSettings: (settings: Partial<UserProgress["settings"]>) => Promise<void>;
   unlockAchievement: (achievementId: string) => Promise<void>;
   resetProgress: () => Promise<void>;
   syncNow: () => Promise<import("@/lib/sync").SyncResult | undefined>;
-}
-
-function updateStreak(progress: UserProgress): Streak {
-  const today = todayISO();
-  const last = progress.streak.lastStudyDate;
-
-  if (!last) {
-    return {
-      current: 1,
-      longest: Math.max(1, progress.streak.longest),
-      lastStudyDate: today,
-    };
-  }
-
-  if (last === today) {
-    return { ...progress.streak, lastStudyDate: today };
-  }
-
-  const yesterday = new Date();
-  yesterday.setDate(yesterday.getDate() - 1);
-  const yesterdayStr = yesterday.toISOString().split("T")[0];
-
-  if (last === yesterdayStr) {
-    const current = progress.streak.current + 1;
-    return {
-      current,
-      longest: Math.max(current, progress.streak.longest),
-      lastStudyDate: today,
-    };
-  }
-
-  return { current: 1, longest: progress.streak.longest, lastStudyDate: today };
 }
 
 function persist(updated: UserProgress): UserProgress {
@@ -81,21 +49,8 @@ function persist(updated: UserProgress): UserProgress {
   return updated;
 }
 
-function queueLessonCompleted(
-  userId: string,
-  lessonId: string,
-  moduleId: string,
-  passed: boolean,
-  accuracy: number,
-  score: number,
-  xpEarned: number
-): void {
-  addEvent({
-    type: "lesson_completed",
-    userId,
-    timestamp: new Date().toISOString(),
-    payload: { lessonId, moduleId, level: "A1", passed, accuracy, score, xpEarned },
-  });
+function queueLessonAttempt(userId: string, attempt: LessonAttempt): void {
+  addLessonAttemptEvent({ ...attempt, userId });
   scheduleSync(userId);
 }
 
@@ -140,59 +95,58 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
     return syncResult;
   },
 
-  completeLesson: async (lessonId: string) => {
+  recordLessonAttempt: async (attempt: LessonAttempt, vocabulary = 0) => {
     const state = get();
     if (!state.progress) return;
-    if (state.progress.completedLessons.includes(lessonId)) return;
+    if (state.progress.recordedAttemptIds.includes(attempt.id)) return;
 
-    const completedCountBefore = state.progress.completedLessons.length;
-    const completedLessons = [...state.progress.completedLessons, lessonId];
-    const lessonModuleId = lessonId.split("-lektion-")[0];
-    const moduleLessons = getLessonsByModule(lessonModuleId);
+    const completedLessons = attempt.passed && !state.progress.completedLessons.includes(attempt.lessonId)
+      ? [...state.progress.completedLessons, attempt.lessonId]
+      : state.progress.completedLessons;
+    const masteredLessons = attempt.mastered && !state.progress.masteredLessons.includes(attempt.lessonId)
+      ? [...state.progress.masteredLessons, attempt.lessonId]
+      : state.progress.masteredLessons;
+    const moduleLessons = getLessonsByModule(attempt.moduleId);
     const moduleIsComplete =
       moduleLessons.length > 0 && moduleLessons.every((lesson) => completedLessons.includes(lesson.lessonId));
     const completedModules =
-      moduleIsComplete && !state.progress.completedModules.includes(lessonModuleId)
-        ? [...state.progress.completedModules, lessonModuleId]
+      moduleIsComplete && !state.progress.completedModules.includes(attempt.moduleId)
+        ? [...state.progress.completedModules, attempt.moduleId]
         : state.progress.completedModules;
+    const activityDate = todayISO(attempt.finishedAt ? new Date(attempt.finishedAt) : new Date());
+    const day = state.progress.dailyStats[activityDate] ?? { minutes: 0, vocabulary: 0, activeSeconds: 0 };
+    const previousBest = state.progress.lessonScores[attempt.lessonId] ?? 0;
+    const currentConsecutive = attempt.incorrectCount > 0
+      ? 0
+      : (state.progress.exerciseStats.consecutiveCorrect ?? 0) + attempt.correctCount;
 
     const updated = persist({
       ...state.progress,
       completedLessons,
+      masteredLessons,
       completedModules,
-      streak: updateStreak(state.progress),
-    });
-
-    saveProgressLocal(updated);
-    set({ progress: updated });
-    await saveProgressToSupabase(updated);
-
-    if (state.userId) {
-      queueLessonCompleted(state.userId, lessonId, lessonModuleId, true, 1, 100, 10);
-    }
-
-    if (updated.completedLessons.length > completedCountBefore) {
-      triggerLevelUpConfetti();
-    }
-  },
-
-  masterLesson: async (lessonId: string, score = 100) => {
-    const state = get();
-    if (!state.progress) return;
-    if (state.progress.masteredLessons.includes(lessonId)) return;
-
-    const previousBest = state.progress.lessonScores[lessonId] ?? 0;
-    const updated = persist({
-      ...state.progress,
-      masteredLessons: [...state.progress.masteredLessons, lessonId],
-      completedLessons: state.progress.completedLessons.includes(lessonId)
-        ? state.progress.completedLessons
-        : [...state.progress.completedLessons, lessonId],
       lessonScores: {
         ...state.progress.lessonScores,
-        [lessonId]: Math.max(previousBest, score),
+        [attempt.lessonId]: Math.max(previousBest, attempt.score),
       },
-      streak: updateStreak(state.progress),
+      exerciseStats: {
+        total: state.progress.exerciseStats.total + attempt.correctCount + attempt.incorrectCount,
+        correct: state.progress.exerciseStats.correct + attempt.correctCount,
+        wrong: state.progress.exerciseStats.wrong + attempt.incorrectCount,
+        consecutiveCorrect: currentConsecutive,
+      },
+      dailyStats: {
+        ...state.progress.dailyStats,
+        [activityDate]: {
+          minutes: day.minutes + attempt.activeTimeSeconds / 60,
+          activeSeconds: (day.activeSeconds ?? Math.round(day.minutes * 60)) + attempt.activeTimeSeconds,
+          vocabulary: day.vocabulary + (attempt.passed ? vocabulary : 0),
+        },
+      },
+      recordedAttemptIds: [...state.progress.recordedAttemptIds, attempt.id],
+      streak: attempt.activeTimeSeconds > 0
+        ? updateStreakForDate(state.progress.streak, attempt.finishedAt ? new Date(attempt.finishedAt) : new Date())
+        : state.progress.streak,
     });
 
     saveProgressLocal(updated);
@@ -200,7 +154,13 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
     await saveProgressToSupabase(updated);
 
     if (state.userId) {
-      queueLessonCompleted(state.userId, lessonId, "mastery", true, score / 100, score, 10);
+      queueLessonAttempt(state.userId, attempt);
+    }
+
+    if (attempt.correctCount > 0 && attempt.incorrectCount === 0) vibrateCorrect(currentConsecutive);
+    if (attempt.incorrectCount > 0) vibrateWrong();
+    if (attempt.mastered) {
+      triggerLevelUpConfetti();
     }
   },
 
@@ -212,16 +172,13 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
     const updated = persist({
       ...state.progress,
       completedModules: [...state.progress.completedModules, moduleId],
-      streak: updateStreak(state.progress),
+      streak: updateStreakForDate(state.progress.streak),
     });
 
     saveProgressLocal(updated);
     set({ progress: updated });
     await saveProgressToSupabase(updated);
 
-    if (state.userId) {
-      queueLessonCompleted(state.userId, `module-${moduleId}`, moduleId, true, 1, 100, 10);
-    }
   },
 
   reviewVocabulary: async (wordId: string, known: boolean) => {
@@ -302,56 +259,6 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
     }
   },
 
-  addExerciseResult: async (correct: boolean) => {
-    const state = get();
-    if (!state.progress) return;
-
-    const stats = state.progress.exerciseStats;
-    const currentConsecutive = correct
-      ? (state.progress.exerciseStats.consecutiveCorrect ?? 0) + 1
-      : 0;
-
-    if (correct) {
-      vibrateCorrect(currentConsecutive);
-      if (currentConsecutive > 0 && currentConsecutive % 3 === 0) {
-        triggerConfetti({ scalar: 1 + Math.min(currentConsecutive, 10) * 0.05 });
-      }
-    } else {
-      vibrateWrong();
-    }
-
-    const updated = persist({
-      ...state.progress,
-      exerciseStats: {
-        total: stats.total + 1,
-        correct: stats.correct + (correct ? 1 : 0),
-        wrong: stats.wrong + (correct ? 0 : 1),
-        consecutiveCorrect: currentConsecutive,
-      },
-    });
-
-    saveProgressLocal(updated);
-    set({ progress: updated });
-    await saveProgressToSupabase(updated);
-
-    if (state.userId) {
-      addEvent({
-        type: "exercise_result",
-        userId: state.userId,
-        timestamp: new Date().toISOString(),
-        payload: {
-          attemptId: generateEventId(),
-          exerciseId: "exercise",
-          exerciseType: "mixed",
-          itemId: generateEventId(),
-          status: correct ? "correct" : "wrong",
-          durationMs: 0,
-        },
-      });
-      scheduleSync(state.userId);
-    }
-  },
-
   addStudyTime: async (minutes: number, vocabulary = 0) => {
     const state = get();
     if (!state.progress) return;
@@ -369,16 +276,12 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
           vocabulary: todayStats.vocabulary + vocabulary,
         },
       },
-      streak: updateStreak(state.progress),
+      streak: updateStreakForDate(state.progress.streak),
     });
 
     saveProgressLocal(updated);
     set({ progress: updated });
     await saveProgressToSupabase(updated);
-
-    if (state.userId) {
-      queueLessonCompleted(state.userId, `daily-${today}`, "daily", true, 1, 100, 10);
-    }
 
     if (updated.streak.current > currentStreak && updated.streak.current > 0 && updated.streak.current % 7 === 0) {
       triggerConfetti({ scalar: 1 + updated.streak.current * 0.02 });

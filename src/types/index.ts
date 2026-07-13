@@ -14,6 +14,7 @@ void _vocabularyTypeRef;
 
 export * from "./learning";
 export * from "./speaking";
+import type { ExerciseType, ListenExerciseItem } from "./learning";
 
 export interface GrammarExample {
   bg: string;
@@ -35,8 +36,6 @@ export interface GrammarSection {
   exercises?: Exercise[];
 }
 
-export type ExerciseType = "quiz" | "fill-in" | "matching" | "sentence-builder" | "listen";
-
 export interface QuizQuestion {
   id: string;
   question: string;
@@ -45,6 +44,7 @@ export interface QuizQuestion {
   bg?: string;
   explanation?: string;
   grammarTopicSlug?: string;
+  required?: boolean;
 }
 
 export interface FillInSentence {
@@ -56,6 +56,7 @@ export interface FillInSentence {
   de?: string; // German hint for the full sentence meaning
   explanation?: string;
   grammarTopicSlug?: string;
+  required?: boolean;
 }
 
 export interface MatchingPair {
@@ -64,6 +65,7 @@ export interface MatchingPair {
   bg: string;
   explanation?: string;
   grammarTopicSlug?: string;
+  required?: boolean;
 }
 
 export interface SentenceBuilder {
@@ -74,13 +76,14 @@ export interface SentenceBuilder {
   de?: string;
   explanation?: string;
   grammarTopicSlug?: string;
+  required?: boolean;
 }
 
 export interface Exercise {
   id: string;
   type: ExerciseType;
   title: string;
-  data: QuizQuestion[] | FillInSentence[] | MatchingPair[] | SentenceBuilder[];
+  data: QuizQuestion[] | FillInSentence[] | MatchingPair[] | SentenceBuilder[] | ListenExerciseItem[];
 }
 
 export interface Lesson {
@@ -94,6 +97,7 @@ export interface Lesson {
   vocabulary: VocabularyItem[];
   grammar: GrammarSection;
   exercises: Exercise[];
+  requiresProductive?: boolean;
 }
 
 export interface ModuleMeta {
@@ -104,6 +108,7 @@ export interface ModuleMeta {
   order: number;
   icon?: string;
   requiredScore?: number;
+  requiresProductive?: boolean;
   lessons: {
     lessonId: string;
     title: string;
@@ -150,7 +155,9 @@ export interface UserProgress {
     wrong: number;
     consecutiveCorrect?: number;
   };
-  dailyStats: Record<string, { minutes: number; vocabulary: number }>;
+  dailyStats: Record<string, { minutes: number; vocabulary: number; activeSeconds?: number }>;
+  /** Attempt ids already applied to aggregate progress, for retry idempotency. */
+  recordedAttemptIds: string[];
   settings: UserSettings;
   achievements: string[];
 }

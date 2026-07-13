@@ -1,5 +1,5 @@
 import { LessonAttempt } from "@/types/learning";
-import { calculateLessonMetrics } from "./evaluation";
+import { calculateLessonMetrics, flattenExerciseResults } from "./evaluation";
 import { msToRoundedMinutes } from "./active-time";
 
 export interface LessonPerformanceSummary {
@@ -25,7 +25,7 @@ export function buildLessonPerformanceSummary(attempt: LessonAttempt): LessonPer
     { correct: number; total: number }
   >();
 
-  for (const result of attempt.results) {
+  for (const result of flattenExerciseResults(attempt.results)) {
     if (!result.vocabularyId) continue;
     const stat = vocabStats.get(result.vocabularyId) ?? { correct: 0, total: 0 };
     stat.total += 1;
