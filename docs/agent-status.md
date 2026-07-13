@@ -1,10 +1,11 @@
 # Slogovo controlled-development status
 
-Last updated: 2026-07-13 15:38 UTC
+Last updated: 2026-07-13 15:45 UTC
 
 ## Active run — Phase 1 content correctness gate
 
 - Current branch: `fix/phase-1-content-correctness`, based on `main` commit `1eb0f66c0a333854fb9e8e295d3b63aeb12007cf`.
+- Implementation commit: `43f05672606444b6900af972a10482f623587665`.
 - Remote branches inspected: only `main`; no implementation branch or open pull request exists.
 - PR #95 was squash-merged before this run as `1eb0f66c0a333854fb9e8e295d3b63aeb12007cf`; its branch was deleted.
 - Latest GitHub Actions result: post-merge `main` run `29262028156` completed successfully.
@@ -55,12 +56,21 @@ Acceptance criteria:
 - Confirmed PR #95 and post-merge CI are green and no milestone remains active.
 - Audited the current Phase 1 types, filesystem inventory, validator, content guidelines, landing copy, first `съм` lesson, and grammar reference.
 - Selected and recorded this single coherent milestone before implementation changes.
+- Corrected the landing label from the Russian `Български за начинающих` to Bulgarian `Български за начинаещи`.
+- Corrected the first `съм` lesson and grammar reference to teach that present-tense copula forms normally remain while the subject pronoun may be omitted; removed three ungrammatical omission examples and corrected `Той е добре.` to German `Ihm geht es gut.`.
+- Made missing lesson introductions, summaries, grammar titles, explanations, and examples production-blocking validation errors.
+- Required a non-empty `bgLatin` reading aid for every A1 vocabulary item and made unresolved native-review flags and markers production-blocking.
+- Removed 245 unresolved optional A2 transliteration placeholders from 26 lesson files rather than fabricating unreviewed Latin forms; A2 transliteration remains optional under the documented policy.
+- Added validation for all nine registered grammar topics, including unique IDs/slugs and complete titles, descriptions, sections, explanations, and bilingual examples.
+- Added focused regression tests for the known linguistic corrections and validator tests for A1 transliteration, native-review blockers, incomplete lesson content, grammar-topic completeness, and duplicate topic identity.
+- Full validation passed: type-check, lint, 26 test files / 114 tests, content validation with 12 modules / 60 lessons / 9 grammar topics and 0 errors / 0 warnings, production build with 99 static pages, and `git diff --check`.
+- No database schema, Supabase data, production environment, Vercel setting, or secret was changed.
 
 ### Work remaining
 
-- Implement the correctness and validation changes.
-- Add focused tests and run the complete validation suite.
-- Update this status with final evidence, push the branch, and open one pull request when reviewable.
+- Commit and push this final status and implementation branch.
+- Open exactly one pull request and verify GitHub Actions and Vercel preview status.
+- Merge only if every automatic-merge condition is satisfied; otherwise stop and report the blocker.
 
 ### Commands executed in this run
 
@@ -69,6 +79,15 @@ Acceptance criteria:
 - OpenClaw cron history, visible-session, and subagent inspection.
 - Read-only audit of content types, registry, validator, tests, guidelines, landing copy, lesson content, and grammar topics.
 - `git switch -c fix/phase-1-content-correctness`.
+- Focused Vitest run for content validation and known corrections (2 files / 18 tests passed).
+- `npm run validate:content` (initially identified 245 unresolved A2 placeholders; final run passed with 12 modules, 60 lessons, 9 grammar topics, 0 errors, and 0 warnings).
+- Bulk mechanical removal of optional `NATIVE_REVIEW_NEEDED` A2 transliteration fields from 26 lesson files.
+- `npm run type-check` (passed).
+- `npm run lint` (passed with no warnings or errors).
+- `npm test` (26 test files and 114 tests passed).
+- `npm run build` (passed; content validation ran first and 99 static pages were generated).
+- `git diff --check` (passed).
+- `git commit -m "fix: enforce Phase 1 content correctness"`.
 
 ---
 
