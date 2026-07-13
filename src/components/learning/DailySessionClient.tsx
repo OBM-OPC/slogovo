@@ -81,7 +81,7 @@ export function DailySessionClient() {
     const nextIndex = index + 1;
     if (nextIndex >= activePlan.sessionItems.length) {
       const elapsedMs = Date.now() - (startedAt ?? Date.now());
-      const elapsedMinutes = Math.max(1, Math.round(elapsedMs / 60_000));
+      const elapsedMinutes = elapsedMs / 60_000;
       const vocabularyCount = activePlan.sessionItems.filter((item) => item.kind === "vocabulary").length;
       await addStudyTime(elapsedMinutes, vocabularyCount);
       trackLearningEvent("daily_session_completed", {

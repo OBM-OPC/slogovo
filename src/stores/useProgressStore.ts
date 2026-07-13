@@ -154,7 +154,7 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
         },
       },
       recordedAttemptIds: [...state.progress.recordedAttemptIds, attempt.id],
-      streak: attempt.activeTimeSeconds > 0
+      streak: attempt.passed && attempt.itemsAnswered > 0 && attempt.activeTimeSeconds > 0
         ? updateStreakForDate(state.progress.streak, attempt.finishedAt ? new Date(attempt.finishedAt) : new Date())
         : state.progress.streak,
     });
@@ -182,7 +182,6 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
     const updated = persist({
       ...state.progress,
       completedModules: [...state.progress.completedModules, moduleId],
-      streak: updateStreakForDate(state.progress.streak),
     });
 
     saveProgressLocal(updated);
@@ -203,13 +202,13 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
       easeFactor: 2.5,
     };
 
-    const updated = {
+    const updated = persist({
       ...state.progress,
       vocabularyProgress: {
         ...state.progress.vocabularyProgress,
         [wordId]: reviewWord(existing, known),
       },
-    };
+    });
 
     saveProgressLocal(updated);
     set({ progress: updated });
@@ -247,13 +246,13 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
     const tracked = mode === "production"
       ? recordProductionAttempt(reviewed, rating !== "repeat")
       : recordRecognitionAttempt(reviewed, rating !== "repeat");
-    const updated = {
+    const updated = persist({
       ...state.progress,
       vocabularyProgress: {
         ...state.progress.vocabularyProgress,
         [wordId]: tracked,
       },
-    };
+    });
 
     saveProgressLocal(updated);
     set({ progress: updated });
@@ -279,10 +278,12 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
   addStudyTime: async (minutes: number, vocabulary = 0) => {
     const state = get();
     if (!state.progress) return;
+    if (!Number.isFinite(minutes) || minutes <= 0) return;
 
     const today = todayISO();
-    const todayStats = state.progress.dailyStats[today] || { minutes: 0, vocabulary: 0 };
+    const todayStats = state.progress.dailyStats[today] || { minutes: 0, vocabulary: 0, activeSeconds: 0 };
     const currentStreak = state.progress.streak.current;
+    const measuredSeconds = Math.round(minutes * 60);
 
     const updated = persist({
       ...state.progress,
@@ -290,10 +291,11 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
         ...state.progress.dailyStats,
         [today]: {
           minutes: todayStats.minutes + minutes,
+          activeSeconds: (todayStats.activeSeconds ?? Math.round(todayStats.minutes * 60)) + measuredSeconds,
           vocabulary: todayStats.vocabulary + vocabulary,
         },
       },
-      streak: updateStreakForDate(state.progress.streak),
+      streak: measuredSeconds >= 30 ? updateStreakForDate(state.progress.streak) : state.progress.streak,
     });
 
     saveProgressLocal(updated);

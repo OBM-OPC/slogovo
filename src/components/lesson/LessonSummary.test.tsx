@@ -67,7 +67,7 @@ describe("LessonSummary", () => {
     expect(screen.getByText("Lektion bestanden!")).toBeTruthy();
     expect(screen.getByText("50%")).toBeTruthy();
     expect(screen.getByText("42s")).toBeTruthy();
-    expect(screen.getByText("25")).toBeTruthy();
+    expect(screen.getByText("4")).toBeTruthy();
     expect(screen.getByText("Schreiben · 100%")).toBeTruthy();
     expect(screen.getByText("Auswahl · 0%")).toBeTruthy();
     expect(screen.getByText("грешка (Fehler)")).toBeTruthy();

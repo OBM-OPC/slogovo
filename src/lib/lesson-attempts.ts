@@ -1,5 +1,6 @@
 import { ExerciseResult, LessonAttempt, RequiredExerciseGroup } from "@/types/learning";
 import { calculateLessonMetrics, evaluateLessonOutcome } from "./evaluation";
+import { calculateLearningXp } from "./learning-xp";
 
 export interface CreateLessonAttemptInput {
   id?: string;
@@ -28,7 +29,13 @@ export function createLessonAttempt(input: CreateLessonAttemptInput): LessonAtte
     masteryScore: input.masteryScore,
   });
   const totalDurationMs = Math.max(0, input.totalDurationMs);
-  const xpEarned = outcome.passed ? Math.max(10, Math.round(metrics.score * 0.5)) : 0;
+  const activeTimeSeconds = Math.round(totalDurationMs / 1000);
+  const xpEarned = calculateLearningXp({
+    passed: outcome.passed,
+    mastered: outcome.mastered,
+    activeTimeSeconds,
+    results: input.results,
+  });
 
   return {
     id: input.id ?? crypto.randomUUID(),
@@ -38,7 +45,7 @@ export function createLessonAttempt(input: CreateLessonAttemptInput): LessonAtte
     level: input.level,
     results: input.results,
     totalDurationMs,
-    activeTimeSeconds: Math.round(totalDurationMs / 1000),
+    activeTimeSeconds,
     startedAt: input.startedAt,
     finishedAt: input.finishedAt,
     firstTryCorrect: metrics.firstTryCorrect,
