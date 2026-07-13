@@ -89,6 +89,7 @@ async function writeEvent(
           user_answer: item.userAnswer,
           correct_answers: item.acceptedAnswers,
           feedback: item.feedback,
+          feedback_status: item.feedbackStatus,
           feedback_needs_review: item.feedbackNeedsReview ?? false,
           duration_ms: item.durationMs,
           answered_at: item.completedAt,

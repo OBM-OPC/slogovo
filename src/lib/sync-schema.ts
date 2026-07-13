@@ -3,6 +3,16 @@ import type { SyncEvent } from "./sync-queue";
 
 const timestampSchema = z.string().datetime({ offset: true });
 const exerciseStatusSchema = z.enum(["correct", "typo", "wrong-form", "wrong", "skipped"]);
+const feedbackStatusSchema = z.enum([
+  "correct",
+  "correct_with_typo",
+  "accepted_variant",
+  "partially_correct",
+  "wrong_form",
+  "wrong_word",
+  "missing_word",
+  "incorrect",
+]);
 const exerciseTypeSchema = z.enum([
   "quiz",
   "fill-in",
@@ -20,6 +30,7 @@ const itemResultSchema = z.object({
   userAnswer: z.string().optional(),
   acceptedAnswers: z.array(z.string()),
   feedback: z.string().optional(),
+  feedbackStatus: feedbackStatusSchema.optional(),
   feedbackNeedsReview: z.boolean().optional(),
   durationMs: z.number().int().nonnegative(),
   startedAt: timestampSchema,

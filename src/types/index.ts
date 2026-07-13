@@ -56,6 +56,7 @@ export interface FillInSentence {
   de?: string; // German hint for the full sentence meaning
   explanation?: string;
   grammarTopicSlug?: string;
+  allowOmittedSubjectPronoun?: boolean;
   required?: boolean;
 }
 

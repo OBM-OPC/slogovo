@@ -65,6 +65,7 @@ export function ListenExercise({
       acceptedAnswers: evaluation.acceptedAnswers,
       status: evaluation.status,
       feedback: evaluation.feedback,
+      feedbackStatus: evaluation.richStatus,
       durationMs: Date.parse(completedAt) - Date.parse(itemStartedAt.current),
       startedAt: itemStartedAt.current,
       completedAt,

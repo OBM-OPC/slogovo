@@ -95,6 +95,27 @@ describe("validateModules", () => {
     expect(errors(issues).some((i) => i.message.includes("accepted answers array is empty"))).toBe(true);
   });
 
+  it("rejects malformed authored answer options", () => {
+    const moduleMeta = makeModule("a1-modul-1", [{ lessonId: "a1-modul-1-lektion-1", title: "T" }]);
+    const lesson = makeLesson({
+      exercises: [{
+        id: "ex1",
+        type: "fill-in",
+        title: "F",
+        data: [{
+          id: "f1",
+          parts: ["a", "____"],
+          answer: "x",
+          answers: ["x"],
+          allowOmittedSubjectPronoun: "yes",
+        }],
+      } as unknown as Exercise],
+    });
+
+    expect(errors(validateModules([moduleMeta], [lesson])).map((issue) => issue.message))
+      .toContain("allowOmittedSubjectPronoun must be a boolean");
+  });
+
   it("errors when sentence-builder correctOrder uses missing tile", () => {
     const moduleMeta = makeModule("a1-modul-1", [{ lessonId: "a1-modul-1-lektion-1", title: "T" }]);
     const lesson = makeLesson({

@@ -7,11 +7,21 @@ import {
   ListenSelectItem,
   ListenTypeItem,
 } from "@/types";
-import { evaluateAnswer } from "./answer-evaluation";
+import {
+  authoredAnswerOptions,
+  evaluateAnswerDetailed,
+  type DetailedAnswerEvaluation,
+} from "./answer-evaluation";
+import {
+  buildEvaluationFeedback,
+  formatRichFeedback,
+  type RichStatus,
+} from "./feedback";
 
 export interface ListenResult {
   correct: boolean;
   status: ExerciseResultStatus;
+  richStatus: RichStatus;
   feedback: string;
   acceptedAnswers: string[];
 }
@@ -22,29 +32,48 @@ export function evaluateListenSelect(item: ListenSelectItem, selectedOptionId: s
   return {
     correct,
     status: correct ? "correct" : "wrong",
+    richStatus: correct ? "correct" : "incorrect",
     feedback: correct ? "Richtig!" : `Richtige Antwort: ${correctOption?.de ?? correctOption?.bg ?? ""}`,
     acceptedAnswers: [correctOption?.id ?? item.correctOptionId],
   };
 }
 
-export function evaluateListenType(item: ListenTypeItem, userAnswer: string): ListenResult {
-  const status = evaluateAnswer(userAnswer, { acceptedAnswers: item.acceptedAnswers });
+function typedResult(
+  evaluation: DetailedAnswerEvaluation,
+  acceptedAnswers: string[]
+): ListenResult {
+  const feedback = buildEvaluationFeedback(evaluation, acceptedAnswers);
   return {
-    correct: status === "correct" || status === "typo",
-    status,
-    feedback: status === "correct" ? "Richtig!" : `Richtige Antwort: ${item.acceptedAnswers[0]}`,
-    acceptedAnswers: item.acceptedAnswers,
+    correct: evaluation.status === "correct" || evaluation.status === "typo",
+    status: evaluation.status,
+    richStatus: evaluation.richStatus,
+    feedback: formatRichFeedback(feedback),
+    acceptedAnswers,
   };
 }
 
+export function evaluateListenType(item: ListenTypeItem, userAnswer: string): ListenResult {
+  const primary = item.acceptedAnswers[0] ?? "";
+  const evaluation = evaluateAnswerDetailed(userAnswer, {
+    ...authoredAnswerOptions(primary, item.acceptedAnswers),
+    allowOmittedSubjectPronoun: item.allowOmittedSubjectPronoun,
+  });
+  return typedResult(evaluation, item.acceptedAnswers);
+}
+
 export function evaluateDictation(item: DictationItem, userAnswer: string): ListenResult {
-  const status = evaluateAnswer(userAnswer, { acceptedAnswers: [item.audioText], strict: true });
-  return {
-    correct: status === "correct",
-    status,
-    feedback: status === "correct" ? "Richtig!" : `Richtige Antwort: ${item.audioText}`,
+  const acceptedAnswers = [
+    item.audioText,
+    ...(item.acceptedVariants ?? []),
+    ...(item.acceptedTransliterations ?? []),
+  ];
+  const evaluation = evaluateAnswerDetailed(userAnswer, {
     acceptedAnswers: [item.audioText],
-  };
+    acceptedVariants: item.acceptedVariants,
+    acceptedTransliterations: item.acceptedTransliterations,
+    allowOmittedSubjectPronoun: item.allowOmittedSubjectPronoun,
+  });
+  return typedResult(evaluation, acceptedAnswers);
 }
 
 export function evaluateListenReorder(item: ListenReorderItem, selectedOrder: string[]): ListenResult {
@@ -54,6 +83,7 @@ export function evaluateListenReorder(item: ListenReorderItem, selectedOrder: st
   return {
     correct,
     status: correct ? "correct" : "wrong",
+    richStatus: correct ? "correct" : "incorrect",
     feedback: correct ? "Richtig!" : `Richtige Reihenfolge: ${acceptedAnswer}`,
     acceptedAnswers: [acceptedAnswer],
   };
@@ -64,6 +94,7 @@ export function evaluateAudioComprehension(item: AudioComprehensionItem, selecte
   return {
     correct,
     status: correct ? "correct" : "wrong",
+    richStatus: correct ? "correct" : "incorrect",
     feedback: correct ? "Richtig!" : `Richtige Antwort: ${item.options[item.correctOptionIndex]}`,
     acceptedAnswers: [item.options[item.correctOptionIndex]],
   };

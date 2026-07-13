@@ -7,6 +7,16 @@ export type ExerciseResultStatus =
   | "wrong"
   | "skipped";
 
+export type AnswerFeedbackStatus =
+  | "correct"
+  | "correct_with_typo"
+  | "accepted_variant"
+  | "partially_correct"
+  | "wrong_form"
+  | "wrong_word"
+  | "missing_word"
+  | "incorrect";
+
 export type ExerciseType =
   | "quiz"
   | "fill-in"
@@ -37,6 +47,7 @@ export interface ExerciseItemResult {
   userAnswer?: string;
   acceptedAnswers: string[];
   feedback?: string;
+  feedbackStatus?: AnswerFeedbackStatus;
   feedbackNeedsReview?: boolean;
   durationMs: number;
   startedAt: string;
@@ -138,11 +149,15 @@ export interface ListenSelectItem extends ListenBaseItem {
 export interface ListenTypeItem extends ListenBaseItem {
   format: "listen-type";
   acceptedAnswers: string[];
+  allowOmittedSubjectPronoun?: boolean;
 }
 
 export interface DictationItem extends ListenBaseItem {
   format: "dictation";
   wordCount?: number;
+  acceptedVariants?: string[];
+  acceptedTransliterations?: string[];
+  allowOmittedSubjectPronoun?: boolean;
 }
 
 export interface ListenReorderItem extends ListenBaseItem {

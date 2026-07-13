@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { evaluateAnswer, normalizeAnswer } from "./answer-evaluation";
+import {
+  authoredAnswerOptions,
+  evaluateAnswer,
+  evaluateAnswerDetailed,
+  normalizeAnswer,
+} from "./answer-evaluation";
 
 describe("normalizeAnswer", () => {
   it("removes punctuation and normalizes whitespace", () => {
@@ -9,6 +14,7 @@ describe("normalizeAnswer", () => {
   it("removes German and Bulgarian quotes", () => {
     expect(normalizeAnswer('„Здравей"', {})).toBe("здравей");
     expect(normalizeAnswer("'Здравей'", {})).toBe("здравей");
+    expect(normalizeAnswer("“Здравей”", {})).toBe("здравей");
   });
 
   it("removes diacritics", () => {
@@ -55,6 +61,45 @@ describe("evaluateAnswer", () => {
     expect(
       evaluateAnswer("hallo", { acceptedAnswers: ["hi", "hallo", "guten tag"] })
     ).toBe("correct");
+  });
+
+  it("distinguishes authored variants and explicitly permitted transliteration", () => {
+    const options = authoredAnswerOptions("здравей", ["здравей", "здрасти", "zdravey"]);
+    expect(evaluateAnswerDetailed("здрасти", options)).toMatchObject({
+      status: "correct",
+      richStatus: "accepted_variant",
+      matchKind: "variant",
+    });
+    expect(evaluateAnswerDetailed("zdravey", options)).toMatchObject({
+      status: "correct",
+      richStatus: "accepted_variant",
+      matchKind: "transliteration",
+    });
+    expect(evaluateAnswer("zdravey", { acceptedAnswers: ["здравей"] })).toBe("wrong");
+  });
+
+  it("accepts an omitted subject pronoun only when the exercise opts in", () => {
+    const optional = {
+      acceptedAnswers: ["Аз съм от Германия"],
+      allowOmittedSubjectPronoun: true,
+    };
+    expect(evaluateAnswerDetailed("съм от Германия", optional)).toMatchObject({
+      status: "correct",
+      richStatus: "accepted_variant",
+      matchKind: "omitted-pronoun",
+    });
+    expect(
+      evaluateAnswer("съм от Германия", { acceptedAnswers: ["Аз съм от Германия"] })
+    ).not.toBe("correct");
+  });
+
+  it("returns a specific missing-word status", () => {
+    expect(
+      evaluateAnswerDetailed("аз от германия", {
+        acceptedAnswers: ["аз съм от германия"],
+        requiresSum: true,
+      })
+    ).toMatchObject({ status: "wrong-form", richStatus: "missing_word" });
   });
 
   it("strict mode rejects typo", () => {

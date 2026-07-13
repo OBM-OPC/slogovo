@@ -4,6 +4,8 @@ import { useRef, useState } from "react";
 import { ExerciseItemResult, ExerciseResult, FillInSentence } from "@/types";
 import { Button } from "@/components/ui/Button";
 import { buildExerciseItemResult, buildExerciseResult } from "@/lib/evaluation";
+import { authoredAnswerOptions, evaluateAnswerDetailed } from "@/lib/answer-evaluation";
+import { buildEvaluationFeedback, formatRichFeedback } from "@/lib/feedback";
 import { cn } from "@/lib/utils";
 
 interface FillInExerciseProps {
@@ -28,7 +30,16 @@ export function FillInExercise({
   const [input, setInput] = useState("");
   const [showResult, setShowResult] = useState(false);
   const sentence = sentences[current];
-  const isCorrect = sentence.answers.some((answer) => answer.toLowerCase() === input.trim().toLowerCase());
+  const evaluation = evaluateAnswerDetailed(input, {
+    ...authoredAnswerOptions(sentence.answer, sentence.answers),
+    allowOmittedSubjectPronoun: sentence.allowOmittedSubjectPronoun,
+  });
+  const richFeedback = buildEvaluationFeedback(
+    evaluation,
+    sentence.answers,
+    sentence.explanation
+  );
+  const isCorrect = evaluation.status === "correct" || evaluation.status === "typo";
 
   const checkAnswer = () => {
     if (showResult || !input.trim()) return;
@@ -38,13 +49,18 @@ export function FillInExercise({
       itemId: sentence.id,
       userAnswer: input,
       acceptedAnswers: sentence.answers,
+      status: evaluation.status,
       durationMs: Date.parse(completedAt) - Date.parse(itemStartedAt.current),
       startedAt: itemStartedAt.current,
       completedAt,
       attemptNumber,
       required: sentence.required,
       productive: true,
-      feedback: sentence.explanation,
+      feedback: [formatRichFeedback(richFeedback), sentence.explanation]
+        .filter(Boolean)
+        .join(" "),
+      feedbackStatus: richFeedback.status,
+      feedbackNeedsReview: richFeedback.needsNativeReview,
     }));
     setShowResult(true);
   };
@@ -104,7 +120,7 @@ export function FillInExercise({
             </div>
           )}
           <div className={cn("rounded-xl p-4 text-center font-medium", isCorrect ? "bg-success/10 text-success" : "bg-danger/10 text-danger")}>
-            {isCorrect ? "Richtig!" : `Richtige Antwort: ${sentence.answers[0]}`}
+            <p aria-live="polite">{formatRichFeedback(richFeedback)}</p>
           </div>
           <Button onClick={handleNext} fullWidth>{current < sentences.length - 1 ? "Weiter" : "Fertig"}</Button>
         </div>

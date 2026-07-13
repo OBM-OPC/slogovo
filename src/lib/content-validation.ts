@@ -294,6 +294,12 @@ function validateFillIn(sentences: FillInSentence[], path: string, issues: Conte
     if (Array.isArray(s.answers) && !s.answers.includes(s.answer)) {
       issues.push({ path: sPath, message: "fill-in primary answer is not included in accepted answers", severity: "error" });
     }
+    if (
+      s.allowOmittedSubjectPronoun !== undefined
+      && typeof s.allowOmittedSubjectPronoun !== "boolean"
+    ) {
+      issues.push({ path: sPath, message: "allowOmittedSubjectPronoun must be a boolean", severity: "error" });
+    }
     if (!isNonEmptyString(s.bg)) {
       issues.push({ path: sPath, message: "fill-in Bulgarian sentence (bg) is missing", severity: "warning" });
     }
@@ -339,12 +345,28 @@ function validateListen(items: ListenExerciseItem[], path: string, issues: Conte
     if (!isNonEmptyString(item.audioText)) {
       issues.push({ path: itemPath, message: "listen audioText is missing", severity: "error" });
     }
+    if (
+      "allowOmittedSubjectPronoun" in item
+      && item.allowOmittedSubjectPronoun !== undefined
+      && typeof item.allowOmittedSubjectPronoun !== "boolean"
+    ) {
+      issues.push({ path: itemPath, message: "allowOmittedSubjectPronoun must be a boolean", severity: "error" });
+    }
     if (item.format === "listen-select") {
       if (item.options.length < 2 || !item.options.some((option) => option.id === item.correctOptionId)) {
         issues.push({ path: itemPath, message: "listen-select options or correctOptionId are invalid", severity: "error" });
       }
     } else if (item.format === "listen-type" && item.acceptedAnswers.length === 0) {
       issues.push({ path: itemPath, message: "listen-type acceptedAnswers are missing", severity: "error" });
+    } else if (item.format === "dictation") {
+      for (const [field, values] of [
+        ["acceptedVariants", item.acceptedVariants],
+        ["acceptedTransliterations", item.acceptedTransliterations],
+      ] as const) {
+        if (values !== undefined && (!Array.isArray(values) || values.some((value) => !isNonEmptyString(value)))) {
+          issues.push({ path: itemPath, message: `dictation ${field} must contain non-empty strings`, severity: "error" });
+        }
+      }
     } else if (item.format === "listen-reorder" && item.correctOrder.length === 0) {
       issues.push({ path: itemPath, message: "listen-reorder correctOrder is missing", severity: "error" });
     } else if (item.format === "audio-comprehension") {

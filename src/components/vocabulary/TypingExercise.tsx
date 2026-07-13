@@ -10,6 +10,8 @@ import { cn, shuffleArray } from "@/lib/utils";
 import { vibrateCorrect, vibrateWrong } from "@/lib/haptics";
 import { triggerConfetti } from "@/lib/confetti";
 import { Volume2, Loader2, AlertCircle, Brain, Check, RotateCcw, Sparkles } from "lucide-react";
+import { evaluateAnswerDetailed } from "@/lib/answer-evaluation";
+import { buildEvaluationFeedback, formatRichFeedback, type RichFeedback } from "@/lib/feedback";
 
 
 type Phase = "question" | "answer";
@@ -35,6 +37,7 @@ export function TypingExercise({ words, mode, onExit }: TypingExerciseProps) {
   const [phase, setPhase] = useState<Phase>("question");
   const [input, setInput] = useState("");
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+  const [answerFeedback, setAnswerFeedback] = useState<RichFeedback | null>(null);
   const [typedToday, setTypedToday] = useState<Record<string, number>>({});
   const [consecutiveCorrect, setConsecutiveCorrect] = useState(0);
   const [speakState, setSpeakState] = useState<"idle" | "loading" | "error">("idle");
@@ -116,18 +119,15 @@ export function TypingExercise({ words, mode, onExit }: TypingExerciseProps) {
     );
   }
 
-  const normalize = (s: string) =>
-    s
-      .toLowerCase()
-      .replace(/[.,!?;:\-]/g, "")
-      .trim();
-
-  const acceptedAnswers = [word.bg, word.bgLatin].filter((s): s is string => typeof s === "string").map(normalize);
-
   const handleCheck = () => {
-    const trimmed = normalize(input);
-    const correct = acceptedAnswers.some((a) => a === trimmed);
+    const evaluation = evaluateAnswerDetailed(input, {
+      acceptedAnswers: [word.bg],
+      acceptedTransliterations: word.bgLatin ? [word.bgLatin] : [],
+    });
+    const feedback = buildEvaluationFeedback(evaluation, [word.bg, word.bgLatin].filter(Boolean) as string[]);
+    const correct = evaluation.status === "correct" || evaluation.status === "typo";
     setIsCorrect(correct);
+    setAnswerFeedback(feedback);
     setPhase("answer");
     if (correct) {
       const nextStreak = consecutiveCorrect + 1;
@@ -150,6 +150,7 @@ export function TypingExercise({ words, mode, onExit }: TypingExerciseProps) {
     }
     setInput("");
     setIsCorrect(null);
+    setAnswerFeedback(null);
     setPhase("question");
     setIndex((i) => i + 1);
     if (isCorrect && rating !== "repeat") {
@@ -269,7 +270,7 @@ export function TypingExercise({ words, mode, onExit }: TypingExerciseProps) {
               isCorrect ? "bg-success/10 text-success" : "bg-danger/10 text-danger"
             )}
           >
-            {isCorrect ? "Richtig!" : `Richtige Antwort: ${word.bg}`}
+            {answerFeedback ? formatRichFeedback(answerFeedback) : `Richtige Antwort: ${word.bg}`}
           </div>
           <p className="text-center text-sm text-muted">Wie schwer war diese Vokabel?</p>
           <div className="grid grid-cols-2 gap-2">

@@ -78,6 +78,7 @@ export interface Database {
           user_answer: string | null;
           correct_answers: Json;
           feedback: string | null;
+          feedback_status: string | null;
           feedback_needs_review: boolean;
           duration_ms: number;
           answered_at: string;
