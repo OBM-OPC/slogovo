@@ -1,12 +1,12 @@
 # Slogovo controlled-development status
 
-Last updated: 2026-07-13 17:55 UTC
+Last updated: 2026-07-13 18:08 UTC
 
 ## Complete-backlog program
 
 - Current branch: `feat/complete-slogovo-backlog`
 - Base commit: `29bcf6a11fb39e86786327ef722ac9ee14e8a019`
-- Current implementation commit: `7773e65` (`test: add full browser and component strategy`); preceding database/architecture/evaluation/sync/auth commits: `f8a804e`, `82bdded`, `d46feec`, `f7edc1d`, and `124c231`.
+- Current implementation commit: `0159173` (`feat(content): generate course quality report`); preceding testing/database/architecture/evaluation/sync/auth commits: `7773e65`, `f8a804e`, `82bdded`, `d46feec`, `f7edc1d`, and `124c231`.
 - Draft pull request: #97, `feat/complete-slogovo-backlog` to `main`.
 - GitHub state at restart: exactly the Draft PR and backlog branch above plus `main`; PR CI run `29265699487` passed on the prior remote head `6b3ed5e`; latest `main` CI run `29264112422` passed.
 - Concurrent-run state: the legacy 45-minute single-milestone worker is disabled; no second worktree, Git lock, implementation process, branch, or pull request exists.
@@ -23,7 +23,7 @@ Last updated: 2026-07-13 17:55 UTC
 | P1 | #68 Learning-domain architecture rules | Closed complete | Added bounded shared schemas, content-backed server answer/attempt validation, typed learning errors, safe structured logs, stable-ID/idempotency enforcement, explicit mastery fields, architecture documentation, and the learning review checklist; removed unaudited standalone result mutation. |
 | P2 | #67 Migration rules and database type workflow | Closed complete | Documented additive migration, staging, type-generation, backfill, RLS, recovery, and owner-only production rules; added `validate:database` and CI enforcement for ordering, destructive markers, public-table RLS, and generated table/column types. |
 | P2 | #65 Full automated testing strategy | Closed complete | Added Playwright, an isolated Supabase-compatible E2E fixture, seven auth/session/lesson/review/sync/restore journeys, direct quiz/sentence-builder/retry component coverage, author documentation, and the CI browser gate. |
-| P2 | #66 Course content quality report | Open | Validator counts modules/lessons and rejects structural faults, but no `content:report` command or author-facing coverage/audio/productive-content report exists. |
+| P2 | #66 Course content quality report | Closed complete | Added an author-facing inventory and exact file/ID findings for untested vocabulary, missing authored audio, accepted-answer gaps, unsupported types, duplicate stable IDs, grammar gaps, and lessons without productive exercises; the report runs standalone and in content validation/build. |
 | P2 | #33 Adaptive daily learning session | Partially implemented | UI-independent planner tests exist, but the dashboard does not expose a complete authoritative “Heute lernen” flow and recognition/production mastery inputs are incomplete. |
 | P2 | #34 Listening and pronunciation | Partially implemented | Five listening formats render with structured scoring, keyboard input, audio errors, native/TTS fallback. Slow/reveal controls, cache/offline coexistence, real production content, replay telemetry, and usable speaking flow remain. |
 | P2 | #69 Privacy-conscious analytics and monitoring | Open | Sync events cover some learning actions, but no documented privacy-reviewed analytics schema or complete error/event monitoring pipeline exists. External paid monitoring remains optional and must not be enabled automatically. |
@@ -46,8 +46,8 @@ No issue is currently classified as duplicate or obsolete. Potential owner block
 
 ### Current work
 
-- Current issue: #66 course content quality report.
-- Completed and closed issues: #30, #31, #32, #65, #67, #68, and #70.
+- Current issue: #71 repository audit and Phase 1/2 implementation plan.
+- Completed and closed issues: #30, #31, #32, #65, #66, #67, #68, and #70.
 - Completed in this run: restarted from the interrupted working tree without discarding changes; repeated repository/GitHub/CI/concurrency preflight; re-inspected all 17 open issue bodies; finished the Phase 4 auth increment in commit `124c231`; finished the Phase 5 synchronization increment in commit `f7edc1d`.
 - Phase 4 details: Supabase SSR remains the only session authority; refresh tokens stay in HTTP-only Supabase cookies; custom mirrored auth cookies and direct browser auth calls were removed; protected routes/APIs verify `getUser`; RLS coverage for attempts, results, review/activity/offline history, aggregate settings, and achievements is enforced by migrations and schema-contract tests; security/API documentation was corrected.
 - Phase 5 details: browser queue writes now go through authenticated `/api/sync`; incoming batches are schema-bounded; lesson outcome fields are recalculated on the server; progress saves merge with the current server row; camel-case API progress no longer resets during deserialization; stable device/event IDs are persisted; failed events remain queued; browser reconnect retries events and the aggregate snapshot; duplicate and two-device review events remain distinct and idempotent.
@@ -56,10 +56,11 @@ No issue is currently classified as duplicate or obsolete. Potential owner block
 - Delivery-template details: `.github/pull_request_template.md` now requires findings, proposal, risks, implementation, lint/type/unit/component/E2E/content/build validation, manual tests, remaining work, the learning-domain review checklist, and an explicit warning against UI-only completion claims.
 - Database-workflow details: `docs/database-workflow.md` defines immutable applied migrations, additive compatibility, idempotent/batched backfills, staging verification, RLS tests, generated-type commands, forward-fix recovery, and owner-controlled production/PITR actions. `validate:database` checks ordered unique timestamps, review markers for destructive SQL, RLS on every created public table, and generated table/column coverage; CI runs it after lint.
 - Automated-testing details: Playwright now runs against an in-memory Supabase-compatible auth/PostgREST service with no deployed credentials. Seven browser journeys cover registration, login, HttpOnly cookies, session expiry, route protection, logout, lesson start/pass/fail/alternative retry, due vocabulary review, event sync, and clean-context progress restore. Added direct quiz, sentence-builder, and `LessonView` retry component tests, fixed form label associations discovered by accessibility-first locators, documented the three-layer strategy, and added Playwright to CI.
+- Content-quality details: `npm run content:report` and `validate:content` now report 12 modules, 60 lessons, 554 vocabulary items, and 315 exercise items with author-readable file/ID findings. The current baseline exposes 299 untested vocabulary items, 554 items without authored audio, and 37 lessons without productive exercises; accepted-answer, supported-type, duplicate-ID, and grammar-explanation checks currently report zero gaps. Coverage definitions and native-review rules are documented in `docs/content-guidelines.md`.
 - Blocked issues: none yet.
 - Commands run at restart: Git status/log/worktree/branch/lock/process inspection; OpenClaw cron inspection; GitHub REST inspection of all remote branches, the open Draft PR, all 17 issue bodies, reviews, and recent Actions; auth/sync source, store, migration, schema, and test audits; focused Vitest runs; full validation; `git diff --check`; logical commits.
-- Validation on `7773e65`: lint passed with no warnings; type-check passed; database validation passed for 7 ordered migrations; 41 test files / 154 tests passed; 7/7 Playwright journeys passed; content validation passed for 12 modules / 60 lessons / 9 grammar topics with 0 errors and 0 warnings; production build passed with 99 static pages; `git diff --check` passed. GitHub Actions run `29271951406` passed.
-- Vercel: preview deployment passed on `7773e65`; no setting or deployment action performed in this run.
+- Validation on `0159173`: lint passed with no warnings; type-check passed; database validation passed for 7 ordered migrations; 42 test files / 156 tests passed; content validation and its complete quality report passed; production build passed with 99 static pages; `git diff --check` passed. The immediately preceding seven-journey Playwright gate passed locally on `7773e65`, and GitHub Actions run `29272833836` (including Playwright) passed for `0159173`.
+- Vercel: preview deployment passed on `0159173`; no setting or deployment action performed in this run.
 - Supabase: added local additive migrations for sync device IDs and rich answer feedback status and updated generated-style types; no production migration, data, environment, or secret action performed.
 - Owner decisions required: none at present.
 
