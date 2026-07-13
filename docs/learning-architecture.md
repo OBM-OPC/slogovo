@@ -1,5 +1,8 @@
 # Learning-domain architecture
 
+The complete Phase 1/2 repository, data-flow, calculation, model, migration,
+and verification map is maintained in [phase-1-2-audit.md](./phase-1-2-audit.md).
+
 ## Trust boundaries
 
 - Content files define stable lesson, exercise, and item IDs plus authored accepted answers.
