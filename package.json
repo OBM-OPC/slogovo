@@ -12,6 +12,7 @@
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
     "validate:content": "tsx scripts/validate-content.ts",
+    "validate:database": "tsx scripts/validate-database.ts",
     "validate-content": "npm run validate:content"
   },
   "dependencies": {
