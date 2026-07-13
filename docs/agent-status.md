@@ -1,6 +1,86 @@
 # Slogovo controlled-development status
 
-Last updated: 2026-07-13 14:56 UTC
+Last updated: 2026-07-13 15:17 UTC
+
+## Active run — Phase 2 required exercise groups
+
+- Current branch: `feat/phase-2-required-groups`, based on `main` commit `6b18db8b1a4ba0aed3cd826a291a545b6ba622c9`.
+- Implementation commit: `5c1b9632b5fe2045ef97e39c33c46cca10ed74a8`.
+- Preflight found only remote `main`, no open pull request, green post-merge CI run `29260241894`, no additional worktree or Git lock, and no active Slogovo coding run.
+- The controlled development cron is temporarily disabled during this interactive run and will be re-enabled at handoff.
+- All 19 open issues inspected: #71, #70, #69, #68, #67, #66, #65, #64, #63, #62, #61, #35, #34, #33, #32, #31, #30, #29, and #28.
+
+### Selected milestone
+
+Selected issue: #29 — Phase 2 lesson scoring around mastery.
+
+Reasoning: PRs #91–#94 now cover structured results, historical attempts, thresholds, required items, productive work, alternative-type deferred retries, all-wrong protection, and the full learner-facing performance summary. The remaining explicit Phase 2 acceptance gap is enforcement of configured required exercise groups.
+
+Scope:
+
+- Add an explicit, typed lesson configuration for required exercise groups using stable exercise IDs and a minimum passed count.
+- Enforce configured groups in the authoritative lesson outcome calculation and expose missing group IDs in the outcome.
+- Wire lesson configuration through `LessonView` and `createLessonAttempt`.
+- Validate group IDs, referenced exercise IDs, uniqueness, and minimum counts in content validation.
+- Add focused scoring and content-validation tests.
+
+Out of scope:
+
+- Changing existing lesson scores or adding group configuration to production content, new exercise types, UI redesign, production schema changes, environment changes, and production actions.
+
+Dependencies:
+
+- `src/types/learning.ts`, `src/types/index.ts`, `src/lib/evaluation.ts`, `src/lib/lesson-attempts.ts`, `src/lib/content-validation.ts`, and `src/components/lesson/LessonView.tsx`.
+
+Risks:
+
+- Retry results must satisfy the original logical exercise without being counted as a separate exercise.
+- Invalid content references must fail validation before build.
+- Empty or impossible group configurations must fail clearly rather than silently weakening pass rules.
+
+Acceptance criteria:
+
+- A configured group fails the lesson when fewer than its required exercises have every required item answered correctly at least once.
+- A successful deferred retry can satisfy the original exercise in its configured group.
+- Overall score alone cannot bypass a missing required group.
+- Invalid group configuration fails content validation with author-readable paths/messages.
+- Lessons without group configuration preserve current behavior.
+- Focused tests and the complete type-check, lint, unit-test, content-validation, and production-build suite pass.
+- Exactly one implementation branch and one pull request are used.
+
+### Work completed
+
+- Completed the controlled preflight and full open-issue audit.
+- Selected and recorded this coherent milestone before implementation changes.
+- Added typed `RequiredExerciseGroup` lesson configuration using stable exercise IDs and an optional minimum passed count.
+- Enforced groups inside the authoritative lesson outcome: an exercise counts only after every required logical item has passed at least once, and retries retain the original exercise identity.
+- Exposed missing group IDs in `LessonOutcome` and wired lesson configuration through `LessonView` and `createLessonAttempt`.
+- Added content validation for missing/duplicate group IDs, empty groups, duplicate/unknown exercise references, impossible minimums, and exercises containing only optional items.
+- Added tests proving score cannot bypass a missing group, deferred retries satisfy the original group, minimum counts are enforced, invalid content fails, and attempt creation uses the group gate.
+- Verified every acceptance criterion in issue #29 is now covered by merged work plus this increment; the pull request may close #29 after checks pass.
+- Clean install completed with 520 packages installed and 521 audited; the existing audit reports 6 dependency vulnerabilities (1 moderate, 5 high) outside this milestone.
+- Full validation passed: type-check, lint, 25 test files / 108 tests, content validation with 12 modules and 60 lessons / 0 errors / 0 warnings, production build with 99 static pages, and `git diff --check`.
+- No existing lesson content, database schema, production data, environment, Vercel setting, or secret was changed.
+
+### Work remaining
+
+- Commit this status update, push the sole branch, and open exactly one pull request configured to close #29.
+- Verify final GitHub Actions and Vercel checks, then auto-merge and delete the branch only if every safeguard passes.
+
+### Commands executed in this run
+
+- Local Git status, branches, worktrees, locks, processes, cron state, open PRs, all 19 open issues and bodies, and latest Actions inspection.
+- `openclaw cron disable 717c5071-e0fd-43bd-b45c-4144f4d98403` to prevent overlapping coding runs.
+- `git switch -c feat/phase-2-required-groups`.
+- Focused Vitest runs for evaluation, lesson attempts, and content validation (26 tests passed in the final focused run).
+- `npm ci` (520 packages installed; 521 audited).
+- `npm run type-check` (passed).
+- `npm run lint` (passed with no warnings or errors).
+- `npm test` (25 test files and 108 tests passed).
+- `npm run validate:content` (12 module files and 60 lesson files; 0 errors and 0 warnings).
+- `npm run build` (passed; content validation ran first and 99 static pages were generated).
+- `git diff --check` (passed).
+- `git commit -m "feat: enforce required exercise groups"`.
 
 ## Active run — Phase 2 performance summary
 
