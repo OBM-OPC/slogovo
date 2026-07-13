@@ -232,6 +232,13 @@ async function restRoute(request: IncomingMessage, response: ServerResponse, url
     return;
   }
 
+  if (request.method === "GET" && table === "lesson_attempts") {
+    // Attempt writes are counted by the fixture; detailed rows are not needed
+    // outside the dedicated progress-insight contract tests.
+    json(response, 200, []);
+    return;
+  }
+
   if (request.method === "POST") {
     const body = await readBody(request);
     increment(table);

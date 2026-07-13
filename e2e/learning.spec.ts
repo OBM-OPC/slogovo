@@ -55,6 +55,14 @@ test("keeps a Bulgarian typing flow usable on a narrow mobile viewport", async (
   expect(overflow).toBe(false);
 });
 
+test("shows an honest empty progress state before learning events exist", async ({ page }) => {
+  await login(page);
+  await page.goto("/fortschritt");
+  await expect(page.getByRole("heading", { name: "Dein Lernstand" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Noch keine Lernereignisse" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Heute lernen" })).toBeVisible();
+});
+
 test("starts a lesson, retries one failed item, passes, syncs, and restores on another device", async ({ page, browser, request }) => {
   await login(page);
   await openFirstLesson(page);
