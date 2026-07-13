@@ -1,6 +1,6 @@
 # Slogovo controlled-development status
 
-Last updated: 2026-07-13 15:45 UTC
+Last updated: 2026-07-13 15:49 UTC
 
 ## Active run — Phase 1 content correctness gate
 
@@ -65,12 +65,15 @@ Acceptance criteria:
 - Added focused regression tests for the known linguistic corrections and validator tests for A1 transliteration, native-review blockers, incomplete lesson content, grammar-topic completeness, and duplicate topic identity.
 - Full validation passed: type-check, lint, 26 test files / 114 tests, content validation with 12 modules / 60 lessons / 9 grammar topics and 0 errors / 0 warnings, production build with 99 static pages, and `git diff --check`.
 - No database schema, Supabase data, production environment, Vercel setting, or secret was changed.
+- Committed the implementation, pushed the sole branch, and opened pull request #96: https://github.com/OBM-OPC/slogovo/pull/96
+- Confirmed PR #96 is non-draft and mergeable with no reviews or requested changes at head `d7160b7dfe45e8c9ee192417351a57b0abf250ed`.
+- GitHub Actions validation run `29263751960` and the Vercel preview deployment completed successfully for PR #96.
 
 ### Work remaining
 
-- Commit and push this final status and implementation branch.
-- Open exactly one pull request and verify GitHub Actions and Vercel preview status.
-- Merge only if every automatic-merge condition is satisfied; otherwise stop and report the blocker.
+- Commit and push this final delivery status.
+- Verify the resulting documentation-only PR head receives green GitHub Actions and Vercel checks.
+- Squash-merge PR #96 and delete the branch only if every automatic-merge condition remains satisfied; otherwise stop and report the blocker.
 
 ### Commands executed in this run
 
@@ -88,6 +91,10 @@ Acceptance criteria:
 - `npm run build` (passed; content validation ran first and 99 static pages were generated).
 - `git diff --check` (passed).
 - `git commit -m "fix: enforce Phase 1 content correctness"`.
+- `git commit -m "docs: record Phase 1 validation results"`.
+- `git push -u origin fix/phase-1-content-correctness`.
+- GitHub API pull request creation (opened #96).
+- GitHub API inspection of PR merge state, reviews, check runs, commit status, GitHub Actions, and Vercel preview.
 
 ---
 
