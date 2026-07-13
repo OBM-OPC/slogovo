@@ -10,62 +10,52 @@
     {
       "id": "a2m5l5-1",
       "de": "nach der Arbeit",
-      "bg": "след работа",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "след работа"
     },
     {
       "id": "a2m5l5-2",
       "de": "die Party",
-      "bg": "партито",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "партито"
     },
     {
       "id": "a2m5l5-3",
       "de": "das Konzert",
-      "bg": "концертът",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "концертът"
     },
     {
       "id": "a2m5l5-4",
       "de": "das Kino",
-      "bg": "киното",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "киното"
     },
     {
       "id": "a2m5l5-5",
       "de": "das Theater",
-      "bg": "театърът",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "театърът"
     },
     {
       "id": "a2m5l5-6",
       "de": "das Museum",
-      "bg": "музеят",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "музеят"
     },
     {
       "id": "a2m5l5-7",
       "de": "treffen",
-      "bg": "срещам се",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "срещам се"
     },
     {
       "id": "a2m5l5-8",
       "de": "entspannen",
-      "bg": "отпускам се",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "отпускам се"
     },
     {
       "id": "a2m5l5-9",
       "de": "die Einladung",
-      "bg": "поканата",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "поканата"
     },
     {
       "id": "a2m5l5-10",
       "de": "ablehnen",
-      "bg": "отказвам",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "отказвам"
     }
   ],
   "grammar": {

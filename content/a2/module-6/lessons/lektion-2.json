@@ -10,62 +10,52 @@
     {
       "id": "a2m6l2-1",
       "de": "der Freund",
-      "bg": "приятелят",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "приятелят"
     },
     {
       "id": "a2m6l2-2",
       "de": "die Freundin",
-      "bg": "приятелката",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "приятелката"
     },
     {
       "id": "a2m6l2-3",
       "de": "kennenlernen",
-      "bg": "запознавам се",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "запознавам се"
     },
     {
       "id": "a2m6l2-4",
       "de": "sich verstehen",
-      "bg": "разбираме се",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "разбираме се"
     },
     {
       "id": "a2m6l2-5",
       "de": "helfen",
-      "bg": "помагам",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "помагам"
     },
     {
       "id": "a2m6l2-6",
       "de": "streiten",
-      "bg": "карям се",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "карям се"
     },
     {
       "id": "a2m6l2-7",
       "de": "vertrauen",
-      "bg": "доверявам се",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "доверявам се"
     },
     {
       "id": "a2m6l2-8",
       "de": "das Geheimnis",
-      "bg": "тайната",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "тайната"
     },
     {
       "id": "a2m6l2-9",
       "de": "loyal",
-      "bg": "верен",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "верен"
     },
     {
       "id": "a2m6l2-10",
       "de": "die Unterstützung",
-      "bg": "подкрепата",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "подкрепата"
     }
   ],
   "grammar": {

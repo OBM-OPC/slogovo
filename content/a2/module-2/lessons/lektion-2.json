@@ -10,68 +10,57 @@
     {
       "id": "a2m2l2-1",
       "de": "der Markt",
-      "bg": "пазарът",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "пазарът"
     },
     {
       "id": "a2m2l2-2",
       "de": "frisch",
-      "bg": "пресен",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "пресен"
     },
     {
       "id": "a2m2l2-3",
       "de": "das Pfund",
-      "bg": "килограм",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "килограм"
     },
     {
       "id": "a2m2l2-4",
       "de": "das Gramm",
-      "bg": "грамът",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "грамът"
     },
     {
       "id": "a2m2l2-5",
       "de": "der Preis",
-      "bg": "цената",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "цената"
     },
     {
       "id": "a2m2l2-6",
       "de": "billig",
-      "bg": "евтино",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "евтино"
     },
     {
       "id": "a2m2l2-7",
       "de": "teuer",
-      "bg": "скъпо",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "скъпо"
     },
     {
       "id": "a2m2l2-8",
       "de": "verhandeln",
-      "bg": "пазаря се",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "пазаря се"
     },
     {
       "id": "a2m2l2-9",
       "de": "probieren",
-      "bg": "пробвам",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "пробвам"
     },
     {
       "id": "a2m2l2-10",
       "de": "der Verkäufer",
-      "bg": "продавачът",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "продавачът"
     },
     {
       "id": "a2m2l2-11",
       "de": "die Qualität",
-      "bg": "качеството",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "качеството"
     }
   ],
   "grammar": {

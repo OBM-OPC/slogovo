@@ -10,56 +10,47 @@
     {
       "id": "a2m2l3-1",
       "de": "die Speisekarte",
-      "bg": "менюто",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "менюто"
     },
     {
       "id": "a2m2l3-2",
       "de": "die Vorspeise",
-      "bg": "предястието",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "предястието"
     },
     {
       "id": "a2m2l3-3",
       "de": "das Hauptgericht",
-      "bg": "основното ястие",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "основното ястие"
     },
     {
       "id": "a2m2l3-4",
       "de": "das Dessert",
-      "bg": "десертът",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "десертът"
     },
     {
       "id": "a2m2l3-5",
       "de": "die Rechnung",
-      "bg": "сметката",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "сметката"
     },
     {
       "id": "a2m2l3-6",
       "de": "der Kellner",
-      "bg": "сервитьорът",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "сервитьорът"
     },
     {
       "id": "a2m2l3-7",
       "de": "vegetarisch",
-      "bg": "вегетарианско",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "вегетарианско"
     },
     {
       "id": "a2m2l3-8",
       "de": "scharf",
-      "bg": "люто",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "люто"
     },
     {
       "id": "a2m2l3-9",
       "de": "salzig",
-      "bg": "солено",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "солено"
     }
   ],
   "grammar": {

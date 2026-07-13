@@ -1,4 +1,4 @@
-import { Exercise, ExerciseType, FillInSentence, Lesson, ListenExerciseItem, MatchingPair, ModuleMeta, QuizQuestion, SentenceBuilder, VocabularyItem } from "@/types";
+import { Exercise, ExerciseType, FillInSentence, GrammarSection, GrammarTopic, Lesson, ListenExerciseItem, MatchingPair, ModuleMeta, QuizQuestion, SentenceBuilder, VocabularyItem } from "@/types";
 
 export interface ContentValidationIssue {
   path: string;
@@ -32,10 +32,10 @@ function validateLesson(lesson: Lesson, moduleMeta: ModuleMeta, issues: ContentV
     issues.push({ path: prefix, message: "title is missing", severity: "error" });
   }
   if (!isNonEmptyString(lesson.introduction)) {
-    issues.push({ path: prefix, message: "introduction is missing", severity: "warning" });
+    issues.push({ path: prefix, message: "introduction is missing", severity: "error" });
   }
   if (!isNonEmptyString(lesson.summary)) {
-    issues.push({ path: prefix, message: "summary is missing", severity: "warning" });
+    issues.push({ path: prefix, message: "summary is missing", severity: "error" });
   }
   if (!Array.isArray(lesson.vocabulary) || lesson.vocabulary.length === 0) {
     issues.push({ path: prefix, message: "vocabulary array is empty or missing", severity: "error" });
@@ -43,22 +43,14 @@ function validateLesson(lesson: Lesson, moduleMeta: ModuleMeta, issues: ContentV
 
   const vocabIds = new Set<string>();
   lesson.vocabulary.forEach((item, idx) => {
-    validateVocabularyItem(item, `${prefix}/vocabulary[${idx}]`, issues);
+    validateVocabularyItem(item, lesson.level, `${prefix}/vocabulary[${idx}]`, issues);
     if (vocabIds.has(item.id)) {
       issues.push({ path: `${prefix}/vocabulary[${idx}]`, message: `duplicate vocabulary id '${item.id}'`, severity: "error" });
     }
     vocabIds.add(item.id);
   });
 
-  if (!lesson.grammar || !isNonEmptyString(lesson.grammar.title)) {
-    issues.push({ path: `${prefix}/grammar`, message: "grammar title is missing", severity: "warning" });
-  }
-  if (!lesson.grammar || !isNonEmptyString(lesson.grammar.explanation)) {
-    issues.push({ path: `${prefix}/grammar`, message: "grammar explanation is missing", severity: "warning" });
-  }
-  if (!lesson.grammar || !Array.isArray(lesson.grammar.examples) || lesson.grammar.examples.length === 0) {
-    issues.push({ path: `${prefix}/grammar`, message: "grammar examples are missing or empty", severity: "warning" });
-  }
+  validateGrammarSection(lesson.grammar, `${prefix}/grammar`, issues);
 
   const exerciseIds = new Set<string>();
   lesson.exercises.forEach((exercise, idx) => {
@@ -127,7 +119,7 @@ function validateRequiredExerciseGroups(
   });
 }
 
-function validateVocabularyItem(item: VocabularyItem, path: string, issues: ContentValidationIssue[]): void {
+function validateVocabularyItem(item: VocabularyItem, level: Lesson["level"], path: string, issues: ContentValidationIssue[]): void {
   if (!isNonEmptyString(item.id)) {
     issues.push({ path, message: "vocabulary item id is missing", severity: "error" });
   }
@@ -137,11 +129,48 @@ function validateVocabularyItem(item: VocabularyItem, path: string, issues: Cont
   if (!isNonEmptyString(item.bg)) {
     issues.push({ path, message: "Bulgarian text (bg) is missing", severity: "error" });
   }
-  if (item.bgLatin !== undefined && !isNonEmptyString(item.bgLatin)) {
+  if (item.needsNativeReview === true) {
+    issues.push({ path, message: "vocabulary item still needs native-speaker review", severity: "error" });
+  }
+  if (item.bgLatin === "NATIVE_REVIEW_NEEDED") {
+    issues.push({ path, message: "bgLatin still contains the NATIVE_REVIEW_NEEDED marker", severity: "error" });
+  } else if (level === "A1" && !isNonEmptyString(item.bgLatin)) {
+    issues.push({ path, message: "A1 vocabulary requires a non-empty bgLatin reading aid", severity: "error" });
+  } else if (item.bgLatin !== undefined && !isNonEmptyString(item.bgLatin)) {
     issues.push({ path, message: "bgLatin is present but empty", severity: "warning" });
   }
   if (item.audio !== undefined && !isNonEmptyString(item.audio)) {
     issues.push({ path, message: "audio path is present but empty", severity: "warning" });
+  }
+}
+
+function validateGrammarSection(
+  section: GrammarSection | undefined,
+  path: string,
+  issues: ContentValidationIssue[],
+): void {
+  if (!section) {
+    issues.push({ path, message: "grammar section is missing", severity: "error" });
+    return;
+  }
+  if (!isNonEmptyString(section.title)) {
+    issues.push({ path, message: "grammar title is missing", severity: "error" });
+  }
+  if (!isNonEmptyString(section.explanation)) {
+    issues.push({ path, message: "grammar explanation is missing", severity: "error" });
+  }
+  if (!Array.isArray(section.examples) || section.examples.length === 0) {
+    issues.push({ path, message: "grammar examples are missing or empty", severity: "error" });
+  } else {
+    section.examples.forEach((example, index) => {
+      const examplePath = `${path}/examples[${index}]`;
+      if (!isNonEmptyString(example.bg)) {
+        issues.push({ path: examplePath, message: "grammar example Bulgarian text (bg) is missing", severity: "error" });
+      }
+      if (!isNonEmptyString(example.de)) {
+        issues.push({ path: examplePath, message: "grammar example German text (de) is missing", severity: "error" });
+      }
+    });
   }
 }
 
@@ -393,6 +422,45 @@ export function validateModules(moduleMetas: ModuleMeta[], lessons: Lesson[]): C
           severity: "error",
         });
       }
+    });
+  });
+
+  return issues;
+}
+
+export function validateGrammarTopics(topics: GrammarTopic[]): ContentValidationIssue[] {
+  const issues: ContentValidationIssue[] = [];
+  const topicIds = new Set<string>();
+  const slugs = new Set<string>();
+
+  topics.forEach((topic, topicIndex) => {
+    const path = `src/lib/content.ts/grammarTopics[${topicIndex}]`;
+    if (!isNonEmptyString(topic.topicId)) {
+      issues.push({ path, message: "grammar topic id is missing", severity: "error" });
+    } else if (topicIds.has(topic.topicId)) {
+      issues.push({ path, message: `duplicate grammar topic id '${topic.topicId}'`, severity: "error" });
+    } else {
+      topicIds.add(topic.topicId);
+    }
+    if (!isNonEmptyString(topic.slug)) {
+      issues.push({ path, message: "grammar topic slug is missing", severity: "error" });
+    } else if (slugs.has(topic.slug)) {
+      issues.push({ path, message: `duplicate grammar topic slug '${topic.slug}'`, severity: "error" });
+    } else {
+      slugs.add(topic.slug);
+    }
+    if (!isNonEmptyString(topic.title)) {
+      issues.push({ path, message: "grammar topic title is missing", severity: "error" });
+    }
+    if (!isNonEmptyString(topic.shortDescription)) {
+      issues.push({ path, message: "grammar topic short description is missing", severity: "error" });
+    }
+    if (!Array.isArray(topic.content) || topic.content.length === 0) {
+      issues.push({ path, message: "grammar topic content is missing or empty", severity: "error" });
+      return;
+    }
+    topic.content.forEach((section, sectionIndex) => {
+      validateGrammarSection(section, `${path}/content[${sectionIndex}]`, issues);
     });
   });
 

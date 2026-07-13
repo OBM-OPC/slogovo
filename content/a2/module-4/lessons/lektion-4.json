@@ -10,62 +10,52 @@
     {
       "id": "a2m4l4-1",
       "de": "gesund",
-      "bg": "здрав",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "здрав"
     },
     {
       "id": "a2m4l4-2",
       "de": "das Gemüse",
-      "bg": "зеленчукът",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "зеленчукът"
     },
     {
       "id": "a2m4l4-3",
       "de": "der Sport",
-      "bg": "спортът",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "спортът"
     },
     {
       "id": "a2m4l4-4",
       "de": "schlafen",
-      "bg": "спя",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "спя"
     },
     {
       "id": "a2m4l4-5",
       "de": "das Wasser",
-      "bg": "водата",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "водата"
     },
     {
       "id": "a2m4l4-6",
       "de": "der Stress",
-      "bg": "стресът",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "стресът"
     },
     {
       "id": "a2m4l4-7",
       "de": "entspannen",
-      "bg": "отпускам се",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "отпускам се"
     },
     {
       "id": "a2m4l4-8",
       "de": "das Frühstück",
-      "bg": "закуската",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "закуската"
     },
     {
       "id": "a2m4l4-9",
       "de": "vermeiden",
-      "bg": "избягвам",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "избягвам"
     },
     {
       "id": "a2m4l4-10",
       "de": "das Fast Food",
-      "bg": "бързата храна",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "бързата храна"
     }
   ],
   "grammar": {

@@ -18,6 +18,7 @@ import {
   Target,
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { BEGINNER_LABEL_BG } from "@/lib/content-copy";
 
 export default function HomePage() {
   const { user, isLoading, isAuthenticated } = useAuth();
@@ -74,7 +75,7 @@ export default function HomePage() {
         >
           <p className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-primary-50 px-3 py-1 text-xs font-medium text-primary">
             <Sparkles className="h-3.5 w-3.5" />
-            Български за начинающих
+            {BEGINNER_LABEL_BG}
           </p>
           <h1 className="text-3xl sm:text-5xl font-serif font-bold text-foreground mb-4 leading-tight">
             Lerne{" "}

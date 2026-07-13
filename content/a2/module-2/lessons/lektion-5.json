@@ -10,56 +10,47 @@
     {
       "id": "a2m2l5-1",
       "de": "das Hemd",
-      "bg": "ризата",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "ризата"
     },
     {
       "id": "a2m2l5-2",
       "de": "die Hose",
-      "bg": "панталонът",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "панталонът"
     },
     {
       "id": "a2m2l5-3",
       "de": "das Kleid",
-      "bg": "роклята",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "роклята"
     },
     {
       "id": "a2m2l5-4",
       "de": "der Schuh",
-      "bg": "обувката",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "обувката"
     },
     {
       "id": "a2m2l5-5",
       "de": "die Größe",
-      "bg": "размерът",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "размерът"
     },
     {
       "id": "a2m2l5-6",
       "de": "die Farbe",
-      "bg": "цветът",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "цветът"
     },
     {
       "id": "a2m2l5-7",
       "de": "passen",
-      "bg": "пасва",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "пасва"
     },
     {
       "id": "a2m2l5-8",
       "de": "umtauschen",
-      "bg": "връщам",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "връщам"
     },
     {
       "id": "a2m2l5-9",
       "de": "die Umkleide",
-      "bg": "пробната",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "пробната"
     }
   ],
   "grammar": {

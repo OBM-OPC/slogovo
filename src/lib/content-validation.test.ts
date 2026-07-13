@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { validateModules, ContentValidationIssue } from "./content-validation";
-import { Exercise, Lesson, ModuleMeta } from "@/types";
+import { validateGrammarTopics, validateModules, ContentValidationIssue } from "./content-validation";
+import { Exercise, GrammarTopic, Lesson, ModuleMeta } from "@/types";
 
 function makeModule(moduleId: string, lessons: { lessonId: string; title: string; duration?: string }[]): ModuleMeta {
   return {
@@ -22,7 +22,7 @@ function makeLesson(overrides: Partial<Lesson> = {}): Lesson {
     duration: "15 min",
     introduction: "intro",
     summary: "summary",
-    vocabulary: [{ id: "v1", de: "Hallo", bg: "Здравей" }],
+    vocabulary: [{ id: "v1", de: "Hallo", bg: "Здравей", bgLatin: "Sdrawej" }],
     grammar: { title: "G", explanation: "e", examples: [{ bg: "bg", de: "de" }] },
     exercises: [],
     ...overrides,
@@ -31,10 +31,6 @@ function makeLesson(overrides: Partial<Lesson> = {}): Lesson {
 
 function errors(issues: ContentValidationIssue[]): ContentValidationIssue[] {
   return issues.filter((i) => i.severity === "error");
-}
-
-function warnings(issues: ContentValidationIssue[]): ContentValidationIssue[] {
-  return issues.filter((i) => i.severity === "warning");
 }
 
 describe("validateModules", () => {
@@ -115,13 +111,48 @@ describe("validateModules", () => {
     expect(errors(issues).some((i) => i.message.includes("correctOrder contains words not present in words pool"))).toBe(true);
   });
 
-  it("warns for empty bgLatin and missing grammar fields", () => {
+  it("rejects missing A1 transliteration", () => {
     const moduleMeta = makeModule("a1-modul-1", [{ lessonId: "a1-modul-1-lektion-1", title: "T" }]);
     const lesson = makeLesson({
       vocabulary: [{ id: "v1", de: "Hallo", bg: "Здравей", bgLatin: "" }],
     });
     const issues = validateModules([moduleMeta], [lesson]);
-    expect(warnings(issues).some((i) => i.message.includes("bgLatin is present but empty"))).toBe(true);
+    expect(errors(issues).some((i) => i.message.includes("A1 vocabulary requires"))).toBe(true);
+  });
+
+  it("rejects unresolved native-review markers", () => {
+    const moduleMeta = makeModule("a1-modul-1", [{ lessonId: "a1-modul-1-lektion-1", title: "T" }]);
+    const lesson = makeLesson({
+      vocabulary: [{
+        id: "v1",
+        de: "Hallo",
+        bg: "Здравей",
+        bgLatin: "NATIVE_REVIEW_NEEDED",
+        needsNativeReview: true,
+      }],
+    });
+    const messages = errors(validateModules([moduleMeta], [lesson])).map((issue) => issue.message);
+
+    expect(messages.some((message) => message.includes("needs native-speaker review"))).toBe(true);
+    expect(messages.some((message) => message.includes("NATIVE_REVIEW_NEEDED marker"))).toBe(true);
+  });
+
+  it("rejects incomplete lesson narrative and grammar", () => {
+    const moduleMeta = makeModule("a1-modul-1", [{ lessonId: "a1-modul-1-lektion-1", title: "T" }]);
+    const lesson = makeLesson({
+      introduction: "",
+      summary: "",
+      grammar: { title: "", explanation: "", examples: [] },
+    });
+    const messages = errors(validateModules([moduleMeta], [lesson])).map((issue) => issue.message);
+
+    expect(messages).toEqual(expect.arrayContaining([
+      "introduction is missing",
+      "summary is missing",
+      "grammar title is missing",
+      "grammar explanation is missing",
+      "grammar examples are missing or empty",
+    ]));
   });
 
   it("accepts a valid required exercise group", () => {
@@ -202,6 +233,44 @@ describe("validateModules", () => {
     const messages = errors(validateModules([moduleMeta], [lesson])).map((issue) => issue.message);
 
     expect(messages.some((message) => message.includes("without required items"))).toBe(true);
+  });
+});
+
+describe("validateGrammarTopics", () => {
+  function makeTopic(overrides: Partial<GrammarTopic> = {}): GrammarTopic {
+    return {
+      topicId: "topic-1",
+      level: "A1",
+      title: "Grammar",
+      slug: "grammar",
+      shortDescription: "Description",
+      content: [{
+        title: "Section",
+        explanation: "Explanation",
+        examples: [{ bg: "Аз съм тук.", de: "Ich bin hier." }],
+      }],
+      ...overrides,
+    };
+  }
+
+  it("accepts complete registered grammar topics", () => {
+    expect(validateGrammarTopics([makeTopic()])).toEqual([]);
+  });
+
+  it("rejects duplicate identifiers and incomplete sections", () => {
+    const issues = validateGrammarTopics([
+      makeTopic({ content: [{ title: "", explanation: "", examples: [] }] }),
+      makeTopic(),
+    ]);
+    const messages = errors(issues).map((issue) => issue.message);
+
+    expect(messages).toEqual(expect.arrayContaining([
+      "grammar title is missing",
+      "grammar explanation is missing",
+      "grammar examples are missing or empty",
+      "duplicate grammar topic id 'topic-1'",
+      "duplicate grammar topic slug 'grammar'",
+    ]));
   });
 });
 

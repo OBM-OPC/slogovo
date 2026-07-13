@@ -283,7 +283,7 @@ const grammarTopics: GrammarTopic[] = [
     content: [
       {
         title: "съм — Konjugation",
-        explanation: "Das Verb 'съм' (sein) ist unregelmäßig und wird oft weggelassen. Im Präsens lautet die vollständige Konjugation:",
+        explanation: "Das Verb 'съм' (sein) ist unregelmäßig. Seine Präsensformen werden normalerweise verwendet; häufig entfällt stattdessen das Subjektpronomen, weil Verbform und Kontext die Person erkennen lassen:",
         tables: [
           {
             title: "Präsens von съм",
@@ -301,18 +301,18 @@ const grammarTopics: GrammarTopic[] = [
         ],
         examples: [
           { bg: "Аз съм учител.", de: "Ich bin Lehrer." },
-          { bg: "Той е добре.", de: "Er geht es gut." },
+          { bg: "Той е добре.", de: "Ihm geht es gut." },
           { bg: "Ние сме от България.", de: "Wir sind aus Bulgarien." },
           { bg: "Те са тук.", de: "Sie sind hier." },
         ],
       },
       {
-        title: "Elliptischer Gebrauch",
-        explanation: "In der Umgangssprache wird 'съм' oft weggelassen. Das ist besonders bei kurzen Antworten und im Präsens üblich. Im Perfekt und Futur ist das Verb jedoch obligatorisch.",
+        title: "Subjektpronomen weglassen",
+        explanation: "Wenn Person und Bezug klar sind, lässt man im Bulgarischen häufig das Subjektpronomen weg, nicht die Präsensform von 'съм'. Die Form von 'съм' bleibt im normalen Aussagesatz erhalten.",
         examples: [
-          { bg: "Аз от Германия.", de: "Ich (bin) aus Deutschland." },
-          { bg: "Тя учителка?", de: "Ist sie Lehrerin?" },
-          { bg: "Ние добре.", de: "Wir (sind) gut." },
+          { bg: "От Германия съм.", de: "Ich bin aus Deutschland." },
+          { bg: "Учителка е.", de: "Sie ist Lehrerin." },
+          { bg: "Добре сме.", de: "Uns geht es gut." },
         ],
       },
     ],

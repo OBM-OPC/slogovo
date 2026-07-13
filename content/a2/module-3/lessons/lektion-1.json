@@ -10,56 +10,47 @@
     {
       "id": "a2m3l1-1",
       "de": "der Flug",
-      "bg": "полетът",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "полетът"
     },
     {
       "id": "a2m3l1-2",
       "de": "der Pass",
-      "bg": "паспортът",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "паспортът"
     },
     {
       "id": "a2m3l1-3",
       "de": "das Visum",
-      "bg": "визата",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "визата"
     },
     {
       "id": "a2m3l1-4",
       "de": "die Sicherheitskontrolle",
-      "bg": "контролът",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "контролът"
     },
     {
       "id": "a2m3l1-5",
       "de": "das Gepäck",
-      "bg": "багажът",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "багажът"
     },
     {
       "id": "a2m3l1-6",
       "de": "das Boarding",
-      "bg": "качването",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "качването"
     },
     {
       "id": "a2m3l1-7",
       "de": "die Verspätung",
-      "bg": "закъснението",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "закъснението"
     },
     {
       "id": "a2m3l1-8",
       "de": "der Gate",
-      "bg": "изходът",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "изходът"
     },
     {
       "id": "a2m3l1-9",
       "de": "die Landung",
-      "bg": "кацането",
-      "bgLatin": "NATIVE_REVIEW_NEEDED"
+      "bg": "кацането"
     }
   ],
   "grammar": {

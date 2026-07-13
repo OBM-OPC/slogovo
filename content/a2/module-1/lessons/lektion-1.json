@@ -19,7 +19,7 @@
     { "id": "a2m1l1-10", "de": "morgens", "bg": "сутрин", "bgLatin": "sutrin" },
     { "id": "a2m1l1-11", "de": "mittags", "bg": "обед", "bgLatin": "obed" },
     { "id": "a2m1l1-12", "de": "abends", "bg": "вечер", "bgLatin": "wetschet" },
-    { "id": "a2m1l1-13", "de": "nachts", "bg": "нощем", "bgLatin": "NATIVE_REVIEW_NEEDED" }
+    { "id": "a2m1l1-13", "de": "nachts", "bg": "нощем" }
   ],
   "grammar": {
     "title": "Reflexive Verben",
