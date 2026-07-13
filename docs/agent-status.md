@@ -1,6 +1,6 @@
 # Slogovo controlled-development status
 
-Last updated: 2026-07-13 14:53 UTC
+Last updated: 2026-07-13 14:56 UTC
 
 ## Active run — Phase 2 performance summary
 
@@ -63,12 +63,15 @@ Acceptance criteria:
 - Clean install completed with 520 packages installed and 521 audited; the existing audit reports 6 dependency vulnerabilities (1 moderate, 5 high) outside this milestone.
 - Full validation passed: type-check, lint, 25 test files / 100 tests, content validation with 12 modules and 60 lessons / 0 errors / 0 warnings, production build with 99 static pages, and `git diff --check`.
 - No Supabase migration, production data, environment, Vercel setting, or secret action was performed.
+- Committed status commit `ea76d0095c056133a3ff32cf65ad4b1de4df94c0`, pushed the sole branch, and opened pull request #94: https://github.com/OBM-OPC/slogovo/pull/94
+- Confirmed PR #94 is non-draft and mergeable with no requested changes.
+- GitHub Actions validation run `29259935058` and the Vercel preview deployment completed successfully for PR head `ea76d00`.
 
 ### Work remaining
 
-- Commit this status update, push the sole implementation branch, and open exactly one pull request.
-- Verify the final pull-request head receives green GitHub Actions and Vercel checks.
-- Squash-merge and delete the branch only if every automatic-merge condition remains satisfied; otherwise stop and report the blocker.
+- Commit and push this final status update.
+- Verify the resulting final PR head receives green GitHub Actions and Vercel checks.
+- Squash-merge PR #94 and delete the branch only if every automatic-merge condition remains satisfied; otherwise stop and report the blocker.
 
 ### Commands executed in this run
 
@@ -86,6 +89,10 @@ Acceptance criteria:
 - `npm run build` (passed; content validation ran first and 99 static pages were generated).
 - `git diff --check` (passed).
 - `git commit -m "feat: show real lesson performance summary"`.
+- `git commit -m "docs: update controlled development status"`.
+- `git push -u origin feat/phase-2-performance-summary`.
+- `gh pr create --base main --head feat/phase-2-performance-summary` (opened #94).
+- `gh pr view 94` and `gh pr checks 94 --watch` (non-draft/mergeable, Actions and Vercel green for `ea76d00`).
 
 ## Run state
 
