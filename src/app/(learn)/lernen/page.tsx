@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useProgressSafe } from "@/hooks/useProgressSafe";
 import { getAllModules, getLessonsByModule } from "@/lib/content";
 import { ModuleMeta } from "@/types";
-import { Flame, BookOpen, Play, Type, Grid3X3, BookMarked, Lock, CheckCircle2, Circle, ChevronRight } from "lucide-react";
+import { Flame, BookOpen, Play, Type, Grid3X3, BookMarked, Lock, CheckCircle2, Circle, ChevronRight, RotateCcw, Mic, CircleAlert, ChartNoAxesColumnIncreasing, Settings, UserRound } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 // ── Stats Bar (horizontal, flowing) ──
@@ -158,14 +158,16 @@ function ModuleCard({ module, isUnlocked }: { module: ModuleMeta; isUnlocked: bo
 // ── Quick Access Tiles ──
 function QuickTiles() {
   const tiles = [
-    { href: "/vokabeln", icon: Type, label: "Речник", sub: "Vokabeln", color: "bg-primary-50 text-primary" },
-    { href: "/alphabet", icon: Grid3X3, label: "Азбука", sub: "Alphabet", color: "bg-accent-50 text-accent" },
-    { href: "/grammatik", icon: BookMarked, label: "Граматика", sub: "Grammatik", color: "bg-gold-50 text-gold-700" },
+    { href: "/wiederholen", icon: RotateCcw, label: "Wiederholen", sub: "Fällige Karten", color: "bg-danger/10 text-danger" },
+    { href: "/sprechen", icon: Mic, label: "Sprechen", sub: "Laut üben", color: "bg-accent-50 text-accent" },
+    { href: "/fehler", icon: CircleAlert, label: "Fehler", sub: "Gezielt üben", color: "bg-gold-50 text-gold-700" },
+    { href: "/vokabeln", icon: Type, label: "Wortschatz", sub: "Suchen & üben", color: "bg-primary-50 text-primary" },
+    { href: "/fortschritt", icon: ChartNoAxesColumnIncreasing, label: "Fortschritt", sub: "Mastery sehen", color: "bg-success/10 text-success" },
   ];
 
   return (
     <div className="mb-8">
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 gap-3">
         {tiles.map((tile) => (
           <Link
             key={tile.href}
@@ -179,6 +181,10 @@ function QuickTiles() {
             <span className="text-xs text-muted">{tile.sub}</span>
           </Link>
         ))}
+      </div>
+      <div className="mt-3 grid grid-cols-2 gap-3">
+        <Link href="/alphabet" className="flex items-center gap-3 rounded-2xl bg-white p-3 text-sm font-medium shadow-card"><Grid3X3 className="h-5 w-5 text-accent" /> Alphabet</Link>
+        <Link href="/grammatik" className="flex items-center gap-3 rounded-2xl bg-white p-3 text-sm font-medium shadow-card"><BookMarked className="h-5 w-5 text-gold-700" /> Grammatik</Link>
       </div>
     </div>
   );
@@ -213,9 +219,15 @@ export default function LernenPage() {
   return (
     <main className="animate-fade-in bg-rose-pattern min-h-screen px-4 py-6 safe-top">
       {/* Header */}
-      <div className="mb-6">
-        <p className="text-xs font-medium uppercase tracking-widest text-muted">Български език</p>
-        <h1 className="text-3xl font-serif font-bold text-foreground">Lernen</h1>
+      <div className="mb-6 flex items-start justify-between gap-3">
+        <div>
+          <p className="text-xs font-medium uppercase tracking-widest text-muted">Български език</p>
+          <h1 className="text-3xl font-serif font-bold text-foreground">Lernen</h1>
+        </div>
+        <div className="flex gap-2">
+          <Link href="/profil" aria-label="Profil" className="rounded-full bg-white p-2.5 text-muted shadow-card"><UserRound className="h-5 w-5" /></Link>
+          <Link href="/einstellungen" aria-label="Einstellungen" className="rounded-full bg-white p-2.5 text-muted shadow-card"><Settings className="h-5 w-5" /></Link>
+        </div>
       </div>
 
       <StatsBar />

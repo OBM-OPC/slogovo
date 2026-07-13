@@ -2,36 +2,36 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpen, User, Settings } from "lucide-react";
+import { BookOpen, ChartNoAxesColumnIncreasing, Library, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { href: "/lernen", label: "Уча", icon: BookOpen },
-  { href: "/profil", label: "Аз", icon: User },
-  { href: "/einstellungen", label: "⚙️", icon: Settings },
+  { href: "/lernen", label: "Lernen", icon: BookOpen, matches: ["/lernen", "/heute-lernen", "/kurs"] },
+  { href: "/wiederholen", label: "Wiederholen", icon: RotateCcw, matches: ["/wiederholen"] },
+  { href: "/vokabeln", label: "Wortschatz", icon: Library, matches: ["/vokabeln"] },
+  { href: "/fortschritt", label: "Fortschritt", icon: ChartNoAxesColumnIncreasing, matches: ["/fortschritt"] },
 ];
 
 export function BottomNav() {
   const pathname = usePathname() ?? "";
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-xl shadow-nav safe-bottom">
-      <ul className="mx-auto flex max-w-md items-center justify-around px-3 py-2">
+    <nav aria-label="Hauptnavigation" className="fixed bottom-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-xl shadow-nav safe-bottom">
+      <ul className="mx-auto grid max-w-md grid-cols-4 px-2 py-2">
         {navItems.map((item) => {
           const Icon = item.icon;
-          const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
+          const isActive = item.matches.some((path) => pathname === path || pathname.startsWith(`${path}/`));
           return (
             <li key={item.href}>
               <Link
                 href={item.href}
+                aria-current={isActive ? "page" : undefined}
                 className={cn(
-                  "flex flex-col items-center gap-0.5 rounded-2xl px-4 py-2 text-xs font-medium transition-all duration-200",
-                  isActive
-                    ? "bg-primary-50 text-primary"
-                    : "text-muted hover:text-foreground hover:bg-warm-50"
+                  "flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-2xl px-1 py-1.5 text-[11px] font-medium transition-colors",
+                  isActive ? "bg-primary-50 text-primary" : "text-muted hover:bg-warm-50 hover:text-foreground"
                 )}
               >
-                <Icon className="h-5 w-5" />
+                <Icon className="h-5 w-5" aria-hidden="true" />
                 <span>{item.label}</span>
               </Link>
             </li>

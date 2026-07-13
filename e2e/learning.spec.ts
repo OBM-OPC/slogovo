@@ -15,6 +15,9 @@ test.beforeEach(async ({ request }) => {
 
 test("opens the adaptive daily session from the primary learning action", async ({ page }) => {
   await login(page);
+  for (const area of ["Wiederholen", "Sprechen", "Fehler", "Wortschatz", "Fortschritt"]) {
+    await expect(page.getByRole("link", { name: new RegExp(area) }).first()).toBeVisible();
+  }
   await page.getByRole("link", { name: /Heute lernen/ }).click();
 
   await expect(page).toHaveURL(/\/heute-lernen$/);
