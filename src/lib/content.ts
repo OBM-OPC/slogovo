@@ -1,9 +1,9 @@
 import { ModuleMeta, Lesson, GrammarTopic } from "@/types";
 
-// ── Auto-generated import block ──
-// Content modules are discovered at build time via glob imports.
-// To add new levels, drop JSON files under content/<level>/module-*/
-// and rebuild. No manual imports needed.
+// ── Content import block ──
+// Runtime content uses explicit imports so it remains compatible with Next.js.
+// The content-validation command checks these imports against every JSON file
+// under content/ and fails when the filesystem and this registry drift apart.
 // ──
 
 // A1 Modules

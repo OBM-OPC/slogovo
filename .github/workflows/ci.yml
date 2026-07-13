@@ -20,5 +20,5 @@ jobs:
       - run: npm run type-check
       - run: npm run lint
       - run: npm test
-      - run: npm run validate-content
+      # `npm run build` starts with the filesystem-complete content validator.
       - run: npm run build
