@@ -1,5 +1,77 @@
 # Slogovo controlled-development status
 
+Last updated: 2026-07-13 15:38 UTC
+
+## Active run — Phase 1 content correctness gate
+
+- Current branch: `fix/phase-1-content-correctness`, based on `main` commit `1eb0f66c0a333854fb9e8e295d3b63aeb12007cf`.
+- Remote branches inspected: only `main`; no implementation branch or open pull request exists.
+- PR #95 was squash-merged before this run as `1eb0f66c0a333854fb9e8e295d3b63aeb12007cf`; its branch was deleted.
+- Latest GitHub Actions result: post-merge `main` run `29262028156` completed successfully.
+- All 18 open issues inspected: #71, #70, #69, #68, #67, #66, #65, #64, #63, #62, #61, #35, #34, #33, #32, #31, #30, and #28. Issue #29 is closed after PR #95.
+- Concurrent-run check: no additional worktree, Git lock, Slogovo coding process, visible Slogovo session, or subagent was found. Session visibility is restricted to the current session tree.
+
+### Selected milestone
+
+Selected issue: #28 — Phase 1 content correctness and validation.
+
+Reasoning: the Phase 2 scoring milestone is merged and issue #29 is closed. The highest-priority unblocked learner-facing defect is now the explicit Phase 1 correctness gap: the landing page contains the Russian ending `начинающих`, and both the first `съм` lesson and grammar reference incorrectly claim that the present-tense copula is usually omitted. The existing validator also permits incomplete grammar, missing A1 transliteration, and native-review placeholders to reach a production build.
+
+Scope:
+
+- Correct the landing-page Bulgarian label to `Български за начинаещи`.
+- Replace the inaccurate `съм` explanations and ungrammatical omission examples with accurate present-tense guidance in lesson content and the grammar reference.
+- Make required lesson narrative and grammar fields production-blocking rather than warnings.
+- Require non-empty `bgLatin` for A1 vocabulary and reject unresolved native-review markers.
+- Validate the static grammar-topic registry so incomplete grammar reference content also fails `npm run validate:content` and the production build.
+- Add focused regression and validation tests.
+
+Out of scope:
+
+- A full native-speaker review of all 60 lessons, bulk vocabulary enrichment, transliteration-system redesign, new exercise types, database changes, environment changes, and production actions.
+
+Dependencies:
+
+- `src/app/page.tsx`, `content/a1/module-1/lessons/lektion-2.json`, `src/lib/content.ts`, `src/lib/content-validation.ts`, `scripts/validate-content.ts`, and focused tests.
+
+Risks:
+
+- Tightening warnings into errors can expose latent content gaps across the full inventory.
+- Grammar-topic validation must remain generic and avoid hard-coding only the two known corrections.
+- Copy corrections must not introduce unsupported linguistic claims.
+
+Acceptance criteria:
+
+- The landing page displays `Български за начинаещи` and no longer contains the Russian ending.
+- The lesson and grammar reference explain that present-tense forms of `съм` are normally required, while subject pronouns may be omitted when context is clear.
+- Missing A1 `bgLatin`, unresolved `NATIVE_REVIEW_NEEDED`, `needsNativeReview: true`, and incomplete lesson or grammar content fail validation.
+- Every registered grammar topic is included in content validation.
+- Focused tests and the complete type-check, lint, unit-test, content-validation, and production-build suite pass.
+- Exactly one implementation branch and one pull request are used.
+
+### Work completed
+
+- Completed the required local, GitHub branch/PR, all-open-issue, Actions, and concurrent-run preflight.
+- Confirmed PR #95 and post-merge CI are green and no milestone remains active.
+- Audited the current Phase 1 types, filesystem inventory, validator, content guidelines, landing copy, first `съм` lesson, and grammar reference.
+- Selected and recorded this single coherent milestone before implementation changes.
+
+### Work remaining
+
+- Implement the correctness and validation changes.
+- Add focused tests and run the complete validation suite.
+- Update this status with final evidence, push the branch, and open one pull request when reviewable.
+
+### Commands executed in this run
+
+- Local Git status, branch, remote, worktree, lock, process, and repository-history inspection.
+- GitHub API inspection of all remote branches, open pull requests, all 18 open issues and bodies, PR #95, and the latest Actions runs.
+- OpenClaw cron history, visible-session, and subagent inspection.
+- Read-only audit of content types, registry, validator, tests, guidelines, landing copy, lesson content, and grammar topics.
+- `git switch -c fix/phase-1-content-correctness`.
+
+---
+
 Last updated: 2026-07-13 15:20 UTC
 
 ## Active run — Phase 2 required exercise groups
