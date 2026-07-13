@@ -12,6 +12,7 @@ import { getAllModules, getAllVocabulary, getLessonsByModule } from "@/lib/conte
 import { buildDailyPlan, type DailyPlan, type DailySessionItem, type GrammarWeakness } from "@/lib/planner";
 import { useProgressStore } from "@/stores/useProgressStore";
 import { durationBucket, trackLearningEvent } from "@/lib/telemetry";
+import { BulgarianKeyboard } from "@/components/ui/BulgarianKeyboard";
 
 const SOURCE_LABELS: Record<DailySessionItem["source"], string> = {
   due_review: "Fällige Wiederholung",
@@ -227,8 +228,14 @@ export function DailySessionClient() {
             onChange={(event) => setInput(event.target.value)}
             disabled={answerCorrect !== null}
             aria-label="Bulgarische Antwort"
+            aria-invalid={answerCorrect === null ? undefined : !answerCorrect}
+            aria-describedby={answerCorrect === null ? undefined : "daily-answer-feedback"}
+            autoComplete="off"
+            spellCheck={false}
+            lang="bg"
             className="input mb-4 text-center text-lg"
           />
+          <BulgarianKeyboard disabled={answerCorrect !== null} onInsert={(character) => setInput((value) => value + character)} />
           {answerCorrect === null ? (
             <Button
               onClick={() => {
@@ -243,7 +250,7 @@ export function DailySessionClient() {
             >Prüfen</Button>
           ) : (
             <>
-              <p className={`mb-4 rounded-xl p-3 font-medium ${answerCorrect ? "bg-success/10 text-success" : "bg-danger/10 text-danger"}`}>
+              <p id="daily-answer-feedback" role="status" aria-live="polite" className={`mb-4 rounded-xl p-3 font-medium ${answerCorrect ? "bg-success/10 text-success" : "bg-danger/10 text-danger"}`}>
                 {answerCorrect ? "Richtig!" : `Richtige Antwort: ${current.word.bg}`}
               </p>
               <Button onClick={() => void advance(answerCorrect ? "good" : "repeat")} fullWidth>Weiter</Button>

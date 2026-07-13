@@ -27,6 +27,34 @@ test("opens the adaptive daily session from the primary learning action", async 
   await expect(page.getByText("Sprechen", { exact: true })).toBeVisible();
 });
 
+test("keeps a Bulgarian typing flow usable on a narrow mobile viewport", async ({ page, request }) => {
+  await page.setViewportSize({ width: 360, height: 740 });
+  const seeded = defaultProgressRow({
+    vocabulary_progress: {
+      "m1l1-1": {
+        status: "learning",
+        nextReview: "2026-07-14",
+        lastReviewed: "2026-07-13",
+        timesCorrect: 0,
+        timesWrong: 1,
+        intervalIndex: 0,
+        easeFactor: 2.5,
+      },
+    },
+  });
+  expect((await request.post(`${mockUrl}/__test/progress`, { data: seeded })).ok()).toBeTruthy();
+
+  await login(page);
+  await page.goto("/fehler");
+  const input = page.getByRole("textbox", { name: "Bulgarische Übersetzung eingeben" });
+  await expect(input).toBeVisible();
+  await page.getByRole("button", { name: "Bulgarische Tastaturhilfe" }).click();
+  await page.getByRole("button", { name: "ъ einfügen" }).click();
+  await expect(input).toHaveValue("ъ");
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth);
+  expect(overflow).toBe(false);
+});
+
 test("starts a lesson, retries one failed item, passes, syncs, and restores on another device", async ({ page, browser, request }) => {
   await login(page);
   await openFirstLesson(page);

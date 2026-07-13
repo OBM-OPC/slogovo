@@ -72,7 +72,7 @@ export function SentenceBuilderExercise({
     <div>
       <p className="mb-2 text-muted">Baue den bulgarischen Satz:</p>
       {sentence.de && <p className="mb-4 font-medium">„{sentence.de}“</p>}
-      <div className="mb-4 min-h-[56px] rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 p-3">
+      <div aria-label="Gebauter Satz" aria-live="polite" className="mb-4 min-h-[56px] rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 p-3">
         {selected.length === 0 ? <p className="text-center text-sm text-muted">Tippe die Wörter in der richtigen Reihenfolge an.</p> : (
           <div className="flex flex-wrap gap-2">
             {selected.map((word, index) => (
@@ -81,6 +81,7 @@ export function SentenceBuilderExercise({
                 type="button"
                 onClick={() => { onInteraction?.(); setSelected((items) => items.filter((_, itemIndex) => itemIndex !== index)); }}
                 disabled={showResult}
+                aria-label={`${word} aus Position ${index + 1} entfernen`}
                 className={cn(
                   "rounded-lg px-3 py-1.5 text-sm font-medium",
                   showResult ? (word === sentence.correctOrder[index] ? "bg-success/20 text-success" : "bg-danger/20 text-danger") : "bg-white shadow-sm hover:bg-gray-100"
@@ -99,7 +100,8 @@ export function SentenceBuilderExercise({
             type="button"
             onClick={() => { onInteraction?.(); setSelected((items) => [...items, word]); }}
             disabled={showResult}
-            className="rounded-lg bg-primary-50 px-3 py-1.5 text-sm font-medium text-primary transition-colors hover:bg-primary-100 disabled:opacity-50"
+            aria-label={`${word} zum Satz hinzufügen`}
+            className="min-h-11 rounded-lg bg-primary-50 px-3 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary-100 disabled:opacity-50"
           >
             {word}
           </button>
@@ -115,7 +117,7 @@ export function SentenceBuilderExercise({
               {sentence.grammarTopicSlug && <a href={`/grammatik/${sentence.grammarTopicSlug}`} className="mt-2 inline-block text-sm text-primary underline">Zum Grammatikthema</a>}
             </div>
           )}
-          <div className={cn("rounded-xl p-4 text-center font-medium", isCorrect ? "bg-success/10 text-success" : "bg-danger/10 text-danger")}>
+          <div role="status" aria-live="polite" className={cn("rounded-xl p-4 text-center font-medium", isCorrect ? "bg-success/10 text-success" : "bg-danger/10 text-danger")}>
             {isCorrect ? "Richtig!" : `Richtige Reihenfolge: ${sentence.correctOrder.join(" ")}`}
           </div>
           <Button onClick={handleNext} fullWidth>{current < sentences.length - 1 ? "Weiter" : "Fertig"}</Button>

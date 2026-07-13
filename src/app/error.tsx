@@ -15,7 +15,7 @@ export default function AppError({ reset }: { error: Error & { digest?: string }
     <main className="px-4 py-10 text-center">
       <h1 className="mb-2 text-2xl font-bold">Inhalt konnte nicht geladen werden</h1>
       <p className="mb-6 text-muted">Bitte versuche es erneut. Es wurden keine persönlichen Fehlerdetails übertragen.</p>
-      <button type="button" onClick={reset} className="rounded-xl bg-primary px-5 py-3 font-medium text-white">
+      <button type="button" onClick={reset} className="min-h-12 rounded-xl bg-primary px-5 py-3 font-medium text-white">
         Erneut versuchen
       </button>
     </main>

@@ -19,9 +19,9 @@ describe("SentenceBuilderExercise", () => {
       />
     );
 
-    fireEvent.click(screen.getByRole("button", { name: "Аз" }));
-    fireEvent.click(screen.getByRole("button", { name: "съм" }));
-    fireEvent.click(screen.getByRole("button", { name: "Мария" }));
+    fireEvent.click(screen.getByRole("button", { name: "Аз zum Satz hinzufügen" }));
+    fireEvent.click(screen.getByRole("button", { name: "съм zum Satz hinzufügen" }));
+    fireEvent.click(screen.getByRole("button", { name: "Мария zum Satz hinzufügen" }));
     fireEvent.click(screen.getByRole("button", { name: "Prüfen" }));
 
     expect(screen.getByText("Richtig!")).toBeTruthy();

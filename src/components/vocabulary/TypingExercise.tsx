@@ -12,6 +12,7 @@ import { triggerConfetti } from "@/lib/confetti";
 import { Volume2, Loader2, AlertCircle, Brain, Check, RotateCcw, Sparkles } from "lucide-react";
 import { evaluateAnswerDetailed } from "@/lib/answer-evaluation";
 import { buildEvaluationFeedback, formatRichFeedback, type RichFeedback } from "@/lib/feedback";
+import { BulgarianKeyboard } from "@/components/ui/BulgarianKeyboard";
 
 
 type Phase = "question" | "answer";
@@ -209,6 +210,12 @@ export function TypingExercise({ words, mode, onExit }: TypingExerciseProps) {
           onChange={(e) => setInput(e.target.value)}
           disabled={phase === "answer"}
           placeholder="Bulgarische Übersetzung eingeben"
+          aria-label="Bulgarische Übersetzung eingeben"
+          aria-invalid={phase === "answer" ? !isCorrect : undefined}
+          aria-describedby={phase === "answer" ? "typing-feedback" : undefined}
+          autoComplete="off"
+          spellCheck={false}
+          lang="bg"
           className={cn(
             "input text-center text-lg",
             phase === "answer" &&
@@ -237,6 +244,7 @@ export function TypingExercise({ words, mode, onExit }: TypingExerciseProps) {
           <div className="flex flex-wrap justify-center gap-2">
             {buildTiles.map((char, idx) => (
               <button
+                type="button"
                 key={`${idx}-${char}`}
                 onClick={() => handleBuildTileClick(char)}
                 disabled={phase === "answer"}
@@ -247,6 +255,7 @@ export function TypingExercise({ words, mode, onExit }: TypingExerciseProps) {
             ))}
           </div>
           <button
+            type="button"
             onClick={handleBuildBackspace}
             disabled={phase === "answer" || input.length === 0}
             className="w-full rounded-xl bg-gray-100 py-2 text-sm font-medium text-muted hover:bg-gray-200 disabled:opacity-50"
@@ -254,6 +263,13 @@ export function TypingExercise({ words, mode, onExit }: TypingExerciseProps) {
             ← Letzter Buchstabe löschen
           </button>
         </div>
+      )}
+
+      {mode === "type" && (
+        <BulgarianKeyboard
+          disabled={phase === "answer"}
+          onInsert={(character) => setInput((value) => value + character)}
+        />
       )}
 
       {phase === "question" && (
@@ -265,6 +281,9 @@ export function TypingExercise({ words, mode, onExit }: TypingExerciseProps) {
       {phase === "answer" && (
         <div className="space-y-3 animate-fade-in">
           <div
+            id="typing-feedback"
+            role="status"
+            aria-live="polite"
             className={cn(
               "rounded-xl p-4 text-center font-medium",
               isCorrect ? "bg-success/10 text-success" : "bg-danger/10 text-danger"

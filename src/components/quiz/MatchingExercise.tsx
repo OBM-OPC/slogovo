@@ -97,6 +97,8 @@ export function MatchingExercise({
               type="button"
               disabled={matched.has(pair.de)}
               onClick={() => handleDeClick(pair.de)}
+              aria-pressed={selectedDe === pair.de}
+              aria-label={`${pair.de}${matched.has(pair.de) ? ", zugeordnet" : wrong.has(pair.de) ? ", falsch" : ""}`}
               className={cn(
                 "w-full rounded-xl border-2 p-3 text-left text-sm font-medium transition-colors",
                 matched.has(pair.de) ? "border-success bg-success/10 text-success"
@@ -118,6 +120,7 @@ export function MatchingExercise({
                 type="button"
                 disabled={matched.has(de)}
                 onClick={() => handleBgClick(bg)}
+                aria-label={`${bg}${matched.has(de) ? ", zugeordnet" : wrong.has(bg) ? ", falsch" : ""}`}
                 className={cn(
                   "w-full rounded-xl border-2 p-3 text-center text-base font-medium transition-colors",
                   matched.has(de) ? "border-success bg-success/10 text-success"

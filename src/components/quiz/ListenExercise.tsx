@@ -18,6 +18,7 @@ import {
 } from "@/lib/listen-exercise";
 import { cn } from "@/lib/utils";
 import { trackLearningEvent, trackMonitoringEvent } from "@/lib/telemetry";
+import { BulgarianKeyboard } from "@/components/ui/BulgarianKeyboard";
 
 interface ListenExerciseProps {
   exerciseId: string;
@@ -167,20 +168,24 @@ export function ListenExercise({
 
   const renderAnswer = () => {
     if (item.format === "listen-select") {
-      return item.options.map((option, index) => (
-        <button key={option.id} type="button" disabled={Boolean(result)} onClick={() => selectOption(index)} className="w-full rounded-xl border-2 border-gray-200 p-4 text-left hover:bg-gray-50 disabled:opacity-70">
+      return item.options.map((option, index) => {
+        const correct = result && option.id === item.correctOptionId;
+        const incorrect = result && selectedIndex === index && !correct;
+        return <button key={option.id} type="button" disabled={Boolean(result)} aria-pressed={selectedIndex === index} aria-label={`${option.de}${correct ? ", richtig" : incorrect ? ", falsch" : ""}`} onClick={() => selectOption(index)} className={cn("min-h-12 w-full rounded-xl border-2 p-4 text-left", correct ? "border-success bg-success/10 text-success" : incorrect ? "border-danger bg-danger/10 text-danger" : "border-gray-200 hover:bg-gray-50", result && "opacity-80")}>
           <span className="mr-2 text-xs text-muted">{index + 1}</span>{option.de}
-        </button>
-      ));
+        </button>;
+      });
     }
     if (item.format === "audio-comprehension") {
       return <>
         <p className="mb-3 font-medium">{item.question}</p>
-        {item.options.map((option, index) => (
-          <button key={option} type="button" disabled={Boolean(result)} onClick={() => selectOption(index)} className="w-full rounded-xl border-2 border-gray-200 p-4 text-left hover:bg-gray-50 disabled:opacity-70">
+        {item.options.map((option, index) => {
+          const correct = result && index === item.correctOptionIndex;
+          const incorrect = result && selectedIndex === index && !correct;
+          return <button key={option} type="button" disabled={Boolean(result)} aria-pressed={selectedIndex === index} aria-label={`${option}${correct ? ", richtig" : incorrect ? ", falsch" : ""}`} onClick={() => selectOption(index)} className={cn("min-h-12 w-full rounded-xl border-2 p-4 text-left", correct ? "border-success bg-success/10 text-success" : incorrect ? "border-danger bg-danger/10 text-danger" : "border-gray-200 hover:bg-gray-50", result && "opacity-80")}>
             <span className="mr-2 text-xs text-muted">{index + 1}</span>{option}
-          </button>
-        ))}
+          </button>;
+        })}
       </>;
     }
     if (item.format === "listen-reorder") {
@@ -205,7 +210,13 @@ export function ListenExercise({
         onKeyDown={(event) => { if (event.key === "Enter") checkAnswer(); }}
         className="input mb-3 text-center"
         placeholder={item.format === "dictation" ? "Gehörten Satz eingeben" : "Gehörtes Wort eingeben"}
+        aria-label={item.format === "dictation" ? "Gehörten bulgarischen Satz eingeben" : "Gehörtes bulgarisches Wort eingeben"}
+        aria-invalid={result ? !result.correct : undefined}
+        autoComplete="off"
+        spellCheck={false}
+        lang="bg"
       />
+      <BulgarianKeyboard disabled={Boolean(result)} onInsert={(character) => setInput((value) => value + character)} />
       {!result && <Button onClick={checkAnswer} fullWidth disabled={!input.trim()}>Prüfen</Button>}
     </>;
   };
@@ -256,7 +267,7 @@ export function ListenExercise({
       <div className="mt-5 space-y-2">{renderAnswer()}</div>
       {result && (
         <div className="mt-4 space-y-3">
-          <div className={cn("rounded-xl p-4 text-center font-medium", result.correct ? "bg-success/10 text-success" : "bg-danger/10 text-danger")}>{result.feedback}</div>
+          <div role="status" aria-live="polite" className={cn("rounded-xl p-4 text-center font-medium", result.correct ? "bg-success/10 text-success" : "bg-danger/10 text-danger")}>{result.feedback}</div>
           <Button onClick={next} fullWidth>{current < items.length - 1 ? "Weiter" : "Fertig"}</Button>
         </div>
       )}
