@@ -1,5 +1,47 @@
 # Slogovo controlled-development status
 
+Last updated: 2026-07-13 19:42 UTC
+
+## Complete-backlog final checkpoint
+
+- Current branch: `feat/complete-slogovo-backlog`.
+- Base commit: `29bcf6a11fb39e86786327ef722ac9ee14e8a019`.
+- Final implementation head: `efefc6317d2c24e9f02f74d7344f475eab67124d` (`feat: report real mastery progress`).
+- Pull request: #97, the sole implementation PR from the sole implementation branch to `main`; ready-for-review handoff after this documentation checkpoint passes required checks. It must not be merged by the agent.
+- Backlog result: all 17 issues inspected for this program are closed complete: #30, #31, #32, #33, #34, #35, #61, #62, #63, #64, #65, #66, #67, #68, #69, #70, and #71. No relevant actionable GitHub issue remains open.
+- Concurrent-run result: no second worktree, implementation branch, pull request, or coding run was introduced; the legacy single-milestone worker remains disabled.
+
+### Work completed in the resumed run
+
+- #33 adaptive daily learning: `799541b`; GitHub Actions `29274674819` and Vercel passed.
+- #34 listening and speaking foundation: `90a7bf9`; GitHub Actions `29275480138` and Vercel passed.
+- #69 privacy-safe analytics and monitoring: `8c1fc8f`; GitHub Actions `29276832050` and Vercel passed. Only allowlisted identity-free learning events and controlled monitoring codes are stored; no vendor or paid service was activated.
+- #61 rationalized product navigation: `8e693eb`; GitHub Actions `29277334393` and Vercel passed. Lernen owns the single dominant daily action; Wiederholen, Sprechen, Fehler, Wortschatz, and Fortschritt have distinct purposes and mobile paths.
+- #62 lesson/mobile/accessibility polish: `608f68a`; GitHub Actions `29278003530` and Vercel passed. Added Bulgarian input assistance, answer-state semantics, loading/empty/success/retry states, focus/touch treatment, reduced motion, and narrow-mobile coverage.
+- #63 learning-based gamification: `af7dd13`; GitHub Actions `29278671297` and Vercel passed. XP, achievements, streaks, active time, and goals now depend on demonstrated learning; fixed minutes, empty click-through, failed attempts, and retry-item farming do not earn XP.
+- #64 real mastery dashboard: `efefc63`; GitHub Actions `29279220524` and Vercel passed. Added measured active time, passed/mastered separation, due vocabulary, receptive/productive mastery, grammar, listening, weak-area, and recent-improvement metrics with authenticated privacy-minimized attempt summaries.
+- #35 Phase 8 tracker closed after #61–#64 and its cross-page criteria were verified.
+
+### Final validation evidence
+
+- `git diff --check`, `npm run type-check`, and `npm run lint` passed.
+- 46 Vitest files / 190 tests passed, including authoritative evaluation, sync/idempotency, analytics privacy, mobile accessibility, gamification anti-farming, and progress-insight rules.
+- `npm run validate:database` passed for all 9 additive migrations and generated database types.
+- `npm run validate:content` passed for 12 modules, 60 lessons, and 9 grammar topics with 0 errors and 0 warnings; the separate quality report still documents 299 untested vocabulary items, 554 missing authored-audio assets, and 37 lessons without productive exercises.
+- The production build passed with 103 generated pages.
+- Playwright passed 11/11 auth, protected-session, adaptive-learning, 360px Bulgarian-input, honest progress-empty-state, lesson pass/fail/retry, sync/restore, vocabulary-review, and telemetry journeys. A focused rerun of the progress empty state also passed after the fixture received the attempt-summary read contract.
+- GitHub Actions passed on every implementation increment through run `29279220524`; Vercel preview checks passed through final implementation head `efefc63`.
+
+### Remaining and owner-controlled work
+
+- Actionable implementation backlog: none.
+- Human action: review PR #97 and decide whether/when to merge. The agent will not merge it.
+- Production actions remain excluded: apply approved migrations, choose/implement raw telemetry retention, activate any paid monitoring service, change production environment values, or alter production data/secrets only through owner-controlled procedures.
+- Content-quality findings are documented rather than silently treated as complete content production; authored audio and any material Bulgarian copy additions require appropriate owner/native-language review.
+- No production migration, data mutation, environment/secret change, paid-service activation, manual deployment, or merge was performed.
+
+---
+
 Last updated: 2026-07-13 18:52 UTC
 
 ## Complete-backlog program
