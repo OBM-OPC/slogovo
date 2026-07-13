@@ -31,6 +31,7 @@ describe("progress schema contract", () => {
 
     expect(loadRoute).toContain("rowToProgress");
     expect(saveRoute).toContain("progressToRow");
+    expect(saveRoute).toContain("parseUserProgress");
 
     expect(baseMigration).toContain("enable row level security");
     expect(baseMigration).toContain("auth.uid() = user_id");

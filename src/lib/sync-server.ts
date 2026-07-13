@@ -1,6 +1,9 @@
 import { getLessonById, getModuleById } from "./content";
 import { flattenExerciseResults } from "./evaluation";
 import { attemptToDbRow, createLessonAttempt } from "./lesson-attempts";
+import { LearningValidationError } from "./learning-errors";
+import { validateLessonResults } from "./server-attempt-validation";
+import { logError } from "./structured-log";
 import type { SyncEvent } from "./sync-queue";
 
 interface DatabaseError {
@@ -12,21 +15,30 @@ export type SyncDatabaseClient = {
     upsert: (
       data: Record<string, unknown>,
       options?: { onConflict?: string }
-    ) => Promise<{ error: DatabaseError | null }>;
+    ) => PromiseLike<{ error: DatabaseError | null }>;
   };
 };
 
 export interface SyncBatchResult {
   processed: string[];
-  failed: Array<{ id: string; error: string }>;
+  failed: Array<{ id: string; error: string; code?: string }>;
 }
 
 function authoritativeAttempt(event: Extract<SyncEvent, { type: "lesson_attempt" }>, userId: string) {
   const submitted = event.payload.attempt;
   const lesson = getLessonById(submitted.lessonId);
-  if (!lesson) throw new Error(`Unknown lesson '${submitted.lessonId}'`);
+  if (!lesson) {
+    throw new LearningValidationError("UNKNOWN_LESSON", `Unknown lesson '${submitted.lessonId}'`);
+  }
   const moduleMeta = getModuleById(lesson.moduleId);
-  if (!moduleMeta) throw new Error(`Unknown module '${lesson.moduleId}'`);
+  if (!moduleMeta) {
+    throw new LearningValidationError("UNKNOWN_MODULE", `Unknown module '${lesson.moduleId}'`);
+  }
+  const results = validateLessonResults(lesson, submitted.results);
+  const totalDurationMs = flattenExerciseResults(results).reduce(
+    (total, item) => total + item.durationMs,
+    0
+  );
 
   return createLessonAttempt({
     id: submitted.id,
@@ -34,11 +46,11 @@ function authoritativeAttempt(event: Extract<SyncEvent, { type: "lesson_attempt"
     lessonId: lesson.lessonId,
     moduleId: lesson.moduleId,
     level: lesson.level,
-    results: submitted.results,
-    totalDurationMs: submitted.totalDurationMs,
+    results,
+    totalDurationMs,
     startedAt: submitted.startedAt,
     finishedAt: submitted.finishedAt,
-    completed: submitted.completed,
+    completed: true,
     requiredScore: moduleMeta.requiredScore ?? 70,
     requiresProductive: lesson.requiresProductive ?? moduleMeta.requiresProductive,
     requiredExerciseGroups: lesson.requiredExerciseGroups,
@@ -104,27 +116,6 @@ async function writeEvent(
     return;
   }
 
-  if (event.type === "exercise_result") {
-    const { error } = await client.from("exercise_results").upsert(
-      {
-        user_id: userId,
-        attempt_id: event.payload.attemptId,
-        exercise_id: event.payload.exerciseId,
-        exercise_type: event.payload.exerciseType,
-        item_id: event.payload.itemId,
-        status: event.payload.status,
-        is_passing: event.payload.status === "correct" || event.payload.status === "typo",
-        duration_ms: event.payload.durationMs,
-        vocabulary_id: event.payload.vocabularyId,
-        client_event_id: event.id,
-        device_id: event.deviceId,
-      },
-      { onConflict: "user_id,client_event_id" }
-    );
-    if (error) throw new Error(error.message);
-    return;
-  }
-
   const { error } = await client.from("user_progress").upsert(
     {
       user_id: userId,
@@ -147,9 +138,15 @@ export async function persistSyncEvents(
       await writeEvent(client, userId, event);
       result.processed.push(event.id);
     } catch (error) {
+      logError("sync.event_rejected", error, {
+        eventId: event.id,
+        eventType: event.type,
+        deviceId: event.deviceId,
+      });
       result.failed.push({
         id: event.id,
         error: error instanceof Error ? error.message : "Unknown sync error",
+        code: error instanceof LearningValidationError ? error.code : undefined,
       });
     }
   }

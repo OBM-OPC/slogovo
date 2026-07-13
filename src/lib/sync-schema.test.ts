@@ -47,4 +47,24 @@ describe("sync payload schema", () => {
       })
     ).toThrow();
   });
+
+  it("rejects unaudited standalone exercise-result mutations", () => {
+    expect(() => parseSyncBatch({
+      events: [{
+        id: "device-a:event-2",
+        deviceId: "device-a",
+        type: "exercise_result",
+        userId: "user-1",
+        timestamp: "2026-07-13T10:00:00.000Z",
+        payload: {
+          attemptId: "00000000-0000-4000-8000-000000000001",
+          exerciseId: "exercise-1",
+          exerciseType: "quiz",
+          itemId: "item-1",
+          status: "correct",
+          durationMs: 1000,
+        },
+      }],
+    })).toThrow();
+  });
 });

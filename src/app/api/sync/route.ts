@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { ZodError } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { parseSyncBatch } from "@/lib/sync-schema";
-import { persistSyncEvents, type SyncDatabaseClient } from "@/lib/sync-server";
+import { persistSyncEvents } from "@/lib/sync-server";
+import { logError } from "@/lib/structured-log";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +17,7 @@ export async function POST(request: Request) {
 
     const events = parseSyncBatch(await request.json());
     const result = await persistSyncEvents(
-      supabase as unknown as SyncDatabaseClient,
+      supabase,
       user.id,
       events
     );
@@ -28,6 +29,7 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
+    logError("sync.request_failed", error);
     return NextResponse.json(
       { error: "Synchronisation fehlgeschlagen" },
       { status: 500 }

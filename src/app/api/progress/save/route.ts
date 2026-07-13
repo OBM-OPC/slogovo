@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
+import { ZodError } from "zod";
 import { createClient } from "@/lib/supabase/server";
-import { UserProgress } from "@/types";
 import { mergeProgress } from "@/lib/progress-merge";
 import { progressToRow, rowToProgress } from "@/lib/progress-serialization";
+import { parseUserProgress } from "@/lib/progress-schema";
 
 export const dynamic = "force-dynamic";
 
@@ -15,8 +16,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Nicht authentifiziert" }, { status: 401 });
     }
 
-    const body = (await request.json()) as { progress?: UserProgress };
-    const progress = body.progress;
+    const body = (await request.json()) as { progress?: unknown };
+    const progress = parseUserProgress(body.progress);
 
     if (!progress || progress.userId !== user.id) {
       return NextResponse.json({ error: "Ungültige Daten" }, { status: 400 });
@@ -55,6 +56,12 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true, progress: merged }, { status: 200 });
   } catch (error) {
+    if (error instanceof ZodError) {
+      return NextResponse.json(
+        { error: "Ungültige Fortschrittsdaten", issues: error.issues },
+        { status: 400 }
+      );
+    }
     const message = error instanceof Error ? error.message : String(error);
     return NextResponse.json(
       { error: "Ein Fehler ist aufgetreten", details: message },

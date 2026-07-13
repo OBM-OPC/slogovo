@@ -126,6 +126,10 @@ export interface VocabularyProgress {
   lastReviewed?: string;
   intervalIndex: number; // 0,1,2,3,4 → 1,3,7,14,30 days
   easeFactor?: number; // Anki-style ease factor
+  recognitionCorrect?: number;
+  recognitionTotal?: number;
+  productionCorrect?: number;
+  productionTotal?: number;
 }
 
 export type DailyGoal = "light" | "medium" | "intense";

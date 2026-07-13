@@ -2,7 +2,32 @@ import { describe, expect, it, vi } from "vitest";
 import { createLessonAttempt } from "./lesson-attempts";
 import { persistSyncEvents, type SyncDatabaseClient } from "./sync-server";
 import { addEvent, addLessonAttemptEvent, clearQueue } from "./sync-queue";
-import { makeExerciseResult } from "@/test/learning-fixtures";
+import { buildExerciseItemResult, buildExerciseResult } from "./evaluation";
+import type { ExerciseType } from "@/types";
+
+function forgedCorrectResult(
+  exerciseId: string,
+  exerciseType: ExerciseType,
+  itemIds: string[]
+) {
+  const startedAt = "2026-07-13T10:00:00.000Z";
+  return buildExerciseResult({
+    exerciseId,
+    exerciseType,
+    startedAt,
+    completedAt: "2026-07-13T10:00:05.000Z",
+    itemResults: itemIds.map((itemId) => buildExerciseItemResult({
+      itemId,
+      userAnswer: "forged wrong answer",
+      acceptedAnswers: ["forged wrong answer"],
+      status: "correct",
+      durationMs: 1000,
+      startedAt,
+      completedAt: "2026-07-13T10:00:01.000Z",
+      attemptNumber: 1,
+    })),
+  });
+}
 
 function database(rows: Map<string, Record<string, unknown>>): SyncDatabaseClient {
   return {
@@ -25,7 +50,10 @@ describe("server-side sync", () => {
       lessonId: "a1-modul-1-lektion-1",
       moduleId: "a1-modul-1",
       level: "A1",
-      results: [makeExerciseResult(["wrong", "wrong"], { exerciseId: "m1l1-ex1" })],
+      results: [
+        forgedCorrectResult("m1l1-ex1", "quiz", ["q1", "q2"]),
+        forgedCorrectResult("m1l1-ex2", "matching", ["p1", "p2", "p3", "p4"]),
+      ],
       totalDurationMs: 12_000,
       startedAt: "2026-07-13T10:00:00.000Z",
       completed: true,
@@ -50,6 +78,7 @@ describe("server-side sync", () => {
       score: 0,
       accuracy: 0,
       xp_earned: 0,
+      total_duration_ms: 6000,
     });
   });
 

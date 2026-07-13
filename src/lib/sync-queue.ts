@@ -1,6 +1,5 @@
 export type SyncEventType =
   | "lesson_attempt"
-  | "exercise_result"
   | "vocabulary_review"
   | "settings_changed";
 
@@ -22,19 +21,6 @@ export interface LessonAttemptEvent extends BaseSyncEvent {
   };
 }
 
-export interface ExerciseResultEvent extends BaseSyncEvent {
-  type: "exercise_result";
-  payload: {
-    attemptId: string;
-    exerciseId: string;
-    exerciseType: string;
-    itemId: string;
-    status: string;
-    durationMs: number;
-    vocabularyId?: string;
-  };
-}
-
 export interface VocabularyReviewEvent extends BaseSyncEvent {
   type: "vocabulary_review";
   payload: {
@@ -53,7 +39,6 @@ export interface SettingsChangedEvent extends BaseSyncEvent {
 
 export type SyncEvent =
   | LessonAttemptEvent
-  | ExerciseResultEvent
   | VocabularyReviewEvent
   | SettingsChangedEvent;
 

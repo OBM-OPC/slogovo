@@ -13,10 +13,10 @@ export interface MasteryTracking {
 
 export function getMasteryTracking(progress: VocabularyProgress): MasteryTracking {
   return {
-    recognitionCorrect: (progress as unknown as Record<string, number>).recognitionCorrect ?? 0,
-    recognitionTotal: (progress as unknown as Record<string, number>).recognitionTotal ?? 0,
-    productionCorrect: (progress as unknown as Record<string, number>).productionCorrect ?? 0,
-    productionTotal: (progress as unknown as Record<string, number>).productionTotal ?? 0,
+    recognitionCorrect: progress.recognitionCorrect ?? 0,
+    recognitionTotal: progress.recognitionTotal ?? 0,
+    productionCorrect: progress.productionCorrect ?? 0,
+    productionTotal: progress.productionTotal ?? 0,
   };
 }
 
@@ -29,7 +29,7 @@ export function recordRecognitionAttempt(
     ...progress,
     recognitionCorrect: current.recognitionCorrect + (correct ? 1 : 0),
     recognitionTotal: current.recognitionTotal + 1,
-  } as VocabularyProgress;
+  };
 }
 
 export function recordProductionAttempt(
@@ -41,7 +41,7 @@ export function recordProductionAttempt(
     ...progress,
     productionCorrect: current.productionCorrect + (correct ? 1 : 0),
     productionTotal: current.productionTotal + 1,
-  } as VocabularyProgress;
+  };
 }
 
 export function isProductivelyMastered(progress: VocabularyProgress): boolean {
