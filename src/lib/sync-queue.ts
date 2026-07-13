@@ -26,6 +26,7 @@ export interface VocabularyReviewEvent extends BaseSyncEvent {
   payload: {
     wordId: string;
     rating: string;
+    mode?: "recognition" | "production";
     reviewedAt: string;
   };
 }

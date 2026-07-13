@@ -104,6 +104,7 @@ export interface Database {
           user_id: string;
           word_id: string;
           rating: string;
+          practice_mode: string;
           reviewed_at: string;
           client_event_id: string;
           device_id: string;

@@ -13,6 +13,16 @@ test.beforeEach(async ({ request }) => {
   await resetBackend(request);
 });
 
+test("opens the adaptive daily session from the primary learning action", async ({ page }) => {
+  await login(page);
+  await page.getByRole("link", { name: /Heute lernen/ }).click();
+
+  await expect(page).toHaveURL(/\/heute-lernen$/);
+  await expect(page.getByRole("heading", { name: "Heute lernen" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Session starten" })).toBeEnabled();
+  await expect(page.getByText("Adaptive Session")).toBeVisible();
+});
+
 test("starts a lesson, retries one failed item, passes, syncs, and restores on another device", async ({ page, browser, request }) => {
   await login(page);
   await openFirstLesson(page);
@@ -43,7 +53,7 @@ test("starts a lesson, retries one failed item, passes, syncs, and restores on a
 
   const secondDevice = await browser.newContext();
   const secondPage = await loginInContext(secondDevice);
-  await expect(secondPage.getByText("Sich vorstellen", { exact: true })).toBeVisible();
+  await expect(secondPage.getByRole("link", { name: /Hallo & Abschiede 1\/5/ })).toBeVisible();
   await secondDevice.close();
 });
 

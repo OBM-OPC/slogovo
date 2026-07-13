@@ -143,7 +143,7 @@ export function TypingExercise({ words, mode, onExit }: TypingExerciseProps) {
   };
 
   const handleDifficulty = (rating: DifficultyRating) => {
-    reviewVocabularyWithDifficulty(word.id, rating);
+    reviewVocabularyWithDifficulty(word.id, rating, "production");
     setTypedToday((prev) => ({ ...prev, [word.id]: (prev[word.id] || 0) + 1 }));
     if (rating === "repeat" && typedToday[word.id] === 0) {
       setQueue((q) => [...q, word]);

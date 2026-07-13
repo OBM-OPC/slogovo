@@ -70,6 +70,7 @@ async function writeEvent(
         user_id: userId,
         word_id: event.payload.wordId,
         rating: event.payload.rating,
+        practice_mode: event.payload.mode ?? "recognition",
         reviewed_at: event.payload.reviewedAt,
         client_event_id: event.id,
         device_id: event.deviceId,

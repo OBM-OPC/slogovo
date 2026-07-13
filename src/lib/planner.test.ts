@@ -60,4 +60,72 @@ describe("buildDailyPlan", () => {
     expect(plan.estimatedMinutes).toBeGreaterThan(0);
     expect(plan.estimatedMinutes).toBeLessThanOrEqual(5);
   });
+
+  it("uses separate recognition and production evidence to choose recall mode", () => {
+    const words = [word("w1", "Ja", "да"), word("w2", "Nein", "не")];
+    const progress = {
+      w1: {
+        status: "review" as const,
+        nextReview: "2026-01-01",
+        timesCorrect: 0,
+        timesWrong: 0,
+        intervalIndex: 1,
+        recognitionCorrect: 3,
+        recognitionTotal: 3,
+        productionCorrect: 0,
+        productionTotal: 0,
+      },
+      w2: {
+        status: "review" as const,
+        nextReview: "2026-01-01",
+        timesCorrect: 10,
+        timesWrong: 0,
+        intervalIndex: 1,
+        recognitionCorrect: 1,
+        recognitionTotal: 3,
+        productionCorrect: 0,
+        productionTotal: 0,
+      },
+    };
+
+    const plan = buildDailyPlan(words, progress);
+    expect(plan.reviewItems.find((item) => item.wordId === "w1")?.mode).toBe("production");
+    expect(plan.reviewItems.find((item) => item.wordId === "w2")?.mode).toBe("recognition");
+  });
+
+  it("includes recent material and grammar weaknesses in the bounded session", () => {
+    const words = [word("w1", "Ja", "да"), word("w2", "Nein", "не")];
+    const progress = {
+      w1: {
+        status: "review" as const,
+        nextReview: "2099-01-01",
+        lastReviewed: "2026-07-12",
+        timesCorrect: 2,
+        timesWrong: 0,
+        intervalIndex: 1,
+      },
+    };
+    const plan = buildDailyPlan(words, progress, [], {
+      availableMinutes: 5,
+      recentWordIds: ["w1"],
+      grammarWeaknesses: [{ id: "grammar-1", title: "съм", href: "/grammatik/verb-sein" }],
+    });
+
+    expect(plan.recentItems.map((item) => item.wordId)).toContain("w1");
+    expect(plan.grammarItems).toEqual([
+      expect.objectContaining({ grammarId: "grammar-1", source: "grammar" }),
+    ]);
+    expect(plan.sessionItems).toContainEqual(expect.objectContaining({ source: "grammar" }));
+    expect(plan.sessionItems.length).toBeLessThanOrEqual(10);
+  });
+
+  it("reserves optional speaking work without making it a Phase 6 default", () => {
+    const words = [word("w1", "Ja", "да")];
+    expect(buildDailyPlan(words, {}).speakingItems).toEqual([]);
+    const speakingPlan = buildDailyPlan(words, {}, [], { includeSpeaking: true });
+    expect(speakingPlan.speakingItems)
+      .toEqual([expect.objectContaining({ wordId: "w1", source: "speaking", mode: "production" })]);
+    expect(speakingPlan.sessionItems)
+      .toContainEqual(expect.objectContaining({ wordId: "w1", source: "speaking" }));
+  });
 });

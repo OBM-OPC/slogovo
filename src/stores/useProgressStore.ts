@@ -20,6 +20,7 @@ import { getLessonsByModule } from "@/lib/content";
 import { enableAutoSync, processSyncQueue, scheduleSync } from "@/lib/sync";
 import { addEvent, addLessonAttemptEvent } from "@/lib/sync-queue";
 import { mergeProgress } from "@/lib/progress-merge";
+import { recordProductionAttempt, recordRecognitionAttempt } from "@/lib/mastery-tracking";
 
 interface ProgressState {
   progress: UserProgress | null;
@@ -30,7 +31,11 @@ interface ProgressState {
   recordLessonAttempt: (attempt: LessonAttempt, vocabulary?: number) => Promise<void>;
   completeModule: (moduleId: string) => Promise<void>;
   reviewVocabulary: (wordId: string, known: boolean) => Promise<void>;
-  reviewVocabularyWithDifficulty: (wordId: string, rating: DifficultyRating) => Promise<void>;
+  reviewVocabularyWithDifficulty: (
+    wordId: string,
+    rating: DifficultyRating,
+    mode?: "recognition" | "production"
+  ) => Promise<void>;
   addStudyTime: (minutes: number, vocabulary?: number) => Promise<void>;
   updateSettings: (settings: Partial<UserProgress["settings"]>) => Promise<void>;
   unlockAchievement: (achievementId: string) => Promise<void>;
@@ -224,7 +229,7 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
     }
   },
 
-  reviewVocabularyWithDifficulty: async (wordId: string, rating: DifficultyRating) => {
+  reviewVocabularyWithDifficulty: async (wordId, rating, mode = "recognition") => {
     const state = get();
     if (!state.progress) return;
 
@@ -236,11 +241,15 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
       easeFactor: 2.5,
     };
 
+    const reviewed = reviewWordWithDifficulty(existing, rating);
+    const tracked = mode === "production"
+      ? recordProductionAttempt(reviewed, rating !== "repeat")
+      : recordRecognitionAttempt(reviewed, rating !== "repeat");
     const updated = {
       ...state.progress,
       vocabularyProgress: {
         ...state.progress.vocabularyProgress,
-        [wordId]: reviewWordWithDifficulty(existing, rating),
+        [wordId]: tracked,
       },
     };
 
@@ -256,6 +265,7 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
         payload: {
           wordId,
           rating,
+          mode,
           reviewedAt: new Date().toISOString(),
         },
       });

@@ -98,6 +98,7 @@ const syncEventSchema = z.discriminatedUnion("type", [
     payload: z.object({
       wordId: z.string().min(1),
       rating: z.enum(["repeat", "hard", "good", "easy"]),
+      mode: z.enum(["recognition", "production"]).optional(),
       reviewedAt: timestampSchema,
     }),
   }),

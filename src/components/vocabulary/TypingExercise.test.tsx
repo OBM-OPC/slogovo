@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { TypingExercise } from "./TypingExercise";
 
 const mocks = vi.hoisted(() => ({ review: vi.fn() }));
@@ -19,6 +19,10 @@ vi.mock("@/lib/haptics", () => ({ vibrateCorrect: vi.fn(), vibrateWrong: vi.fn()
 vi.mock("@/lib/confetti", () => ({ triggerConfetti: vi.fn() }));
 
 describe("TypingExercise", () => {
+  beforeEach(() => {
+    mocks.review.mockReset();
+  });
+
   it("shows shared typo feedback instead of local exact-match feedback", () => {
     render(
       <TypingExercise
@@ -34,5 +38,22 @@ describe("TypingExercise", () => {
 
     expect(screen.getByText(/Fast richtig/)).toBeTruthy();
     expect(screen.getByText(/Schreibweise: здравей/)).toBeTruthy();
+  });
+
+  it("records typed recall as production practice", () => {
+    render(
+      <TypingExercise
+        words={[{ id: "word-1", de: "Hallo", bg: "здравей", bgLatin: "zdravey" }]}
+        mode="type"
+      />
+    );
+
+    fireEvent.change(screen.getByPlaceholderText("Bulgarische Übersetzung eingeben"), {
+      target: { value: "здравей" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Prüfen" }));
+    fireEvent.click(screen.getByRole("button", { name: "Gut" }));
+
+    expect(mocks.review).toHaveBeenCalledWith("word-1", "good", "production");
   });
 });

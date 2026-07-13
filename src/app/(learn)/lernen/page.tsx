@@ -63,18 +63,9 @@ function ContinueButton() {
     (l) => !progress.completedLessons.includes(l.lessonId)
   );
 
-  if (!next) {
-    return (
-      <div className="mb-8 rounded-3xl bg-primary-50 p-6 text-center shadow-card">
-        <p className="text-lg font-serif font-bold text-primary">🎉 Всички уроци са завършени!</p>
-        <p className="mt-1 text-sm text-muted">Alle Lektionen abgeschlossen</p>
-      </div>
-    );
-  }
-
   return (
     <Link
-      href={`/kurs/${next.moduleId}/${next.lessonId}/`}
+      href="/heute-lernen"
       className="group mb-8 block"
     >
       <div className="relative overflow-hidden rounded-3xl bg-primary p-6 shadow-card transition-all duration-300 hover:shadow-card-hover hover:scale-[1.01]">
@@ -85,12 +76,13 @@ function ContinueButton() {
             <Play className="h-6 w-6 text-white" />
           </div>
           <div className="flex-1">
-            <p className="text-sm font-medium text-white/70">Продължи да учиш</p>
-            <p className="text-lg font-serif font-bold text-white">{next.title}</p>
+            <p className="text-sm font-medium text-white/70">Твоята дневна сесия</p>
+            <p className="text-lg font-serif font-bold text-white">Heute lernen</p>
+            <p className="text-xs text-white/70">{next ? `Mit ${next.title} und fälligen Wiederholungen` : "Wiederholen und Wissen festigen"}</p>
           </div>
           <div className="flex flex-col items-end gap-1">
             <span className="rounded-full bg-white/15 px-3 py-1 text-xs font-medium text-white">
-              {next.duration}
+              {progress.settings.dailyGoal === "light" ? "5 min" : progress.settings.dailyGoal === "intense" ? "30 min" : "15 min"}
             </span>
             <ChevronRight className="h-5 w-5 text-white/50" />
           </div>

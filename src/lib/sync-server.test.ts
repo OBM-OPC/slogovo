@@ -92,6 +92,7 @@ describe("server-side sync", () => {
         payload: {
           wordId: "word-1",
           rating: "good",
+          mode: "production",
           reviewedAt: "2026-07-13T10:00:00.000Z",
         },
       },
@@ -107,6 +108,7 @@ describe("server-side sync", () => {
     expect(rows.get("vocabulary_review_events:device-a:event-1")).toMatchObject({
       word_id: "word-1",
       rating: "good",
+      practice_mode: "production",
     });
   });
 

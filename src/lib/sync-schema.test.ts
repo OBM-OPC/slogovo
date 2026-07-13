@@ -17,13 +17,18 @@ describe("sync payload schema", () => {
             payload: {
               wordId: "word-1",
               rating: "good",
+              mode: "production",
               reviewedAt: "2026-07-13T10:00:00.000Z",
             },
           },
         ],
       })
     ).toEqual([
-      expect.objectContaining({ id: "device-a:event-1", type: "vocabulary_review" }),
+      expect.objectContaining({
+        id: "device-a:event-1",
+        type: "vocabulary_review",
+        payload: expect.objectContaining({ mode: "production" }),
+      }),
     ]);
   });
 

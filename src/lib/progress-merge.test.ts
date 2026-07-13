@@ -62,6 +62,46 @@ describe("mergeProgress", () => {
     expect(merged.vocabularyProgress.w2).toBeDefined();
   });
 
+  it("preserves separate recognition and production counters across devices", () => {
+    const local = {
+      ...baseProgress("u1"),
+      vocabularyProgress: {
+        w1: {
+          status: "review" as const,
+          timesCorrect: 4,
+          timesWrong: 0,
+          intervalIndex: 2,
+          recognitionCorrect: 4,
+          recognitionTotal: 4,
+          productionCorrect: 0,
+          productionTotal: 0,
+        },
+      },
+    };
+    const remote = {
+      ...baseProgress("u1"),
+      vocabularyProgress: {
+        w1: {
+          status: "review" as const,
+          timesCorrect: 3,
+          timesWrong: 1,
+          intervalIndex: 1,
+          recognitionCorrect: 1,
+          recognitionTotal: 2,
+          productionCorrect: 2,
+          productionTotal: 3,
+        },
+      },
+    };
+
+    expect(mergeProgress(local, remote).vocabularyProgress.w1).toMatchObject({
+      recognitionCorrect: 4,
+      recognitionTotal: 4,
+      productionCorrect: 2,
+      productionTotal: 3,
+    });
+  });
+
   it("does not drop progress from a device with fewer completed lessons", () => {
     const local = { ...baseProgress("u1"), completedLessons: ["l1"] };
     const remote = { ...baseProgress("u1"), completedLessons: ["l1", "l2", "l3"] };

@@ -28,7 +28,14 @@ export function mergeProgress(local: UserProgress, remote: UserProgress): UserPr
       (localReview.intervalIndex ?? 0) * 10 + localReview.timesCorrect;
     const remoteStrength =
       (remoteReview.intervalIndex ?? 0) * 10 + remoteReview.timesCorrect;
-    vocabularyProgress[wordId] = localStrength >= remoteStrength ? localReview : remoteReview;
+    const stronger = localStrength >= remoteStrength ? localReview : remoteReview;
+    vocabularyProgress[wordId] = {
+      ...stronger,
+      recognitionCorrect: Math.max(localReview.recognitionCorrect ?? 0, remoteReview.recognitionCorrect ?? 0),
+      recognitionTotal: Math.max(localReview.recognitionTotal ?? 0, remoteReview.recognitionTotal ?? 0),
+      productionCorrect: Math.max(localReview.productionCorrect ?? 0, remoteReview.productionCorrect ?? 0),
+      productionTotal: Math.max(localReview.productionTotal ?? 0, remoteReview.productionTotal ?? 0),
+    };
   }
 
   const dailyStats = { ...remote.dailyStats };
