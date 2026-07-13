@@ -1,12 +1,12 @@
 # Slogovo controlled-development status
 
-Last updated: 2026-07-13 18:15 UTC
+Last updated: 2026-07-13 18:52 UTC
 
 ## Complete-backlog program
 
 - Current branch: `feat/complete-slogovo-backlog`
 - Base commit: `29bcf6a11fb39e86786327ef722ac9ee14e8a019`
-- Current implementation commit: `bfbb978` (`docs: consolidate Phase 1 and 2 audit`); preceding content/testing/database/architecture/evaluation/sync/auth commits: `0159173`, `7773e65`, `f8a804e`, `82bdded`, `d46feec`, `f7edc1d`, and `124c231`.
+- Current implementation commit: `90a7bf9` (`feat: complete listening and speaking foundation`); adaptive daily learning commit: `799541b`; earlier content/testing/database/architecture/evaluation/sync/auth commits remain on this branch.
 - Draft pull request: #97, `feat/complete-slogovo-backlog` to `main`.
 - GitHub state at restart: exactly the Draft PR and backlog branch above plus `main`; PR CI run `29265699487` passed on the prior remote head `6b3ed5e`; latest `main` CI run `29264112422` passed.
 - Concurrent-run state: the legacy 45-minute single-milestone worker is disabled; no second worktree, Git lock, implementation process, branch, or pull request exists.
@@ -24,9 +24,9 @@ Last updated: 2026-07-13 18:15 UTC
 | P2 | #67 Migration rules and database type workflow | Closed complete | Documented additive migration, staging, type-generation, backfill, RLS, recovery, and owner-only production rules; added `validate:database` and CI enforcement for ordering, destructive markers, public-table RLS, and generated table/column types. |
 | P2 | #65 Full automated testing strategy | Closed complete | Added Playwright, an isolated Supabase-compatible E2E fixture, seven auth/session/lesson/review/sync/restore journeys, direct quiz/sentence-builder/retry component coverage, author documentation, and the CI browser gate. |
 | P2 | #66 Course content quality report | Closed complete | Added an author-facing inventory and exact file/ID findings for untested vocabulary, missing authored audio, accepted-answer gaps, unsupported types, duplicate stable IDs, grammar gaps, and lessons without productive exercises; the report runs standalone and in content validation/build. |
-| P2 | #33 Adaptive daily learning session | Partially implemented | UI-independent planner tests exist, but the dashboard does not expose a complete authoritative “Heute lernen” flow and recognition/production mastery inputs are incomplete. |
-| P2 | #34 Listening and pronunciation | Partially implemented | Five listening formats render with structured scoring, keyboard input, audio errors, native/TTS fallback. Slow/reveal controls, cache/offline coexistence, real production content, replay telemetry, and usable speaking flow remain. |
-| P2 | #69 Privacy-conscious analytics and monitoring | Open | Sync events cover some learning actions, but no documented privacy-reviewed analytics schema or complete error/event monitoring pipeline exists. External paid monitoring remains optional and must not be enabled automatically. |
+| P2 | #33 Adaptive daily learning session | Closed complete | Added the primary “Heute lernen” flow, bounded UI-independent planner, backlog-aware new-item cap, overdue/mistake/recent/grammar/listening/productive/speaking sources, and separately synchronized recognition/production mastery. |
+| P2 | #34 Listening and pronunciation | Closed complete | All five listening formats render and score; normal/slow, cache/native/offline/TTS source selection, bounded hints, visible failure/source states, duplicate-token reorder, daily speaking practice, and explicitly non-scored transcript matching are implemented and verified. |
+| P2 | #69 Privacy-conscious analytics and monitoring | In progress | First-party identity-free schemas, storage migration, lifecycle instrumentation, controlled monitoring signals, and a privacy review are implemented locally; full validation, remote checks, and issue completion remain. External paid monitoring is not enabled. |
 | P3 | #61 Product navigation areas | Open | Current navigation exposes overlapping course/dashboard/settings paths and lacks the requested Lernen/Wiederholen/Sprechen/Fehler/Wortschatz/Fortschritt product model. |
 | P3 | #62 Lesson interface/mobile/accessibility | Partially implemented | Keyboard handling and some live states exist. Complete mobile ergonomics, Bulgarian input assistance, loading/empty/recovery states, screen-reader labels, focus behavior, and reduced-motion coverage remain. |
 | P3 | #63 Gamification based on learning metrics | Partially implemented | Attempts now use real score/time and anti-click-through gates, but achievement/XP/streak rules and UI still need an explicit anti-farming real-learning model. |
@@ -46,8 +46,8 @@ No issue is currently classified as duplicate or obsolete. Potential owner block
 
 ### Current work
 
-- Current issue: #33 adaptive daily learning session.
-- Completed and closed issues: #30, #31, #32, #65, #66, #67, #68, #70, and #71.
+- Current issue: #69 privacy-conscious learning analytics and monitoring.
+- Completed and closed issues: #30, #31, #32, #33, #34, #65, #66, #67, #68, #70, and #71.
 - Completed in this run: restarted from the interrupted working tree without discarding changes; repeated repository/GitHub/CI/concurrency preflight; re-inspected all 17 open issue bodies; finished the Phase 4 auth increment in commit `124c231`; finished the Phase 5 synchronization increment in commit `f7edc1d`.
 - Phase 4 details: Supabase SSR remains the only session authority; refresh tokens stay in HTTP-only Supabase cookies; custom mirrored auth cookies and direct browser auth calls were removed; protected routes/APIs verify `getUser`; RLS coverage for attempts, results, review/activity/offline history, aggregate settings, and achievements is enforced by migrations and schema-contract tests; security/API documentation was corrected.
 - Phase 5 details: browser queue writes now go through authenticated `/api/sync`; incoming batches are schema-bounded; lesson outcome fields are recalculated on the server; progress saves merge with the current server row; camel-case API progress no longer resets during deserialization; stable device/event IDs are persisted; failed events remain queued; browser reconnect retries events and the aggregate snapshot; duplicate and two-device review events remain distinct and idempotent.
@@ -58,11 +58,13 @@ No issue is currently classified as duplicate or obsolete. Potential owner block
 - Automated-testing details: Playwright now runs against an in-memory Supabase-compatible auth/PostgREST service with no deployed credentials. Seven browser journeys cover registration, login, HttpOnly cookies, session expiry, route protection, logout, lesson start/pass/fail/alternative retry, due vocabulary review, event sync, and clean-context progress restore. Added direct quiz, sentence-builder, and `LessonView` retry component tests, fixed form label associations discovered by accessibility-first locators, documented the three-layer strategy, and added Playwright to CI.
 - Content-quality details: `npm run content:report` and `validate:content` now report 12 modules, 60 lessons, 554 vocabulary items, and 315 exercise items with author-readable file/ID findings. The current baseline exposes 299 untested vocabulary items, 554 items without authored audio, and 37 lessons without productive exercises; accepted-answer, supported-type, duplicate-ID, and grammar-explanation checks currently report zero gaps. Coverage definitions and native-review rules are documented in `docs/content-guidelines.md`.
 - Phase 1/2 audit details: `docs/phase-1-2-audit.md` now traces the pre-foundation correctness loss (`onComplete()` without results, block-count scoring, unconditional completion/fixed study credit) through the current structured client result, alternative retry, calculated attempt, merge-safe aggregate, authenticated sync, content-backed server replay, and idempotent granular persistence flow. It maps every score/pass/mastery/XP/time/streak owner, supported/unsupported types, current content gaps, implemented models, all seven migrations, and exact automated evidence.
+- Phase 6 details: `/lernen` now leads to a single adaptive daily sequence; the pure planner prioritizes overdue, failed/weak, recent, grammar, limited new, listening, productive, and speaking work, caps new items under large review backlogs, and uses separately recorded recognition/production mastery. Commit `799541b`; GitHub Actions `29274674819` and Vercel passed.
+- Phase 7 details: the listening engine supports select, type, dictation, duplicate-safe reorder, and audio-only comprehension; playback supports normal/slow authored audio, Cache Storage, offline fallback, and TTS with visible state and bounded hints. Daily speaking is a transparent self-review, and transcript matching explicitly records pronunciation as not evaluated. Commit `90a7bf9`; GitHub Actions `29275480138` and Vercel passed.
 - Blocked issues: none yet.
 - Commands run at restart: Git status/log/worktree/branch/lock/process inspection; OpenClaw cron inspection; GitHub REST inspection of all remote branches, the open Draft PR, all 17 issue bodies, reviews, and recent Actions; auth/sync source, store, migration, schema, and test audits; focused Vitest runs; full validation; `git diff --check`; logical commits.
-- Validation on `bfbb978`: focused Phase 1/2 verification passed for 8 files / 44 tests plus content validation; `git diff --check` passed. GitHub Actions run `29273384812` (full type/lint/database/156-test/Playwright/content/build gate) and Vercel passed.
-- Vercel: preview deployment passed on `bfbb978`; no setting or deployment action performed in this run.
-- Supabase: added local additive migrations for sync device IDs and rich answer feedback status and updated generated-style types; no production migration, data, environment, or secret action performed.
+- Validation on `90a7bf9`: type-check, 42 files / 170 tests, 8 migration checks, content validation (0 errors/warnings), 100-page production build, Playwright 8/8, GitHub Actions `29275480138`, and Vercel passed.
+- Vercel: preview deployments passed through `90a7bf9`; no setting or manual deployment action performed.
+- Supabase: local additive migrations and generated-style types now cover sync history, recognition/production practice mode, and the pending privacy-safe telemetry table; no production migration, data, environment, or secret action performed.
 - Owner decisions required: none at present.
 
 ---
