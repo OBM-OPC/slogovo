@@ -14,6 +14,7 @@
     "test:e2e": "playwright test",
     "e2e:server": "tsx scripts/e2e-server.ts",
     "validate:content": "tsx scripts/validate-content.ts",
+    "content:report": "tsx scripts/content-report.ts",
     "validate:database": "tsx scripts/validate-database.ts",
     "validate-content": "npm run validate:content"
   },

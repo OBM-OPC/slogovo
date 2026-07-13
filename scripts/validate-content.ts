@@ -1,4 +1,5 @@
 import { getAllGrammarTopics, getAllModules, getLessonsByModule } from "@/lib/content";
+import { buildContentQualityReport, renderContentQualityReport } from "@/lib/content-quality";
 import { loadContentInventory, validateRegistryDrift } from "@/lib/content-inventory";
 import { reportIssues, validateGrammarTopics, validateModules } from "@/lib/content-validation";
 
@@ -16,6 +17,7 @@ async function main() {
     ...validateGrammarTopics(registeredGrammarTopics),
   ];
   const { errors, warnings, text } = reportIssues(issues);
+  const qualityReport = buildContentQualityReport(filesystemModules, filesystemLessons);
 
   if (text) {
     // eslint-disable-next-line no-console
@@ -25,6 +27,8 @@ async function main() {
   console.log(
     `\nValidated ${inventory.modules.length} module file(s), ${inventory.lessons.length} lesson file(s), and ${registeredGrammarTopics.length} grammar topic(s): ${errors} error(s), ${warnings} warning(s).`,
   );
+  // eslint-disable-next-line no-console
+  console.log(`\n${renderContentQualityReport(qualityReport)}`);
   process.exit(errors > 0 ? 1 : 0);
 }
 
