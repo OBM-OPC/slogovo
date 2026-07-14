@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useProgressSafe } from "@/hooks/useProgressSafe";
 import { useProgressStore } from "@/stores/useProgressStore";
 import { recommendLearningPath, type OnboardingAnswers } from "@/lib/onboarding";
+import { OnboardingIllustration } from "@/components/brand/Illustrations";
 
 const pathCopy = {
   alphabet: { title: "Kyrillisch zuerst", href: "/alphabet", detail: "Starte mit Buchstaben und Lauten, bevor du in A1 einsteigst." },
@@ -34,9 +35,7 @@ export default function OnboardingPage() {
 
   return (
     <main className="animate-fade-in min-h-screen px-4 py-6 safe-top pb-28">
-      <p className="text-xs font-medium uppercase tracking-widest text-primary">Persönlicher Einstieg</p>
-      <h1 className="mt-1 text-3xl font-serif font-bold">Was passt zu dir?</h1>
-      <p className="mb-6 text-muted">Ein kurzer, unbenoteter Check legt nur deinen Startpunkt fest. Du kannst alles später ändern.</p>
+      <div className="mb-6 flex items-center justify-between gap-3"><div><p className="text-xs font-medium uppercase tracking-widest text-primary">Persönlicher Einstieg</p><h1 className="mt-1 text-3xl font-serif font-bold">Was passt zu dir?</h1><p className="mt-2 text-muted">Ein kurzer, unbenoteter Check legt nur deinen Startpunkt fest. Du kannst alles später ändern.</p></div><OnboardingIllustration className="hidden h-24 w-32 shrink-0 sm:block" /></div>
 
       <div className="space-y-5">
         <Choice label="Kannst du Kyrillisch lesen?" value={answers.knowsCyrillic ? "yes" : "no"} options={[['no','Noch nicht'],['yes','Ja']]} onChange={(value) => setAnswers({ ...answers, knowsCyrillic: value === "yes" })} />

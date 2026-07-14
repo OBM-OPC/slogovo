@@ -15,6 +15,7 @@ import {
   Volume2,
 } from "lucide-react";
 import { BEGINNER_LABEL_BG } from "@/lib/content-copy";
+import { BrandLogo } from "@/components/brand/BrandMark";
 
 const benefits = [
   {
@@ -52,10 +53,7 @@ export default function HomePage() {
     <div className="min-h-screen overflow-x-hidden bg-rose-pattern">
       <header className="sticky top-0 z-50 border-b border-warm-200/70 bg-background/90 backdrop-blur-xl">
         <nav aria-label="Seitennavigation" className="mx-auto flex min-h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
-          <Link href="/" className="inline-flex min-h-11 items-center gap-2 rounded-xl text-primary">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-sm font-bold text-white" aria-hidden="true">С</span>
-            <span className="font-serif text-xl font-bold">Slogovo</span>
-          </Link>
+          <BrandLogo />
           <div className="flex items-center gap-2 sm:gap-4">
             <Link href="/demo" className="hidden min-h-11 items-center px-2 text-sm font-semibold text-primary hover:text-primary-700 sm:inline-flex">Demo testen</Link>
             <Link href="/login" className="inline-flex min-h-11 items-center px-2 text-sm font-medium text-foreground underline-offset-4 hover:underline">Anmelden</Link>
@@ -180,7 +178,7 @@ export default function HomePage() {
       <footer className="border-t border-warm-200 bg-primary-900 text-white">
         <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:grid-cols-[1fr_auto] sm:px-6">
           <div>
-            <p className="font-serif text-xl font-bold">Slogovo</p>
+            <BrandLogo inverse />
             <p className="mt-2 max-w-md text-sm leading-6 text-white/65">Ein klarer, werbefreier Lernweg für Bulgarisch – mit echten Lernmetriken statt künstlichem Fortschritt.</p>
           </div>
           <nav aria-label="Rechtliches" className="flex flex-wrap items-start gap-x-6 gap-y-3 text-sm">
