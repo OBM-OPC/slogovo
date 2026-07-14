@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { initVoices } from "@/lib/tts";
 import { AchievementToast } from "@/components/ui/AchievementToast";
 import { checkAchievements } from "@/lib/achievements";
+import { PrimaryNav } from "./PrimaryNav";
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -42,14 +43,15 @@ export function AppShell({ children }: AppShellProps) {
   }, [progress, unlockAchievement]);
 
   return (
-    <div className="mx-auto min-h-screen max-w-md overflow-x-hidden pb-24 safe-bottom">
+    <div className="min-h-screen overflow-x-hidden bg-background pb-24 safe-bottom md:pb-0">
+      <PrimaryNav />
       {toastAchievements.length > 0 && (
         <AchievementToast
           achievementIds={toastAchievements}
           onClose={() => setToastAchievements([])}
         />
       )}
-      {children}
+      <div className="mx-auto min-h-[calc(100vh-4.5rem)] max-w-md">{children}</div>
     </div>
   );
 }

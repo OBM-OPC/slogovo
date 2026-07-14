@@ -22,11 +22,13 @@ Last updated: 2026-07-14 21:39 UTC
 - #114 verification: focused component tests passed for accessible fields/progress, dialog focus lifecycle, and persistent/action toasts; type-check and lint passed; the Storybook 10.5 production catalog built successfully; high-severity dependency audit passed (the two previously documented moderate Next.js/PostCSS findings remain); `git diff --check` passed.
 - #115 Branding Refresh: added one reusable Cyrillic-inspired logo system, an explicit primary/secondary/neutral/semantic palette, Inter + Lora typography with Cyrillic subsets, custom SVG illustrations for empty states/achievements/onboarding, a ≤4% grid pattern, documented motion and brand rules, global semantic toasts, consistent landing/auth logo use, and branded favicon/PWA manifest/Open Graph assets. Dark mode remains intentionally unimplemented, so no partial inconsistent theme was introduced.
 - #115 verification: five focused branding/design-system tests passed; type-check and lint passed; content validation and a 110-page production build passed, including `/icon.svg`, `/manifest.webmanifest`, and `/opengraph-image`; `git diff --check` passed.
+- #105 Navigation Redesign: replaced the feature-oriented four-tab bar with exactly five product areas—Home, Lernen, Wiederholen, Fortschritt, Profil. Added a branded desktop navigation with an accessible Learn disclosure containing Kurs, Grammatik, Alphabet, and Wortschatz; added an active/current state and a five-item mobile bottom bar with icons, labels, 48px targets, and safe-area support. All old URLs remain intact.
+- #105 verification: two focused navigation tests passed for exact item order, active-page semantics, and Learn children; type-check and lint passed; desktop adaptive-session and narrow-mobile Bulgarian-input Playwright journeys passed; `git diff --check` passed.
 
 ### Current and remaining work
 
-- Current issue: commit, push, and close #115, then continue with the primary product navigation in #105 and the decision-focused dashboard in #104.
-- Remaining Epic issues: #104–#113 and parent #100.
+- Current issue: commit, push, and close #105, then complete the decision-focused dashboard in #104.
+- Remaining Epic issues: #104, #106–#113, and parent #100.
 - Production migrations, secrets, environments, production data, paid services, and manual deployments remain untouched.
 
 Last updated: 2026-07-14 17:42 UTC
