@@ -1,7 +1,7 @@
 "use client";
 
 import { create } from "zustand";
-import { UserProgress, DifficultyRating, LessonAttempt } from "@/types";
+import { UserProgress, DifficultyRating, LessonAttempt, MistakeCategory } from "@/types";
 import {
   loadProgressLocal,
   saveProgressLocal,
@@ -22,6 +22,10 @@ import { addEvent, addLessonAttemptEvent } from "@/lib/sync-queue";
 import { mergeProgress } from "@/lib/progress-merge";
 import { recordProductionAttempt, recordRecognitionAttempt } from "@/lib/mastery-tracking";
 import { trackLearningEvent } from "@/lib/telemetry";
+import { getAllVocabulary as getVocabularyInventory } from "@/lib/content";
+import { classifyVocabularyMistake } from "@/lib/mistake-categories";
+
+const vocabularyById = new Map(getVocabularyInventory().map((word) => [word.id, word]));
 
 interface ProgressState {
   progress: UserProgress | null;
@@ -35,7 +39,8 @@ interface ProgressState {
   reviewVocabularyWithDifficulty: (
     wordId: string,
     rating: DifficultyRating,
-    mode?: "recognition" | "production"
+    mode?: "recognition" | "production",
+    metadata?: { responseTimeMs?: number; errorCategory?: MistakeCategory }
   ) => Promise<void>;
   addStudyTime: (minutes: number, vocabulary?: number) => Promise<void>;
   updateSettings: (settings: Partial<UserProgress["settings"]>) => Promise<void>;
@@ -230,7 +235,7 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
     trackLearningEvent("review_completed", { vocabularyId: wordId, mode: "recognition" });
   },
 
-  reviewVocabularyWithDifficulty: async (wordId, rating, mode = "recognition") => {
+  reviewVocabularyWithDifficulty: async (wordId, rating, mode = "recognition", metadata = {}) => {
     const state = get();
     if (!state.progress) return;
 
@@ -242,7 +247,12 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
       easeFactor: 2.5,
     };
 
-    const reviewed = reviewWordWithDifficulty(existing, rating);
+    const word = vocabularyById.get(wordId);
+    const errorCategory = metadata.errorCategory ?? (word ? classifyVocabularyMistake(word) : "vocabulary");
+    const reviewed = reviewWordWithDifficulty(existing, rating, {
+      responseTimeMs: metadata.responseTimeMs,
+      errorCategory,
+    });
     const tracked = mode === "production"
       ? recordProductionAttempt(reviewed, rating !== "repeat")
       : recordRecognitionAttempt(reviewed, rating !== "repeat");
@@ -267,6 +277,8 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
           wordId,
           rating,
           mode,
+          responseTimeMs: metadata.responseTimeMs,
+          errorCategory: rating === "repeat" ? errorCategory : undefined,
           reviewedAt: new Date().toISOString(),
         },
       });

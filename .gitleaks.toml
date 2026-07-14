@@ -1,0 +1,11 @@
+title = "Slogovo Gitleaks configuration"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Known non-secret password used only by the isolated in-memory E2E fixture"
+regexTarget = "secret"
+regexes = [
+  '''^Test-Passwort-2026$''',
+]

@@ -105,6 +105,8 @@ export interface Database {
           word_id: string;
           rating: string;
           practice_mode: string;
+          response_time_ms: number | null;
+          error_category: string | null;
           reviewed_at: string;
           client_event_id: string;
           device_id: string;
@@ -182,9 +184,31 @@ export interface Database {
         Update: Partial<Database["public"]["Tables"]["telemetry_events"]["Row"]>;
         Relationships: [];
       };
+      request_rate_limits: {
+        Row: {
+          key_hash: string;
+          scope: string;
+          window_started_at: string;
+          request_count: number;
+          updated_at: string;
+        };
+        Insert: Database["public"]["Tables"]["request_rate_limits"]["Row"];
+        Update: Partial<Database["public"]["Tables"]["request_rate_limits"]["Row"]>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Functions: {
+      consume_request_rate_limit: {
+        Args: {
+          p_key_hash: string;
+          p_scope: string;
+          p_limit: number;
+          p_window_seconds: number;
+        };
+        Returns: Array<{ allowed: boolean; remaining: number; retry_after_seconds: number }>;
+      };
+    };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;
   };

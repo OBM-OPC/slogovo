@@ -139,18 +139,46 @@ if (isBrowser()) {
 // ---------------------------------------------------------------------------
 
 let currentAudio: HTMLAudioElement | null = null;
+const TTS_CACHE_NAME = "slogovo-generated-audio-v1";
+
+async function ttsCacheRequest(text: string, speed: number): Promise<Request> {
+  const bytes = new TextEncoder().encode(`${speed}:${text}`);
+  const digest = await crypto.subtle.digest("SHA-256", bytes);
+  const key = [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+  return new Request(`${window.location.origin}/__tts-cache/${key}`);
+}
+
+async function cachedFishResponse(text: string, speed: number): Promise<Response | null> {
+  if (typeof caches === "undefined" || !crypto.subtle) return null;
+  try {
+    const cache = await caches.open(TTS_CACHE_NAME);
+    return (await cache.match(await ttsCacheRequest(text, speed))) ?? null;
+  } catch {
+    return null;
+  }
+}
 
 async function speakWithFish(text: string, progress?: UserProgress): Promise<boolean> {
-  const response = await fetch("/api/tts/fish", {
+  const speed = Math.min(1.1, Math.max(0.75, progress?.settings.speechRate ?? 0.9));
+  const cached = await cachedFishResponse(text, speed);
+  const response = cached ?? await fetch("/api/tts/fish", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       text,
-      speed: progress?.settings.speechRate ?? 0.9,
+      speed,
     }),
   });
 
   if (!response.ok) return false;
+  if (!cached && typeof caches !== "undefined") {
+    try {
+      const cache = await caches.open(TTS_CACHE_NAME);
+      await cache.put(await ttsCacheRequest(text, speed), response.clone());
+    } catch {
+      // Cache Storage is an optimization; playback remains available without it.
+    }
+  }
 
   const blob = await response.blob();
   const url = URL.createObjectURL(blob);

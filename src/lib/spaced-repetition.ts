@@ -5,6 +5,12 @@ export type VocabCategory = "due" | "new" | "learning" | "mastered";
 
 type DifficultyRating = "repeat" | "hard" | "good" | "easy";
 
+interface ReviewContext {
+  reviewedAt?: Date;
+  responseTimeMs?: number;
+  errorCategory?: VocabularyProgress["lastErrorCategory"];
+}
+
 const DEFAULT_EASE_FACTOR = 2.5;
 const MIN_EASE_FACTOR = 1.3;
 
@@ -50,10 +56,20 @@ export function reviewWord(
 
 export function reviewWordWithDifficulty(
   progress: VocabularyProgress,
-  rating: DifficultyRating
+  rating: DifficultyRating,
+  context: ReviewContext = {}
 ): VocabularyProgress {
-  const today = todayISO();
+  const reviewedAt = context.reviewedAt ?? new Date();
+  const today = todayISO(reviewedAt);
   const ease = nextEaseFactor(progress.easeFactor ?? DEFAULT_EASE_FACTOR, rating);
+  const previousStability = progress.stability ?? Math.max(1, progress.intervalIndex || 1);
+  const stability = rating === "repeat"
+    ? Math.max(0.5, previousStability * 0.45)
+    : previousStability * ({ hard: 1.2, good: 1.8, easy: 2.5 } as const)[rating];
+  const difficulty = Math.min(10, Math.max(1, (progress.difficulty ?? 5) + ({ repeat: 1, hard: 0.4, good: -0.2, easy: -0.6 } as const)[rating]));
+  const successfulReviewsSinceMistake = rating === "repeat"
+    ? 0
+    : (progress.successfulReviewsSinceMistake ?? 0) + 1;
   let nextInterval: number;
 
   if (rating === "repeat") {
@@ -95,6 +111,18 @@ export function reviewWordWithDifficulty(
     intervalIndex: SPACED_REPETITION_INTERVALS.findIndex((i) => i >= nextInterval),
     nextReview: addDays(today, nextInterval),
     easeFactor: ease,
+    stability,
+    difficulty,
+    lapseCount: (progress.lapseCount ?? 0) + (rating === "repeat" ? 1 : 0),
+    lastResponseMs: context.responseTimeMs === undefined
+      ? progress.lastResponseMs
+      : Math.min(Math.max(Math.round(context.responseTimeMs), 0), 60 * 60 * 1000),
+    lastErrorCategory: rating === "repeat" ? context.errorCategory ?? progress.lastErrorCategory : progress.lastErrorCategory,
+    lastMistakeAt: rating === "repeat" ? reviewedAt.toISOString() : progress.lastMistakeAt,
+    successfulReviewsSinceMistake,
+    improvedAt: progress.timesWrong > 0 && successfulReviewsSinceMistake >= 2 && rating !== "repeat"
+      ? reviewedAt.toISOString()
+      : progress.improvedAt,
   };
 }
 

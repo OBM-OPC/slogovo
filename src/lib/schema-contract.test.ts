@@ -30,8 +30,9 @@ describe("progress schema contract", () => {
     }
 
     expect(loadRoute).toContain("rowToProgress");
-    expect(saveRoute).toContain("progressToRow");
     expect(saveRoute).toContain("parseUserProgress");
+    expect(saveRoute).toContain("settings: progress.settings");
+    expect(saveRoute).not.toContain("progressToRow(progress)");
 
     expect(baseMigration).toContain("enable row level security");
     expect(baseMigration).toContain("auth.uid() = user_id");
@@ -64,6 +65,14 @@ describe("progress schema contract", () => {
     expect(generated).toContain("device_id: string");
     expect(feedbackMigration).toContain("feedback_status text");
     expect(generated).toContain("feedback_status: string | null");
+
+    const phase9Migration = read("supabase/migrations/20260714170000_phase9_security_hardening.sql");
+    expect(phase9Migration).toContain("set search_path = ''");
+    expect(phase9Migration).toContain("revoke all on public.accounts from anon, authenticated");
+    expect(phase9Migration).toContain("grant update (name, image) on public.users to authenticated");
+    expect(phase9Migration).toContain("with check (auth.uid() = user_id)");
+    expect(phase9Migration).toContain("consume_request_rate_limit");
+    expect(generated).toContain("request_rate_limits: {");
 
     // User settings and achievements are columns on the RLS-protected aggregate row.
     for (const column of ["settings", "achievements"]) {

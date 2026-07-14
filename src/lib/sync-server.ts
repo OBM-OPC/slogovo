@@ -1,10 +1,12 @@
-import { getLessonById, getModuleById } from "./content";
+import { getAllVocabulary, getLessonById, getModuleById } from "./content";
 import { flattenExerciseResults } from "./evaluation";
 import { attemptToDbRow, createLessonAttempt } from "./lesson-attempts";
 import { LearningValidationError } from "./learning-errors";
 import { validateLessonResults } from "./server-attempt-validation";
 import { logError } from "./structured-log";
 import type { SyncEvent } from "./sync-queue";
+
+const vocabularyIds = new Set(getAllVocabulary().map((word) => word.id));
 
 interface DatabaseError {
   message: string;
@@ -65,12 +67,20 @@ async function writeEvent(
   if (event.userId !== userId) throw new Error("Event user does not match the verified session");
 
   if (event.type === "vocabulary_review") {
+    if (!vocabularyIds.has(event.payload.wordId)) {
+      throw new LearningValidationError(
+        "UNKNOWN_ITEM",
+        `Unknown vocabulary item '${event.payload.wordId}'`
+      );
+    }
     const { error } = await client.from("vocabulary_review_events").upsert(
       {
         user_id: userId,
         word_id: event.payload.wordId,
         rating: event.payload.rating,
         practice_mode: event.payload.mode ?? "recognition",
+        response_time_ms: event.payload.responseTimeMs ?? null,
+        error_category: event.payload.errorCategory ?? null,
         reviewed_at: event.payload.reviewedAt,
         client_event_id: event.id,
         device_id: event.deviceId,

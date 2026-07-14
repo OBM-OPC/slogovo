@@ -1,19 +1,21 @@
 import { z } from "zod";
+import { isCommonPassword, PASSWORD_MAX_LENGTH, PASSWORD_MIN_LENGTH } from "./password-policy";
+
+export const passwordSchema = z
+  .string()
+  .min(PASSWORD_MIN_LENGTH, `Passwort muss mindestens ${PASSWORD_MIN_LENGTH} Zeichen haben`)
+  .max(PASSWORD_MAX_LENGTH, `Passwort darf höchstens ${PASSWORD_MAX_LENGTH} Zeichen haben`)
+  .refine((password) => !isCommonPassword(password), "Dieses Passwort ist zu häufig verwendet");
 
 export const loginSchema = z.object({
   email: z.string().email("Bitte gib eine gültige E-Mail-Adresse ein"),
-  password: z.string().min(6, "Passwort muss mindestens 6 Zeichen haben"),
+  password: passwordSchema,
 });
 
 export const registerSchema = z.object({
   name: z.string().min(2, "Name muss mindestens 2 Zeichen haben").optional(),
   email: z.string().email("Bitte gib eine gültige E-Mail-Adresse ein"),
-  password: z
-    .string()
-    .min(8, "Passwort muss mindestens 8 Zeichen haben")
-    .regex(/[A-Z]/, "Passwort muss mindestens einen Großbuchstaben enthalten")
-    .regex(/[a-z]/, "Passwort muss mindestens einen Kleinbuchstaben enthalten")
-    .regex(/[0-9]/, "Passwort muss mindestens eine Zahl enthalten"),
+  password: passwordSchema,
   confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwörter stimmen nicht überein",
@@ -25,12 +27,7 @@ export const forgotPasswordSchema = z.object({
 });
 
 export const resetPasswordSchema = z.object({
-  password: z
-    .string()
-    .min(8, "Passwort muss mindestens 8 Zeichen haben")
-    .regex(/[A-Z]/, "Passwort muss mindestens einen Großbuchstaben enthalten")
-    .regex(/[a-z]/, "Passwort muss mindestens einen Kleinbuchstaben enthalten")
-    .regex(/[0-9]/, "Passwort muss mindestens eine Zahl enthalten"),
+  password: passwordSchema,
   confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwörter stimmen nicht überein",

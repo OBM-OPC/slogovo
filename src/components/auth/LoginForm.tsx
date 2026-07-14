@@ -88,6 +88,8 @@ export default function LoginForm() {
                 className="input pl-11 pr-12"
                 placeholder="••••••••"
                 required
+                minLength={12}
+                maxLength={128}
               />
               <button
                 type="button"

@@ -1,28 +1,33 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
+import { contentSecurityPolicy, STATIC_SECURITY_HEADERS } from "@/lib/security-headers";
+import { validateStateChangingRequest } from "@/lib/request-security";
 
-const publicPaths = [
+const publicPages = new Set([
   "/",
   "/login",
   "/register",
   "/forgot-password",
   "/reset-password",
+  "/demo",
+  "/datenschutz",
+  "/impressum",
+]);
+
+const publicApiRoutes = new Set([
   "/api/auth/login",
   "/api/auth/register",
   "/api/auth/forgot-password",
   "/api/auth/reset-password",
-  "/api/auth/logout",
-  "/api/auth/me",
-  "/_next",
-  "/favicon.ico",
-];
+]);
+
+const publicStaticPrefixes = ["/_next/", "/audio/", "/images/", "/fonts/"];
 
 function isPublicPath(pathname: string): boolean {
-  return publicPaths.some(
-    (path) =>
-      pathname === path || pathname.startsWith(path + "/") || pathname.startsWith("/_next")
-  );
+  return publicPages.has(pathname)
+    || publicApiRoutes.has(pathname)
+    || pathname === "/favicon.ico"
+    || publicStaticPrefixes.some((prefix) => pathname.startsWith(prefix));
 }
 
 function withSessionCookies(source: NextResponse, target: NextResponse): NextResponse {
@@ -32,35 +37,60 @@ function withSessionCookies(source: NextResponse, target: NextResponse): NextRes
   return target;
 }
 
+function secureResponse(response: NextResponse, csp: string, nonce: string): NextResponse {
+  response.headers.set("Content-Security-Policy", csp);
+  response.headers.set("X-Nonce", nonce);
+  for (const [name, value] of Object.entries(STATIC_SECURITY_HEADERS)) {
+    response.headers.set(name, value);
+  }
+  return response;
+}
+
 export async function middleware(request: NextRequest) {
-  const { response, user } = await updateSession(request);
+  const nonce = crypto.randomUUID();
+  const csp = contentSecurityPolicy(nonce);
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("Content-Security-Policy", csp);
+  requestHeaders.set("X-Nonce", nonce);
+  const securedRequest = new NextRequest(request, { headers: requestHeaders });
+
+  const requestFailure = validateStateChangingRequest(securedRequest);
+  if (requestFailure) {
+    return secureResponse(
+      NextResponse.json({ error: "Ungültige Anfrage", code: requestFailure }, { status: 403 }),
+      csp,
+      nonce
+    );
+  }
+
+  const { response, user } = await updateSession(securedRequest);
   const { pathname } = request.nextUrl;
 
   if (isPublicPath(pathname)) {
-    return response;
+    return secureResponse(response, csp, nonce);
   }
 
   if (!user) {
     if (pathname.startsWith("/api/")) {
-      return withSessionCookies(
+      return secureResponse(withSessionCookies(
         response,
         NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-      );
+      ), csp, nonce);
     }
-    return withSessionCookies(
+    return secureResponse(withSessionCookies(
       response,
       NextResponse.redirect(new URL("/login", request.url))
-    );
+    ), csp, nonce);
   }
 
   if (pathname === "/dashboard") {
-    return withSessionCookies(
+    return secureResponse(withSessionCookies(
       response,
       NextResponse.redirect(new URL("/lernen", request.url))
-    );
+    ), csp, nonce);
   }
 
-  return response;
+  return secureResponse(response, csp, nonce);
 }
 
 export const config = {

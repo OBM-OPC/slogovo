@@ -90,7 +90,7 @@ describe("server-side sync", () => {
         userId: "u1",
         timestamp: "2026-07-13T10:00:00.000Z",
         payload: {
-          wordId: "word-1",
+          wordId: "m6l5-1",
           rating: "good",
           mode: "production",
           reviewedAt: "2026-07-13T10:00:00.000Z",
@@ -106,7 +106,7 @@ describe("server-side sync", () => {
 
     expect(rows.size).toBe(1);
     expect(rows.get("vocabulary_review_events:device-a:event-1")).toMatchObject({
-      word_id: "word-1",
+      word_id: "m6l5-1",
       rating: "good",
       practice_mode: "production",
     });
@@ -121,7 +121,7 @@ describe("server-side sync", () => {
         userId: "u1",
         timestamp: "2026-07-13T10:00:00.000Z",
         payload: {
-          wordId: "word-1",
+          wordId: "m6l5-1",
           rating: "good",
           reviewedAt: "2026-07-13T10:00:00.000Z",
         },
@@ -135,7 +135,7 @@ describe("server-side sync", () => {
         userId: "u1",
         timestamp: "2026-07-13T10:05:00.000Z",
         payload: {
-          wordId: "word-1",
+          wordId: "m6l5-1",
           rating: "hard",
           reviewedAt: "2026-07-13T10:05:00.000Z",
         },
@@ -150,11 +150,11 @@ describe("server-side sync", () => {
     expect(rows.size).toBe(2);
     expect(rows.get("vocabulary_review_events:device-a:event-1")).toMatchObject({
       device_id: "device-a",
-      word_id: "word-1",
+      word_id: "m6l5-1",
     });
     expect(rows.get("vocabulary_review_events:device-b:event-1")).toMatchObject({
       device_id: "device-b",
-      word_id: "word-1",
+      word_id: "m6l5-1",
     });
   });
 
@@ -165,7 +165,7 @@ describe("server-side sync", () => {
       userId: "attacker",
       timestamp: "2026-07-13T10:00:00.000Z",
       payload: {
-        wordId: "word-1",
+        wordId: "m6l5-1",
         rating: "good",
         reviewedAt: "2026-07-13T10:00:00.000Z",
       },

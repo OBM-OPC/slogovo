@@ -27,6 +27,8 @@ export interface VocabularyReviewEvent extends BaseSyncEvent {
     wordId: string;
     rating: string;
     mode?: "recognition" | "production";
+    responseTimeMs?: number;
+    errorCategory?: import("@/types").MistakeCategory;
     reviewedAt: string;
   };
 }

@@ -19,7 +19,7 @@ export async function sendSyncBatch(events: SyncEvent[]): Promise<SyncBatchResul
     method: "POST",
     credentials: "same-origin",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ events }),
+    body: JSON.stringify({ schemaVersion: 1, events }),
   });
   if (!response.ok) {
     const body = (await response.json().catch(() => ({}))) as { error?: string };

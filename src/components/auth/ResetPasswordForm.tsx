@@ -148,7 +148,8 @@ function ResetPasswordContent() {
                 className="input pl-11 pr-12"
                 placeholder="••••••••"
                 required
-                minLength={8}
+                minLength={12}
+                maxLength={128}
               />
               <button
                 type="button"
@@ -159,7 +160,7 @@ function ResetPasswordContent() {
               </button>
             </div>
             <p className="mt-1 text-xs text-muted">
-              Mindestens 8 Zeichen, 1 Großbuchstabe, 1 Kleinbuchstabe, 1 Zahl
+              12–128 Zeichen; lange Passphrasen und Passwortmanager werden unterstützt.
             </p>
           </div>
 
@@ -176,6 +177,8 @@ function ResetPasswordContent() {
                 className="input pl-11"
                 placeholder="••••••••"
                 required
+                minLength={12}
+                maxLength={128}
               />
             </div>
           </div>

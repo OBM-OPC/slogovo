@@ -45,6 +45,7 @@ export function TypingExercise({ words, mode, onExit }: TypingExerciseProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const speakStateRef = useRef(speakState);
+  const questionStartedAt = useRef(Date.now());
   speakStateRef.current = speakState;
 
   const triggerSpeak = useCallback(
@@ -144,9 +145,12 @@ export function TypingExercise({ words, mode, onExit }: TypingExerciseProps) {
   };
 
   const handleDifficulty = (rating: DifficultyRating) => {
-    reviewVocabularyWithDifficulty(word.id, rating, "production");
+    const effectiveRating: DifficultyRating = isCorrect ? rating : "repeat";
+    reviewVocabularyWithDifficulty(word.id, effectiveRating, "production", {
+      responseTimeMs: Date.now() - questionStartedAt.current,
+    });
     setTypedToday((prev) => ({ ...prev, [word.id]: (prev[word.id] || 0) + 1 }));
-    if (rating === "repeat" && typedToday[word.id] === 0) {
+    if (effectiveRating === "repeat" && typedToday[word.id] === 0) {
       setQueue((q) => [...q, word]);
     }
     setInput("");
@@ -154,6 +158,7 @@ export function TypingExercise({ words, mode, onExit }: TypingExerciseProps) {
     setAnswerFeedback(null);
     setPhase("question");
     setIndex((i) => i + 1);
+    questionStartedAt.current = Date.now();
     if (isCorrect && rating !== "repeat") {
       const nextStreak = consecutiveCorrect + 1;
       setConsecutiveCorrect(nextStreak);

@@ -1,5 +1,111 @@
 # Slogovo controlled-development status
 
+Last updated: 2026-07-14 17:42 UTC
+
+## Phase 9 implementation checkpoint — issue #98
+
+- Current branch: `feat/complete-slogovo-backlog`.
+- Base commit: `80b1ac2773dd778882ceea6c4ccb4445885d356f` on `main`.
+- Implementation commit: `4116a6a1c4b018f942fdf6e1dcfa3d44d4c9754f` (`feat: complete Phase 9 security hardening`).
+- Validated delivery head: `606aad30fa5857f87386a12de278974b7f3ce72f`; all source-actionable work and required checks are complete.
+- Backlog inspected: #98 is the only open GitHub issue and was selected in full; no second issue, branch, worktree, coding run, or pull request was introduced.
+- Delivery state: pull request #99 is the sole new/open implementation PR from the sole implementation branch to `main` and is ready for human review: https://github.com/OBM-OPC/slogovo/pull/99. The agent will not merge it.
+
+### Work completed
+
+- Added enforced nonce-based CSP and application-wide HSTS, framing, MIME, referrer, permissions, opener, and resource headers; removed the external font stylesheet and documented required origins.
+- Replaced broad public-route matching with exact page/API rules, protected `/api/auth/me` and unknown auth routes, and added same-origin/content-type/body-size/JSON-depth enforcement for state changes.
+- Added HMAC-keyed, database-backed atomic rate limits with bounded local fallback and separate login, registration, recovery, reset, TTS, sync, progress, telemetry, and sensitive-account policies. Responses use `429`; structured logs contain no credentials, tokens, email addresses, or private learning text.
+- Made registration and password-recovery responses enumeration-resistant, added timing equalization, and standardized a 12–128 character passphrase-friendly policy with a local common-password blocklist.
+- Added the additive Phase 9 migration: locked down legacy profile/account privileges, hardened the optional signup trigger, added explicit update `WITH CHECK` policies, created the private rate-limit store/RPC, and added bounded review response/error fields. Added two-user/anonymous SQL RLS regression tests.
+- Rebuilt aggregate progress, achievements, streaks, scores, mastery, and review scheduling from authenticated server-validated attempt/review rows. Client progress saves now persist settings only; sync payloads are bounded/versioned and content IDs, ownership, ranges, and idempotency are enforced.
+- Hardened TTS with authenticated ownership, fixed provider/voice parameters, text/speed limits, user/IP limits, a ten-second timeout, private response caching, browser Cache Storage reuse, and sanitized failure logging.
+- Added verified account export, learning-history deletion, account deletion, password/email change, other-session revocation, privacy/retention documentation, and settings controls with current-password confirmation for destructive actions.
+- Added the public no-account demo, goal/knowledge onboarding and path recommendation, FSRS-style stability/difficulty/lapse tracking with response time, normalized mistake categories/improvement state, and local-only microphone recording/replay with explicit permission and no upload/retention.
+- Added Dependabot, high-severity dependency auditing, Gitleaks, local Supabase RLS tests, and an OWASP ZAP baseline workflow. Upgraded Next.js to 15.5.18 and Nodemailer to 9.0.3 to remove all high/critical dependency findings.
+
+### Validation evidence
+
+- `npm run type-check` passed.
+- `npm run lint` passed with no warnings or errors (Next.js emitted only its CLI deprecation notice).
+- `npm test` passed: 53 Vitest files / 201 tests.
+- `npm run validate:database` passed: 10 ordered migrations, RLS, additive/destructive policy, and generated types.
+- The clean-project Supabase CI stack applied all 10 migrations and passed the pgTAP two-user/anonymous RLS suite, including least-privilege grants and ownership-change rejection.
+- `npm run validate:content` passed: 12 modules, 60 lessons, and 9 grammar topics with 0 errors and 0 warnings. The separate pre-existing quality report still lists 299 untested vocabulary items, 554 items without authored audio, and 37 lessons without productive exercises.
+- `npm run build` passed and generated 107 pages. The Supabase client emitted a non-fatal Edge-runtime compatibility warning during compilation.
+- `npm run test:e2e` passed: 11/11 registration, protected-session, expiry/logout, mobile learning, lesson pass/fail/retry, authoritative cross-device restore, vocabulary review, and telemetry journeys.
+- `npm audit --audit-level=high` passed. Two moderate PostCSS findings remain nested under the current Next.js package; npm's suggested forced remediation incorrectly downgrades Next.js and was not applied.
+- Gitleaks passed across all 49 commits after narrowly allowlisting only the exact isolated E2E fixture password; OWASP ZAP passed its 43-URL baseline with documented informational exceptions.
+- `git diff --check` passed.
+
+### Remaining and owner-controlled work
+
+- Apply the reviewed migration through the staging/production database workflow and configure a strong production `RATE_LIMIT_HMAC_SECRET`; neither action was performed here.
+- Supply and legally approve the operator address/contact details in the legal notice before public production use.
+- Decide the owner-controlled removal/backfill plan for obsolete legacy reset/verification columns. The migration already blocks client updates but does not destructively drop production columns.
+- Enable repository-native GitHub secret scanning if the repository plan supports it; Gitleaks now provides the source-controlled CI equivalent.
+- Review pull request #99 and the documented production/legal steps. The implementation is ready for human review; only the owner may decide whether and when to merge.
+- Issue #98 remains open pending owner review and these owner-controlled acceptance steps; no production migration, data deletion, environment/secret change, paid-service activation, manual deployment, issue closure, or merge was performed.
+
+### Commands and external state inspected
+
+- Inspected local status/history/worktrees/branches/locks/processes and confirmed no concurrent Slogovo coding run.
+- Inspected all remote branches, open pull requests, open issues, issue #98's complete acceptance criteria, and the latest `main` Actions run (`29280694621`, passed).
+- Ran the validation commands listed above plus focused security, registration, scheduler, middleware, authoritative-progress, and failing-browser reruns during implementation.
+- GitHub Actions CI run `29354269134`, Security run `29354269137` (dependency/Gitleaks, clean-project Supabase RLS, and ZAP), and Vercel passed on validated delivery head `606aad3`. Production Supabase was not accessed or changed.
+
+---
+
+Last updated: 2026-07-14 16:32 UTC
+
+## Active run — issue #98 Phase 9 security and product hardening
+
+- Current branch at audit: `main` (`80b1ac2773dd778882ceea6c4ccb4445885d356f`); the single implementation branch will be `feat/complete-slogovo-backlog`.
+- GitHub state: issue #98 is the only open issue; only remote `main` exists; no pull request is open; latest `main` CI run `29280694621` passed.
+- Concurrent-run state: one clean worktree, no Git lock, no Slogovo implementation process, and no controlled-development cron job or parallel coding run exists.
+- Production boundary: this run may add reviewed migrations and deployment configuration in source control, but will not apply production migrations, alter production environment values/secrets, change production data, activate paid services, or merge the resulting pull request.
+
+### Complete issue #98 audit
+
+| Workstream | Classification | Current evidence and remaining acceptance work |
+| --- | --- | --- |
+| 1. Security headers/CSP | Open | `next.config.js` has no headers and middleware emits no nonce/CSP. |
+| 2. Distributed rate limiting | Open | Auth, sync, telemetry, and TTS routes have no shared-instance limiter. |
+| 3. Account enumeration | Partial | Forgot-password is generic; registration returns a duplicate-specific 409 and user payload. |
+| 4. Sensitive `users` columns | Open | Legacy schema permits broad own-row updates and retains Auth-managed token columns. |
+| 5. Provider-token access | Open | Legacy `accounts` RLS allows authenticated reads of raw provider tokens. |
+| 6. Explicit RLS checks | Partial | Inserts use `WITH CHECK`; several update policies lack explicit `WITH CHECK`, and the legacy user policy does too. |
+| 7. Signup trigger hardening | Open | Legacy `handle_new_user()` is `SECURITY DEFINER` without an empty search path or explicit execution revocation. |
+| 8. Explicit public routes | Open | Middleware uses broad prefix matching and treats `/api/auth/me` as public. |
+| 9. Origin/CSRF checks | Open | State-changing APIs do not centrally validate origin or JSON content type. |
+| 10. Password policy | Open | Password rules differ by route, allow unbounded inputs, and require composition instead of passphrase length. |
+| 11. Authoritative progress/rewards | Partial | Lesson IDs, answers, scores, XP, user ownership, and attempt IDs are server-validated/idempotent; aggregate progress save still accepts client-controlled streak/achievement state and review IDs are not content-validated. |
+| 12. TTS abuse/cost controls | Partial | TTS is authenticated by middleware and caps text/voice/speed; shared rate limits, timeout, safer caching/logging, and usage monitoring remain. |
+| 13. RLS regression tests | Partial | Static policy contracts exist; explicit two-user/anonymous permission regression coverage and local execution documentation remain. |
+| 14. Security scanning | Open | CI lacks dependency, secret, and web baseline scanning; Dependabot is absent. |
+| 15. Privacy/account controls | Open | Local reset exists, but verified export/deletion/password/email/session controls and legal/retention documentation are absent. |
+| 16. Public demo lesson | Open | The landing page has no interactive, no-account learning demo. |
+| 17. Goal onboarding/placement | Partial | Daily goal and transliteration settings exist; first-run knowledge/goal questions and initial recommendation are absent. |
+| 18. Spaced repetition | Partial | Due queue, bidirectional prompts, review dates, ease, synchronization IDs, and explanations exist; explicit stability/difficulty/lapse and response-time scheduling fields remain. |
+| 19. Mistake practice | Partial | Mistake queue/page and recent/weak prioritization exist; normalized error categories and explicit improved-state lifecycle remain. |
+| 20. Pronunciation/listening | Partial | Normal/slow playback, source fallback, self-review, and honest non-scoring disclosure exist; recording/replay, consent handling, word playback/stress guidance remain. |
+
+### Dependency order and acceptance plan
+
+1. Establish request security primitives: nonce CSP/headers, exact route policy, origin/content-type/body limits, and database-backed rate limiting.
+2. Harden authentication, legacy database privileges/functions/RLS, TTS, and server-authoritative synchronization.
+3. Add repeatable security tests/scanning and account privacy/export/deletion/session controls without performing production actions.
+4. Complete the genuinely missing demo/onboarding/review/mistake/pronunciation behavior, preserving the already-authoritative learning domain.
+5. Run focused and full validation, push the single branch, open exactly one Draft PR, and verify GitHub/Vercel status where accessible.
+
+### Owner-controlled or conditional items
+
+- Production migrations and new production environment values (including a rate-limit HMAC secret) require owner execution after review.
+- Native-language copy beyond existing reviewed phrases, legal-text approval, GitHub Advanced Security features unavailable to the repository plan, paid monitoring/rate-limit vendors, and production data deletion/export operations are not performed by this run.
+- Breached-password checking will use a local high-confidence denylist unless the owner later approves a network dependency and its availability/privacy trade-offs.
+
+---
+
 Last updated: 2026-07-13 19:42 UTC
 
 ## Complete-backlog final checkpoint

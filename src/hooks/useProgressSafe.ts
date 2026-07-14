@@ -19,6 +19,14 @@ const emptyProgress: UserProgress = {
     ttsEnabled: true,
     showLatin: true,
     speechRate: 0.9,
+    onboarding: {
+      completed: false,
+      knowsCyrillic: false,
+      priorBulgarian: "none",
+      knowsSlavicLanguage: false,
+      learningGoal: "travel",
+      recommendedPath: "alphabet",
+    },
   },
   achievements: [],
 };

@@ -2,12 +2,17 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { forgotPasswordSchema } from "@/lib/validations";
 import { logEvent } from "@/lib/structured-log";
+import { readJsonBody, RequestBodyError } from "@/lib/request-security";
+import { ipIdentity } from "@/lib/rate-limit";
+import { RATE_LIMITS, rateLimitClient, rateLimitRequest } from "@/lib/api-protection";
+import { minimumResponseTime } from "@/lib/timing";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
+  const startedAt = Date.now();
   try {
-    const body = await request.json();
+    const body = await readJsonBody(request, 8 * 1024);
 
     const result = forgotPasswordSchema.safeParse(body);
     if (!result.success) {
@@ -19,7 +24,12 @@ export async function POST(request: Request) {
     }
 
     const { email } = result.data;
-    const supabase = createClient();
+    const supabase = await createClient();
+    const limited = await rateLimitRequest(rateLimitClient(supabase), request, [
+      { identity: ipIdentity(request), rule: RATE_LIMITS.forgotIp },
+      { identity: `email:${email}`, rule: RATE_LIMITS.forgotEmail },
+    ]);
+    if (limited) return limited;
 
     const { error } = await supabase.auth.resetPasswordForEmail(email.toLowerCase(), {
       redirectTo: `${process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"}/reset-password`,
@@ -30,11 +40,18 @@ export async function POST(request: Request) {
     }
 
     // Don't reveal if user exists.
+    await minimumResponseTime(startedAt);
     return NextResponse.json(
-      { message: "Wenn ein Konto existiert, wurde eine E-Mail gesendet" },
+      { message: "Falls für diese E-Mail noch kein Konto besteht, erhältst du weitere Anweisungen." },
       { status: 200 }
     );
-  } catch {
+  } catch (error) {
+    if (error instanceof RequestBodyError) {
+      return NextResponse.json(
+        { error: "Ungültige Anfrage", code: error.code },
+        { status: error.code === "BODY_TOO_LARGE" ? 413 : 400 }
+      );
+    }
     logEvent("auth_failure", { errorCode: "AUTH_SERVER_ERROR", reason: "server" });
     return NextResponse.json(
       { error: "Ein Fehler ist aufgetreten. Bitte versuche es später erneut." },
