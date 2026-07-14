@@ -18,11 +18,13 @@ Last updated: 2026-07-14 21:39 UTC
 - #103 Redesign Login & Registration: added a shared branded auth shell, independently accessible visibility toggles for every password field, live four-signal password strength feedback while preserving the stronger 12–128-character passphrase policy, Caps Lock detection, actionable inline errors, explicit loading/double-submit protection, autocomplete/input hints, confirmation matching, verification-email guidance, and legal/privacy links. Removed the non-functional remember-me control.
 - #103 security decision: registration keeps the enumeration-resistant response introduced by #98 instead of revealing whether an email is already registered. This intentionally supersedes the issue's unsafe example while still giving actionable validation errors.
 - #103 verification: three focused form interaction tests passed; type-check and lint passed; all four existing auth Playwright journeys passed after selector verification, including a 320×700 registration flow with no horizontal overflow; `git diff --check` passed.
+- #114 Design System: added documented semantic color/typography/4px-spacing rules and reusable Button, Card, Input, Badge, linear/circular Progress, modal/alert/confirm Dialog, EmptyState, text/card/list Skeleton, and auto/action/persistent Toast primitives under `src/components/ui`. Dialogs trap focus, support Escape/overlay close, and restore focus. All primitives have Storybook stories; the catalog includes the a11y addon.
+- #114 verification: focused component tests passed for accessible fields/progress, dialog focus lifecycle, and persistent/action toasts; type-check and lint passed; the Storybook 10.5 production catalog built successfully; high-severity dependency audit passed (the two previously documented moderate Next.js/PostCSS findings remain); `git diff --check` passed.
 
 ### Current and remaining work
 
-- Current issue: commit, push, and close #103, then establish the shared design/brand foundation in #114 and #115 before the remaining application screens.
-- Remaining Epic issues: #104–#115 and parent #100.
+- Current issue: commit, push, and close #114, then complete the shared branding layer in #115 before the remaining application screens.
+- Remaining Epic issues: #104–#113, #115, and parent #100.
 - Production migrations, secrets, environments, production data, paid services, and manual deployments remain untouched.
 
 Last updated: 2026-07-14 17:42 UTC
