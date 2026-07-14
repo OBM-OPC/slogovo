@@ -149,7 +149,7 @@ function InteractiveExample({
     >
       <div className="flex items-center justify-between gap-3">
         <div className="flex-1">
-          <p className="mb-1 text-lg font-medium text-foreground">{example.bg}</p>
+          <p className="mb-1 text-lg font-medium text-foreground" lang="bg">{example.bg}</p>
           <p className={cn("text-sm text-muted", isActive ? "block" : "hidden md:block")}>
             {example.de}
           </p>

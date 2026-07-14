@@ -52,7 +52,7 @@ function CourseRoadmap({ modules, progress }: { modules: ModuleMeta[]; progress:
                   <span className={cn(
                     "absolute -left-[2.72rem] top-6 flex h-8 w-8 items-center justify-center rounded-full border-2 bg-white text-xs font-bold sm:-left-[3.55rem]",
                     chapter.state === "completed" && "border-success bg-success text-white",
-                    chapter.state === "current" && "border-gold bg-gold-50 text-gold-700 shadow-[0_0_0_5px_rgba(232,166,42,0.14)] motion-safe:animate-pulse",
+                    chapter.state === "current" && "border-gold bg-gold-50 text-gold-800 shadow-[0_0_0_5px_rgba(232,166,42,0.14)]",
                     chapter.state === "locked" && "border-warm-200 bg-warm-100 text-muted",
                     chapter.state === "available" && "border-primary text-primary"
                   )} aria-hidden="true">
@@ -108,7 +108,7 @@ function ChapterCard({ chapter, progress }: { chapter: ChapterView; progress: Us
         <div id={`chapter-${module.moduleId}`} className="border-t border-warm-200 bg-white/70 px-5 py-5">
           <div className="mb-5 rounded-2xl bg-primary-50 p-4">
             <h3 className="text-sm font-bold text-primary">Das lernst du</h3>
-            <p className="mt-1 text-sm leading-6 text-muted">{module.description}</p>
+            <p className="mt-1 text-sm leading-6 text-warm-800">{module.description}</p>
             <ul className="mt-2 grid gap-1 text-sm sm:grid-cols-2">
               {module.lessons.slice(0, 4).map((lesson) => <li key={lesson.lessonId} className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-success" aria-hidden="true" /><span>{lesson.title}</span></li>)}
             </ul>
@@ -129,12 +129,12 @@ function ChapterCard({ chapter, progress }: { chapter: ChapterView; progress: Us
                     <Link href={`/kurs/${module.moduleId}/${lesson.lessonId}/`} className={cn(
                       "group flex min-h-14 items-center gap-3 rounded-2xl border px-4 py-3 transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/25",
                       completed && "border-success/30 bg-success/5",
-                      current && "border-gold-300 bg-gold-50 shadow-sm motion-safe:animate-pulse",
+                      current && "border-gold-300 bg-gold-50 shadow-sm",
                       !completed && !current && "border-warm-200 hover:border-primary-200 hover:bg-primary-50"
                     )}>
                       {completed ? <CheckCircle2 className="h-5 w-5 shrink-0 text-success" aria-label="Abgeschlossen" /> : current ? <Play className="h-5 w-5 shrink-0 fill-gold text-gold" aria-label="Aktuelle Lektion" /> : <Circle className="h-5 w-5 shrink-0 text-warm-300" aria-hidden="true" />}
                       <LessonCopy title={lesson.title} duration={lesson.duration} />
-                      {current && <span className="rounded-full bg-gold-100 px-2 py-1 text-xs font-bold text-gold-800">Weiter</span>}
+                      {current && <span className="rounded-full bg-gold-100 px-2 py-1 text-xs font-bold text-gold-900">Weiter</span>}
                     </Link>
                   )}
                 </li>
@@ -151,5 +151,5 @@ function ChapterCard({ chapter, progress }: { chapter: ChapterView; progress: Us
 }
 
 function LessonCopy({ title, duration }: { title: string; duration: string }) {
-  return <div className="min-w-0 flex-1"><p className="font-semibold text-foreground">{title}</p><p className="mt-0.5 flex items-center gap-1 text-xs text-muted"><Clock3 className="h-3 w-3" aria-hidden="true" /> {duration}</p></div>;
+  return <div className="min-w-0 flex-1"><p className="font-semibold text-foreground">{title}</p><p className="mt-0.5 flex items-center gap-1 text-xs text-foreground"><Clock3 className="h-3 w-3" aria-hidden="true" /> {duration}</p></div>;
 }

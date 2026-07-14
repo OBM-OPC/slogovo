@@ -170,7 +170,7 @@ function Choice({ label, hint, value, options, onChange }: { label: string; hint
           {options.map((option) => (
             <label key={option.value} className={`flex min-h-14 cursor-pointer items-center gap-3 rounded-2xl border-2 px-4 py-3 transition-colors ${value === option.value ? "border-primary bg-primary-50" : "border-warm-200 hover:border-primary-200"}`}>
               <input type="radio" checked={value === option.value} onChange={() => onChange(option.value)} />
-              <span><span className="block font-semibold">{option.label}</span>{option.detail && <span className="mt-0.5 block text-sm text-muted">{option.detail}</span>}</span>
+              <span><span className="block font-semibold">{option.label}</span>{option.detail && <span className="mt-0.5 block text-sm text-warm-800">{option.detail}</span>}</span>
             </label>
           ))}
         </div>

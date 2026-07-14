@@ -39,8 +39,8 @@ export function DashboardHome() {
         <div className="relative">
           <div className="flex items-center justify-between gap-3"><p className="text-sm font-bold uppercase tracking-widest text-primary-100">{data.nextAction.eyebrow}</p><span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-xs font-bold"><Clock3 className="h-4 w-4" aria-hidden="true" /> {data.nextAction.duration}</span></div>
           <h2 id="next-action-title" className="mt-4 text-3xl font-bold">{data.nextAction.title}</h2>
-          <p className="mt-2 text-sm leading-6 text-white/75">{data.nextAction.description}</p>
-          {data.nextAction.moduleTitle && <div className="mt-6"><div className="mb-2 flex justify-between gap-3 text-xs text-white/75"><span>{data.nextAction.moduleTitle}</span><span>{data.nextAction.moduleCompleted}/{data.nextAction.moduleTotal} Lektionen</span></div><ProgressBar value={data.nextAction.moduleProgress} ariaLabel="Kapitel-Fortschritt" className="bg-white/15" barClassName="bg-white" /></div>}
+          <p className="mt-2 text-sm leading-6 text-white">{data.nextAction.description}</p>
+          {data.nextAction.moduleTitle && <div className="mt-6"><div className="mb-2 flex justify-between gap-3 text-xs text-white"><span>{data.nextAction.moduleTitle}</span><span>{data.nextAction.moduleCompleted}/{data.nextAction.moduleTotal} Lektionen</span></div><ProgressBar value={data.nextAction.moduleProgress} ariaLabel="Kapitel-Fortschritt" className="bg-white/15" barClassName="bg-white" /></div>}
           <Link href={data.nextAction.href} className="mt-6 inline-flex min-h-14 w-full items-center justify-center gap-2 rounded-2xl bg-white px-5 font-bold text-primary shadow-card">Heute lernen <ArrowRight className="h-5 w-5" aria-hidden="true" /></Link>
         </div>
       </section>

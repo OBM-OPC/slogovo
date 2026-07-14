@@ -37,9 +37,10 @@ export async function completeMatching(page: Page) {
     ["Willkommen", "Добре дошли"],
     ["Auf Wiedersehen", "Довиждане"],
   ];
-  for (const [german, bulgarian] of pairs) {
+  for (const [index, [german, bulgarian]] of pairs.entries()) {
     await page.getByRole("button", { name: german, exact: true }).click();
     await page.getByRole("button", { name: bulgarian, exact: true }).click();
+    await page.getByRole("button", { name: index === pairs.length - 1 ? "Fertig" : "Weiter" }).click();
   }
 }
 

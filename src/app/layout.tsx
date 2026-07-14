@@ -4,6 +4,7 @@ import { TelemetryMonitor } from "@/components/telemetry/TelemetryMonitor";
 import { ToastProvider } from "@/components/ui/Toast";
 import "./globals.css";
 import { MobileInteractionManager } from "@/components/layout/MobileInteractionManager";
+import { RouteAnnouncer } from "@/components/layout/RouteAnnouncer";
 
 const inter = Inter({ subsets: ["latin", "cyrillic"], variable: "--font-sans", display: "swap" });
 const lora = Lora({ subsets: ["latin", "cyrillic"], variable: "--font-serif", display: "swap" });
@@ -37,6 +38,7 @@ export default function RootLayout({
         <ToastProvider>
           <TelemetryMonitor />
           <MobileInteractionManager />
+          <RouteAnnouncer />
           {children}
         </ToastProvider>
       </body>

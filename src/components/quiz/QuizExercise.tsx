@@ -79,7 +79,7 @@ export function QuizExercise({
   return (
     <div>
       <p className="mb-4 text-lg font-medium">{question.question}</p>
-      {question.bg && <p className="mb-4 text-xl font-semibold text-primary">{question.bg}</p>}
+      {question.bg && <p className="mb-4 text-xl font-semibold text-primary" lang="bg">{question.bg}</p>}
       <div className="space-y-2">
         {question.options.map((option, index) => {
           const isSelected = selected === index;

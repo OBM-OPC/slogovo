@@ -1,6 +1,6 @@
 # Slogovo controlled-development status
 
-Last updated: 2026-07-14 23:06 UTC
+Last updated: 2026-07-14 23:22 UTC
 
 ## UI/UX Epic #100 — active direct-main run
 
@@ -40,11 +40,13 @@ Last updated: 2026-07-14 23:06 UTC
 - #110 verification: 16 focused tests passed for milestone eligibility/progress, three-lesson goal, listening threshold, once-weekly freeze, authoritative rebuild, schema normalization, cross-device merge, and the complete achievement screen; type-check and lint passed; `git diff --check` passed.
 - #112 Mobile UX Optimization: added `viewport-fit=cover`, dynamic visual-viewport tracking, focus/keyboard `scrollIntoView`, 16px mobile form controls, global 44px coarse-screen targets, overflow clipping, safe-area bottom navigation, 44px Bulgarian keyboard keys in a thumb-friendly five-column layout, fixed lesson actions, and a scrollable bottom-sheet dialog that closes by overlay, Escape, close control, or downward swipe. Added Android Chrome and iPhone WebKit audit projects covering all 14 learning screens for horizontal overflow and effective control target size.
 - #112 verification so far: Android Chrome Pixel 7 emulation passed the complete 14-route overflow/target audit; 18 focused layout/dialog/exercise tests and the dedicated focus-scroll test passed; type-check and lint passed; `git diff --check` passed. Local WebKit could be downloaded but cannot launch because this immutable host lacks its GTK/GStreamer libraries and has no apt package manager; CI now installs WebKit with system dependencies and is the required final iOS-engine verification before issue closure.
+- #113 Accessibility Improvements: added an automated axe WCAG A/AA audit across all 14 authenticated learning routes, polite route-change announcements, explicit Bulgarian language semantics, keyboard-operable flashcards, named icon/switch/range controls, and AA-safe text and interactive-state contrast. Removed a current-lesson pulse that temporarily lowered contrast; existing global focus-visible and reduced-motion rules remain applied across the product.
+- #113 verification: the complete Chromium axe audit passed with zero WCAG A/AA violations; route-announcer, navigation, mobile-focus, and matching interaction tests passed; type-check and lint passed. All findings identified by the first full audit were fixed and the entire route set was rescanned.
 
 ### Current and remaining work
 
-- Current issue: push #112 for CI WebKit verification while completing final accessibility hardening in #113. Close #112 only after its iPhone WebKit job passes.
-- Remaining Epic issues: #112–#113 and parent #100.
+- Current issue: close #113 after its verified commit is pushed, then complete the full-Epic regression and CI audit. Close #112 only after its iPhone WebKit job passes.
+- Remaining Epic issues: #112, #113, and parent #100.
 - Production migrations, secrets, environments, production data, paid services, and manual deployments remain untouched.
 
 Last updated: 2026-07-14 17:42 UTC

@@ -36,7 +36,7 @@ export default function SpeakingPage() {
       <p className="mb-6 text-muted">Höre, sprich nach und bewerte dich ehrlich.</p>
       <section className="card text-center">
         <p className="mb-2 text-sm text-muted">{word.de}</p>
-        <p className="mb-5 text-3xl font-bold">{word.bg}</p>
+        <p className="mb-5 text-3xl font-bold" lang="bg">{word.bg}</p>
         <div className="mb-5"><SpeakButton text={word.bg} progress={progress} label="Beispiel anhören" /></div>
         {word.bg.split(/\s+/).length > 1 && (
           <div className="mb-5">

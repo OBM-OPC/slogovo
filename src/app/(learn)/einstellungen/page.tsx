@@ -27,7 +27,7 @@ const goals: GoalOption[] = [
     value: "medium",
     label: "Среден",
     description: "15 Min / 25 Wörter",
-    color: "bg-gold-50 text-gold-700",
+    color: "bg-gold-50 text-gold-900",
   },
   {
     value: "intense",
@@ -133,7 +133,7 @@ export default function EinstellungenPage() {
           icon={<Type className="h-5 w-5" />}
           label="Lateinische Umschrift"
           subLabel={settings.showLatin ? "bg-Latin wird angezeigt" : "Nur Kyrillisch"}
-          color="bg-gold-50 text-gold-700"
+          color="bg-gold-50 text-gold-900"
           checked={settings.showLatin}
           onChange={(checked) => updateSettings({ showLatin: checked })}
         />
@@ -151,7 +151,9 @@ export default function EinstellungenPage() {
           </div>
         </div>
 
+        <label htmlFor="speech-rate" className="sr-only">Sprechtempo</label>
         <input
+          id="speech-rate"
           type="range"
           min={0.5}
           max={1.5}
@@ -204,6 +206,7 @@ function ToggleRow({
         </div>
       </div>
       <button
+        aria-label={`${label}: ${checked ? "aktiv" : "inaktiv"}`}
         onClick={() => onChange(!checked)}
         className={cn(
           "relative h-7 w-12 rounded-full transition-colors duration-200",

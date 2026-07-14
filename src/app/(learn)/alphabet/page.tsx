@@ -56,15 +56,15 @@ export default function AlphabetPage() {
       <p className="mb-6 text-muted">Lerne die 30 Buchstaben des bulgarischen Alphabets.</p>
 
       <div className="card mb-6 text-center">
-        <div className="mb-4 text-8xl font-bold text-primary">
+        <div className="mb-4 text-8xl font-bold text-primary" lang="bg">
           {letter.upper} {letter.lower}
         </div>
-        <p className="mb-2 text-2xl font-medium">{letter.nameBg}</p>
+        <p className="mb-2 text-2xl font-medium" lang="bg">{letter.nameBg}</p>
         <p className="mb-4 text-muted">Aussprache: {letter.pronunciation}</p>
 
         {showDetails && (
           <div className="mb-4 rounded-xl bg-gray-50 p-4 animate-fade-in">
-            <p className="text-lg font-medium">{letter.example}</p>
+            <p className="text-lg font-medium" lang="bg">{letter.example}</p>
             <p className="text-sm text-muted">{letter.exampleTranslation}</p>
           </div>
         )}

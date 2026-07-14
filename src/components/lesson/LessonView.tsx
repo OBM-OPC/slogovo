@@ -255,7 +255,7 @@ export function LessonView({ lesson, moduleId, nextLessonId, context }: LessonVi
           <div className="mb-6 space-y-3">
             {lesson.grammar.examples.map((example, index) => (
               <div key={`${example.bg}-${index}`} className="rounded-xl border border-gray-100 bg-gray-50 p-4">
-                <p className="mb-1 text-lg font-medium">{example.bg}</p>
+                <p className="mb-1 text-lg font-medium" lang="bg">{example.bg}</p>
                 <p className="text-sm text-muted">{example.de}</p>
                 {progress.settings.showLatin && example.bgLatin && <p className="text-xs text-muted">{example.bgLatin}</p>}
                 <div className="mt-2"><SpeakButton text={example.bg} progress={progress} variant="inline" label="Anhören" /></div>
