@@ -12,11 +12,11 @@ insert into public.user_progress (user_id) values
   ('20000000-0000-4000-8000-000000000002');
 
 insert into public.lesson_attempts (
-  id, user_id, lesson_id, module_id, level, started_at, items_answered
+  id, user_id, lesson_id, module_id, level, started_at, items_answered, device_id
 ) values (
   '20000000-0000-4000-8000-000000000010',
   '20000000-0000-4000-8000-000000000002',
-  'phase9-test-lesson', 'phase9-test-module', 'A1', now(), 1
+  'phase9-test-lesson', 'phase9-test-module', 'A1', now(), 1, 'phase9-rls-test'
 );
 
 set local role authenticated;
