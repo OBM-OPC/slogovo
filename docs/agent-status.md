@@ -1,6 +1,6 @@
 # Slogovo controlled-development status
 
-Last updated: 2026-07-14 22:36 UTC
+Last updated: 2026-07-14 22:41 UTC
 
 ## UI/UX Epic #100 — active direct-main run
 
@@ -34,11 +34,13 @@ Last updated: 2026-07-14 22:36 UTC
 - #106 verification: nine lesson/quiz interaction tests passed across quiz, fill-in, listening, sentence-building, matching, and required-item retry, including progress semantics, timer, touch-target class, and automatic focus; type-check and lint passed; `git diff --check` passed.
 - #107 Improve Exercise Feedback: introduced one reusable, in-flow feedback panel across quiz, fill-in, sentence-building, listening, and matching. Correct responses receive confirmation and a clear continuation; wrong responses retain the question context while showing the correct solution, authored/fallback explanation, replay for Bulgarian audio, contextual grammar tip/link, and a functional “Später wiederholen” control. Learner-selected items become required deferred retries even when the original item was optional. Enter advances and Space replays audio without hijacking text inputs; motion uses the existing reduced-motion override.
 - #107 verification: ten cross-exercise tests passed, plus focused tests for wrong-answer solution/explanation, grammar link, audio keyboard replay, review selection, Enter dismissal, matching feedback, and actual optional-item retry insertion; type-check and lint passed; `git diff --check` passed.
+- #109 Progress & Statistics Redesign: replaced the mixed local/server progress page with a read-only authenticated server report. The API now combines authoritative progress, attempt rows, and review-event history to report confidence-threshold words learned, passed/mastered lessons, first-attempt listening accuracy, productive grammar accuracy, active study time, personalized weekly-goal progress, and the exact proportion of reviews due at the start of today that were completed today. XP is absent from the hierarchy; explicit empty/error states never fabricate percentages.
+- #109 verification: focused calculation and rendering tests passed for ≥3/70% word confidence, listening and grammar rates, active time, personalized weekly target, due-at-start review completion, authenticated no-store fetching, and all visual progress semantics; type-check and lint passed; `git diff --check` passed.
 
 ### Current and remaining work
 
-- Current issue: commit, push, and close #107, then redesign meaningful progress metrics in #109 and learning-based gamification in #110.
-- Remaining Epic issues after #107: #109–#110, #112–#113, and parent #100.
+- Current issue: commit, push, and close #109, then improve learning-based achievements, goals, streak protection, and celebrations in #110.
+- Remaining Epic issues after #109: #110, #112–#113, and parent #100.
 - Production migrations, secrets, environments, production data, paid services, and manual deployments remain untouched.
 
 Last updated: 2026-07-14 17:42 UTC
