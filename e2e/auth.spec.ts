@@ -6,11 +6,13 @@ test.beforeEach(async ({ request }) => {
 });
 
 test("registers a learner through the public form", async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 700 });
   await page.goto("/register");
   await page.getByLabel("Name").fill("Neue Lernerin");
   await page.getByLabel("E-Mail").fill("new@example.com");
   await page.getByLabel("Passwort", { exact: true }).fill(testPassword);
-  await page.getByLabel("Passwort bestätigen").fill(testPassword);
+  await page.getByLabel("Passwort bestätigen", { exact: true }).fill(testPassword);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth)).toBe(false);
   await page.getByRole("button", { name: "Konto erstellen" }).click();
 
   await expect(page.getByRole("heading", { name: "Anfrage erhalten" })).toBeVisible();

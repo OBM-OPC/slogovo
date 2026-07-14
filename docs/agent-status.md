@@ -15,11 +15,14 @@ Last updated: 2026-07-14 21:39 UTC
 - #101 verification: focused React test passed; type-check and lint passed; content validation passed (12 modules, 60 lessons, 9 grammar topics, 0 errors/warnings); production build passed (107 pages); Lighthouse production audit scored Performance 98, Accessibility 100, Best Practices 93, SEO 91; `git diff --check` passed.
 - #102 Create Interactive Demo Lesson: implemented a no-account, four-stage mini lesson with five audio-capable vocabulary flashcards, a listening question, actionable wrong-answer feedback with the correct solution, three accessible matching pairs, live progress, a completion metrics preview, replay, and registration CTA.
 - #102 verification: focused interaction test passed; type-check and lint passed; a Playwright journey completed the entire demo at 320×700, verified the wrong-answer explanation and registration CTA, and found no horizontal overflow; `git diff --check` passed.
+- #103 Redesign Login & Registration: added a shared branded auth shell, independently accessible visibility toggles for every password field, live four-signal password strength feedback while preserving the stronger 12–128-character passphrase policy, Caps Lock detection, actionable inline errors, explicit loading/double-submit protection, autocomplete/input hints, confirmation matching, verification-email guidance, and legal/privacy links. Removed the non-functional remember-me control.
+- #103 security decision: registration keeps the enumeration-resistant response introduced by #98 instead of revealing whether an email is already registered. This intentionally supersedes the issue's unsafe example while still giving actionable validation errors.
+- #103 verification: three focused form interaction tests passed; type-check and lint passed; all four existing auth Playwright journeys passed after selector verification, including a 320×700 registration flow with no horizontal overflow; `git diff --check` passed.
 
 ### Current and remaining work
 
-- Current issue: commit, push, and close #102, then continue directly with #103.
-- Remaining Epic issues: #103–#115 and parent #100.
+- Current issue: commit, push, and close #103, then establish the shared design/brand foundation in #114 and #115 before the remaining application screens.
+- Remaining Epic issues: #104–#115 and parent #100.
 - Production migrations, secrets, environments, production data, paid services, and manual deployments remain untouched.
 
 Last updated: 2026-07-14 17:42 UTC
