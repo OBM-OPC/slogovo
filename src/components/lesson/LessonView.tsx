@@ -47,6 +47,7 @@ export function LessonView({ lesson, moduleId, nextLessonId, context }: LessonVi
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [showTimer, setShowTimer] = useState(true);
   const stageRef = useRef<HTMLDivElement>(null);
+  const reviewItemIds = useRef(new Set<string>());
 
   const moduleTitle = context?.moduleTitle ?? moduleMeta?.title ?? moduleId;
   const lessonNumber = context?.lessonIndex ?? 0;
@@ -95,6 +96,10 @@ export function LessonView({ lesson, moduleId, nextLessonId, context }: LessonVi
     setItemProgress((current) => current.index === index && current.total === total ? current : { index, total });
   }, []);
 
+  const handleReviewRequest = useCallback((itemId: string) => {
+    reviewItemIds.current.add(itemId);
+  }, []);
+
   const startLesson = () => {
     interact();
     if (!lessonStarted.current) {
@@ -136,7 +141,13 @@ export function LessonView({ lesson, moduleId, nextLessonId, context }: LessonVi
 
   const handleExerciseComplete = async (result: ExerciseResult) => {
     interact();
-    for (const itemResult of result.itemResults) {
+    const resultWithReview = {
+      ...result,
+      itemResults: result.itemResults.map((itemResult) => reviewItemIds.current.has(itemResult.itemId)
+        ? { ...itemResult, required: true }
+        : itemResult),
+    };
+    for (const itemResult of resultWithReview.itemResults) {
       const properties = {
         lessonId: lesson.lessonId,
         moduleId: lesson.moduleId,
@@ -155,8 +166,8 @@ export function LessonView({ lesson, moduleId, nextLessonId, context }: LessonVi
         trackLearningEvent("hint_used", { ...properties, count: itemResult.hintsUsed });
       }
     }
-    const finalResults = [...results, result];
-    const retryRuns = currentRun ? createRetryRuns(currentRun.exercise, result) : [];
+    const finalResults = [...results, resultWithReview];
+    const retryRuns = currentRun ? createRetryRuns(currentRun.exercise, resultWithReview) : [];
     const nextRuns = retryRuns.length > 0 ? [...runs, ...retryRuns] : runs;
     const nextIndex = runIndex + 1;
     setResults(finalResults);
@@ -273,6 +284,7 @@ export function LessonView({ lesson, moduleId, nextLessonId, context }: LessonVi
             attemptNumber={currentRun.attemptNumber}
             onInteraction={interact}
             onItemChange={handleItemChange}
+            onReviewRequest={handleReviewRequest}
             onComplete={(result) => void handleExerciseComplete(result)}
           />
         </section>

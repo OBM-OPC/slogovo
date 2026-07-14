@@ -20,6 +20,7 @@ interface ExerciseEngineProps {
   attemptNumber?: number;
   onInteraction?: () => void;
   onItemChange?: (index: number, total: number) => void;
+  onReviewRequest?: (itemId: string) => void;
   onComplete: (result: ExerciseResult) => void;
 }
 
@@ -28,9 +29,10 @@ export function ExerciseEngine({
   attemptNumber = 1,
   onInteraction,
   onItemChange,
+  onReviewRequest,
   onComplete,
 }: ExerciseEngineProps) {
-  const shared = { exerciseId: exercise.id, attemptNumber, onInteraction, onItemChange, onComplete };
+  const shared = { exerciseId: exercise.id, attemptNumber, onInteraction, onItemChange, onReviewRequest, onComplete };
 
   switch (exercise.type) {
     case "quiz":

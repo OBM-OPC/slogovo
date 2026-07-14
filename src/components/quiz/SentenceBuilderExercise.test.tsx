@@ -24,7 +24,7 @@ describe("SentenceBuilderExercise", () => {
     fireEvent.click(screen.getByRole("button", { name: "Мария zum Satz hinzufügen" }));
     fireEvent.click(screen.getByRole("button", { name: "Prüfen" }));
 
-    expect(screen.getByText("Richtig!")).toBeTruthy();
+    expect(screen.getByText("Richtig – gut erkannt!")).toBeTruthy();
     expect(screen.getByText("Das Verb steht an zweiter Stelle.")).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "Fertig" }));
     expect(onComplete).toHaveBeenCalledWith(expect.objectContaining({

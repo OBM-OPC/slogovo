@@ -19,6 +19,7 @@ import {
 import { cn } from "@/lib/utils";
 import { trackLearningEvent, trackMonitoringEvent } from "@/lib/telemetry";
 import { BulgarianKeyboard } from "@/components/ui/BulgarianKeyboard";
+import { ExerciseFeedback } from "./ExerciseFeedback";
 
 interface ListenExerciseProps {
   exerciseId: string;
@@ -26,6 +27,7 @@ interface ListenExerciseProps {
   attemptNumber?: number;
   onInteraction?: () => void;
   onItemChange?: (index: number, total: number) => void;
+  onReviewRequest?: (itemId: string) => void;
   onComplete: (result: ExerciseResult) => void;
 }
 
@@ -35,6 +37,7 @@ export function ListenExercise({
   attemptNumber = 1,
   onInteraction,
   onItemChange,
+  onReviewRequest,
   onComplete,
 }: ListenExerciseProps) {
   const progress = useProgressSafe();
@@ -234,6 +237,11 @@ export function ListenExercise({
   };
   const maxReveals = item.revealText ? Math.max(0, item.maxReveals ?? 1) : 0;
   const canReveal = !result && revealCount < maxReveals;
+  const correctAnswer = item.format === "listen-select"
+    ? (item.options.find((option) => option.id === item.correctOptionId)?.bg || item.options.find((option) => option.id === item.correctOptionId)?.de || item.audioText)
+    : item.format === "audio-comprehension"
+      ? item.options[item.correctOptionIndex]
+      : result?.acceptedAnswers[0] || item.audioText;
 
   return (
     <div>
@@ -270,10 +278,16 @@ export function ListenExercise({
       )}
       <div className="mt-5 space-y-2">{renderAnswer()}</div>
       {result && (
-        <div className="mt-4 space-y-3">
-          <div role="status" aria-live="polite" className={cn("rounded-xl p-4 text-center font-medium", result.correct ? "bg-success/10 text-success" : "bg-danger/10 text-danger")}>{result.feedback}</div>
-          <Button className="lesson-action" onClick={next} fullWidth>{current < items.length - 1 ? "Weiter" : "Fertig"}</Button>
-        </div>
+        <ExerciseFeedback
+          correct={result.correct}
+          correctAnswer={correctAnswer}
+          explanation={result.correct ? result.feedback : "Höre die Aufnahme noch einmal und vergleiche Klang, Wortgrenzen und Endungen mit der Lösung."}
+          grammarError={result.richStatus === "wrong_form"}
+          audioText={item.audioText}
+          nextLabel={current < items.length - 1 ? "Weiter" : "Fertig"}
+          onNext={next}
+          onAddToReview={!result.correct ? () => onReviewRequest?.(item.id) : undefined}
+        />
       )}
       {selectedIndex !== null && <span className="sr-only">Auswahl {selectedIndex + 1}</span>}
     </div>

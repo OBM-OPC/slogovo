@@ -2,9 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ExerciseItemResult, ExerciseResult, QuizQuestion } from "@/types";
-import { Button } from "@/components/ui/Button";
 import { buildExerciseItemResult, buildExerciseResult } from "@/lib/evaluation";
 import { cn } from "@/lib/utils";
+import { ExerciseFeedback } from "./ExerciseFeedback";
 
 interface QuizExerciseProps {
   exerciseId: string;
@@ -12,6 +12,7 @@ interface QuizExerciseProps {
   attemptNumber?: number;
   onInteraction?: () => void;
   onItemChange?: (index: number, total: number) => void;
+  onReviewRequest?: (itemId: string) => void;
   onComplete: (result: ExerciseResult) => void;
 }
 
@@ -21,6 +22,7 @@ export function QuizExercise({
   attemptNumber = 1,
   onInteraction,
   onItemChange,
+  onReviewRequest,
   onComplete,
 }: QuizExerciseProps) {
   const exerciseStartedAt = useRef(new Date().toISOString());
@@ -30,6 +32,10 @@ export function QuizExercise({
   const [selected, setSelected] = useState<number | null>(null);
   const [showResult, setShowResult] = useState(false);
   const question = questions[current];
+  const correctAnswer = question.options[question.correctOptionIndex];
+  const audioText = /[\u0400-\u04ff]/u.test(correctAnswer)
+    ? correctAnswer
+    : question.bg || question.question.match(/[\u0400-\u04ff][\u0400-\u04ff\s?!.,-]*/u)?.[0];
 
   useEffect(() => onItemChange?.(current, questions.length), [current, onItemChange, questions.length]);
 
@@ -100,26 +106,16 @@ export function QuizExercise({
           );
         })}
       </div>
-      {showResult && (
-        <div className="mt-6 space-y-3">
-          {question.explanation && (
-            <div className={cn(
-              "rounded-xl p-4 text-sm",
-              selected === question.correctOptionIndex ? "bg-success/10 text-success" : "bg-warm-50 text-muted"
-            )}>
-              <p className="font-medium">{question.explanation}</p>
-              {question.grammarTopicSlug && (
-                <a href={`/grammatik/${question.grammarTopicSlug}`} className="mt-2 inline-block text-sm text-primary underline">
-                  Zum Grammatikthema
-                </a>
-              )}
-            </div>
-          )}
-          <Button className="lesson-action" onClick={handleNext} fullWidth>
-            {current < questions.length - 1 ? "Weiter" : "Fertig"}
-          </Button>
-        </div>
-      )}
+      {showResult && <ExerciseFeedback
+        correct={selected === question.correctOptionIndex}
+        correctAnswer={correctAnswer}
+        explanation={question.explanation}
+        grammarTopicSlug={question.grammarTopicSlug}
+        audioText={audioText}
+        nextLabel={current < questions.length - 1 ? "Weiter" : "Fertig"}
+        onNext={handleNext}
+        onAddToReview={selected !== question.correctOptionIndex ? () => onReviewRequest?.(question.id) : undefined}
+      />}
     </div>
   );
 }

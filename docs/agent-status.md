@@ -1,6 +1,6 @@
 # Slogovo controlled-development status
 
-Last updated: 2026-07-14 22:29 UTC
+Last updated: 2026-07-14 22:36 UTC
 
 ## UI/UX Epic #100 — active direct-main run
 
@@ -32,11 +32,13 @@ Last updated: 2026-07-14 22:29 UTC
 - #108 verification: focused model and interaction tests passed for sequential status derivation, total duration, current expanded content, objectives, lesson destinations, and locked lesson guidance; type-check and lint passed; `git diff --check` passed.
 - #106 Lesson Experience Improvements: rebuilt the live lesson shell around a sticky, always-visible header and granular journey progress. Exercises now expose a global current/total question count, elapsed and estimated remaining time with a dismissible timer, 56px answer targets, a fixed mobile primary action that reserves content space, a stable-height stage, 200ms reduced-motion-safe transitions, and programmatic focus movement after each step/question. Retry questions are included in the live total rather than hidden from progress.
 - #106 verification: nine lesson/quiz interaction tests passed across quiz, fill-in, listening, sentence-building, matching, and required-item retry, including progress semantics, timer, touch-target class, and automatic focus; type-check and lint passed; `git diff --check` passed.
+- #107 Improve Exercise Feedback: introduced one reusable, in-flow feedback panel across quiz, fill-in, sentence-building, listening, and matching. Correct responses receive confirmation and a clear continuation; wrong responses retain the question context while showing the correct solution, authored/fallback explanation, replay for Bulgarian audio, contextual grammar tip/link, and a functional “Später wiederholen” control. Learner-selected items become required deferred retries even when the original item was optional. Enter advances and Space replays audio without hijacking text inputs; motion uses the existing reduced-motion override.
+- #107 verification: ten cross-exercise tests passed, plus focused tests for wrong-answer solution/explanation, grammar link, audio keyboard replay, review selection, Enter dismissal, matching feedback, and actual optional-item retry insertion; type-check and lint passed; `git diff --check` passed.
 
 ### Current and remaining work
 
-- Current issue: commit, push, and close #106, then implement explanatory cross-exercise feedback in #107.
-- Remaining Epic issues after #106: #107, #109–#110, #112–#113, and parent #100.
+- Current issue: commit, push, and close #107, then redesign meaningful progress metrics in #109 and learning-based gamification in #110.
+- Remaining Epic issues after #107: #109–#110, #112–#113, and parent #100.
 - Production migrations, secrets, environments, production data, paid services, and manual deployments remain untouched.
 
 Last updated: 2026-07-14 17:42 UTC

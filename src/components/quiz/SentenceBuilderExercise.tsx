@@ -5,6 +5,7 @@ import { ExerciseItemResult, ExerciseResult, SentenceBuilder } from "@/types";
 import { Button } from "@/components/ui/Button";
 import { buildExerciseItemResult, buildExerciseResult } from "@/lib/evaluation";
 import { cn } from "@/lib/utils";
+import { ExerciseFeedback } from "./ExerciseFeedback";
 
 interface SentenceBuilderExerciseProps {
   exerciseId: string;
@@ -12,6 +13,7 @@ interface SentenceBuilderExerciseProps {
   attemptNumber?: number;
   onInteraction?: () => void;
   onItemChange?: (index: number, total: number) => void;
+  onReviewRequest?: (itemId: string) => void;
   onComplete: (result: ExerciseResult) => void;
 }
 
@@ -21,6 +23,7 @@ export function SentenceBuilderExercise({
   attemptNumber = 1,
   onInteraction,
   onItemChange,
+  onReviewRequest,
   onComplete,
 }: SentenceBuilderExerciseProps) {
   const exerciseStartedAt = useRef(new Date().toISOString());
@@ -114,18 +117,17 @@ export function SentenceBuilderExercise({
       {!showResult ? (
         <Button className="lesson-action" onClick={checkAnswer} fullWidth disabled={selected.length !== sentence.correctOrder.length}>Prüfen</Button>
       ) : (
-        <div className="space-y-3">
-          {sentence.explanation && (
-            <div className={cn("rounded-xl p-4 text-sm", isCorrect ? "bg-success/10 text-success" : "bg-warm-50 text-muted")}>
-              <p className="font-medium">{sentence.explanation}</p>
-              {sentence.grammarTopicSlug && <a href={`/grammatik/${sentence.grammarTopicSlug}`} className="mt-2 inline-block text-sm text-primary underline">Zum Grammatikthema</a>}
-            </div>
-          )}
-          <div role="status" aria-live="polite" className={cn("rounded-xl p-4 text-center font-medium", isCorrect ? "bg-success/10 text-success" : "bg-danger/10 text-danger")}>
-            {isCorrect ? "Richtig!" : `Richtige Reihenfolge: ${sentence.correctOrder.join(" ")}`}
-          </div>
-          <Button className="lesson-action" onClick={handleNext} fullWidth>{current < sentences.length - 1 ? "Weiter" : "Fertig"}</Button>
-        </div>
+        <ExerciseFeedback
+          correct={isCorrect}
+          correctAnswer={sentence.correctOrder.join(" ")}
+          explanation={sentence.explanation}
+          grammarTopicSlug={sentence.grammarTopicSlug}
+          grammarError={!isCorrect}
+          audioText={sentence.correctOrder.join(" ")}
+          nextLabel={current < sentences.length - 1 ? "Weiter" : "Fertig"}
+          onNext={handleNext}
+          onAddToReview={!isCorrect ? () => onReviewRequest?.(sentence.id) : undefined}
+        />
       )}
     </div>
   );

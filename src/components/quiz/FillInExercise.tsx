@@ -8,6 +8,7 @@ import { authoredAnswerOptions, evaluateAnswerDetailed } from "@/lib/answer-eval
 import { buildEvaluationFeedback, formatRichFeedback } from "@/lib/feedback";
 import { cn } from "@/lib/utils";
 import { BulgarianKeyboard } from "@/components/ui/BulgarianKeyboard";
+import { ExerciseFeedback } from "./ExerciseFeedback";
 
 interface FillInExerciseProps {
   exerciseId: string;
@@ -15,6 +16,7 @@ interface FillInExerciseProps {
   attemptNumber?: number;
   onInteraction?: () => void;
   onItemChange?: (index: number, total: number) => void;
+  onReviewRequest?: (itemId: string) => void;
   onComplete: (result: ExerciseResult) => void;
 }
 
@@ -24,6 +26,7 @@ export function FillInExercise({
   attemptNumber = 1,
   onInteraction,
   onItemChange,
+  onReviewRequest,
   onComplete,
 }: FillInExerciseProps) {
   const exerciseStartedAt = useRef(new Date().toISOString());
@@ -108,7 +111,6 @@ export function FillInExercise({
         placeholder="Antwort eingeben"
         aria-label="Bulgarische Antwort"
         aria-invalid={showResult ? !isCorrect : undefined}
-        aria-describedby={showResult ? "fill-in-feedback" : undefined}
         autoComplete="off"
         spellCheck={false}
         lang="bg"
@@ -122,20 +124,17 @@ export function FillInExercise({
       {!showResult ? (
         <Button className="lesson-action" onClick={checkAnswer} fullWidth disabled={!input.trim()}>Prüfen</Button>
       ) : (
-        <div className="space-y-3">
-          {sentence.explanation && (
-            <div className={cn("rounded-xl p-4 text-sm", isCorrect ? "bg-success/10 text-success" : "bg-warm-50 text-muted")}>
-              <p className="font-medium">{sentence.explanation}</p>
-              {sentence.grammarTopicSlug && (
-                <a href={`/grammatik/${sentence.grammarTopicSlug}`} className="mt-2 inline-block text-sm text-primary underline">Zum Grammatikthema</a>
-              )}
-            </div>
-          )}
-          <div className={cn("rounded-xl p-4 text-center font-medium", isCorrect ? "bg-success/10 text-success" : "bg-danger/10 text-danger")}>
-            <p id="fill-in-feedback" role="status" aria-live="polite">{formatRichFeedback(richFeedback)}</p>
-          </div>
-          <Button className="lesson-action" onClick={handleNext} fullWidth>{current < sentences.length - 1 ? "Weiter" : "Fertig"}</Button>
-        </div>
+        <ExerciseFeedback
+          correct={isCorrect}
+          correctAnswer={sentence.answers[0] ?? sentence.answer}
+          explanation={sentence.explanation || formatRichFeedback(richFeedback)}
+          grammarTopicSlug={sentence.grammarTopicSlug}
+          grammarError={richFeedback.status === "wrong_form"}
+          audioText={sentence.answers[0] ?? sentence.answer}
+          nextLabel={current < sentences.length - 1 ? "Weiter" : "Fertig"}
+          onNext={handleNext}
+          onAddToReview={!isCorrect ? () => onReviewRequest?.(sentence.id) : undefined}
+        />
       )}
     </div>
   );
