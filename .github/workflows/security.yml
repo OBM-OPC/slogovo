@@ -26,9 +26,12 @@ jobs:
       # High/critical findings block delivery; moderate findings remain visible
       # for scheduled maintenance without making the baseline unactionable.
       - run: npm audit --audit-level=high
-      - uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Scan repository history for secrets
+        run: >-
+          docker run --rm
+          -v "$PWD:/repo"
+          ghcr.io/gitleaks/gitleaks:v8.28.0
+          detect --source=/repo --redact --no-banner
 
   database-security:
     runs-on: ubuntu-latest
