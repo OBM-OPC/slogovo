@@ -1,5 +1,25 @@
 # Slogovo controlled-development status
 
+Last updated: 2026-07-14 21:39 UTC
+
+## UI/UX Epic #100 — active direct-main run
+
+- Owner instruction for this run: implement Epic #100 continuously on `main`, commit and push each completed sub-issue, and close only verified issues. No implementation pull request will be created.
+- Preflight: clean `main` at `9fd7437041144ae46478426ec9bd7ad0a1ed23bf`; only remote `main`; controlled-development cron disabled; no parallel Slogovo coding session visible. Open PRs #116 and #117 are Dependabot-owned and are outside this Epic run.
+- Inspected: all open issues #100–#115, all issue bodies and acceptance criteria, all open branches/PRs, recent Actions, current component/page architecture, and the prior status history below.
+- Prioritized sequence: high-impact landing/demo/auth first, shared design/brand foundations, primary navigation/dashboard/course/onboarding, learning/feedback/progress/gamification, then cross-screen mobile/accessibility verification.
+
+### Completed in this run
+
+- #101 Redesign Landing Page: replaced the client-heavy narrow landing screen with a static, responsive marketing experience; strengthened the value proposition and primary registration CTA; made login a secondary link; added a faithful learning-interface preview, benefit cards, trust metrics, audience use cases, transparent testimonial placeholder, FAQ, legal/social-proof footer, and 5–10-minute lesson guidance.
+- #101 verification: focused React test passed; type-check and lint passed; content validation passed (12 modules, 60 lessons, 9 grammar topics, 0 errors/warnings); production build passed (107 pages); Lighthouse production audit scored Performance 98, Accessibility 100, Best Practices 93, SEO 91; `git diff --check` passed.
+
+### Current and remaining work
+
+- Current issue: commit, push, and close #101, then continue directly with #102.
+- Remaining Epic issues: #102–#115 and parent #100.
+- Production migrations, secrets, environments, production data, paid services, and manual deployments remain untouched.
+
 Last updated: 2026-07-14 17:42 UTC
 
 ## Phase 9 implementation checkpoint — issue #98
