@@ -1,6 +1,6 @@
 # Slogovo controlled-development status
 
-Last updated: 2026-07-14 23:39 UTC
+Last updated: 2026-07-14 23:46 UTC
 
 ## UI/UX Epic #100 — active direct-main run
 
@@ -42,6 +42,7 @@ Last updated: 2026-07-14 23:39 UTC
 - #112 verification so far: Android Chrome Pixel 7 emulation passed the complete 14-route overflow/target audit; 18 focused layout/dialog/exercise tests and the dedicated focus-scroll test passed; type-check and lint passed; `git diff --check` passed. Local WebKit could be downloaded but cannot launch because this immutable host lacks its GTK/GStreamer libraries and has no apt package manager; CI now installs WebKit with system dependencies and is the required final iOS-engine verification before issue closure.
 - #112 CI follow-up: the first expanded CI run exposed stale matching/dashboard browser assertions and an incomplete E2E Supabase fixture whose missing rate-limit RPC exhausted the secure local fallback after repeated test logins. Matching now advances through its real feedback controls, restore verification targets the redesigned dashboard, and the fixture implements/reset the same bounded RPC contract. The previously rate-limited learning and vocabulary journeys pass locally; the corrected iPhone WebKit run remains required before closure.
 - #112 WebKit isolation: the corrected CI passed all Chromium journeys but WebKit did not submit the UI login form and emitted no server auth request. The layout-only mobile audit now creates its authenticated session through the real same-origin login API using Playwright's shared browser-context cookie jar, while dedicated form/auth journeys continue covering UI login separately. The revised Android audit passes all 14 routes; WebKit CI remains the closure gate.
+- #112 render-readiness follow-up: WebKit then reached `/lernen` successfully but exceeded the default five-second wait for the API-backed dashboard heading. Mobile audits now allow the same 15-second authenticated-page readiness budget and require a visible `h1` on every route, ensuring completed screens—not loading skeletons—are measured.
 - #113 Accessibility Improvements: added an automated axe WCAG A/AA audit across all 14 authenticated learning routes, polite route-change announcements, explicit Bulgarian language semantics, keyboard-operable flashcards, named icon/switch/range controls, and AA-safe text and interactive-state contrast. Removed a current-lesson pulse that temporarily lowered contrast; existing global focus-visible and reduced-motion rules remain applied across the product.
 - #113 verification: the complete Chromium axe audit passed with zero WCAG A/AA violations; route-announcer, navigation, mobile-focus, and matching interaction tests passed; type-check and lint passed. All findings identified by the first full audit were fixed and the entire route set was rescanned.
 

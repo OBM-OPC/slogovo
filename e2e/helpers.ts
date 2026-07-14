@@ -14,7 +14,7 @@ export async function login(page: Page) {
   await page.getByLabel("Passwort", { exact: true }).fill(testPassword);
   await page.getByRole("button", { name: "Anmelden" }).click();
   await expect(page).toHaveURL(/\/lernen$/, { timeout: 15_000 });
-  await expect(page.getByRole("heading", { name: "Lernen" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Lernen" })).toBeVisible({ timeout: 15_000 });
 }
 
 export async function loginViaApi(page: Page) {
@@ -25,7 +25,7 @@ export async function loginViaApi(page: Page) {
   expect(response.ok(), `API login failed with ${response.status()}`).toBeTruthy();
   await page.goto("/lernen");
   await expect(page).toHaveURL(/\/lernen$/, { timeout: 15_000 });
-  await expect(page.getByRole("heading", { name: "Lernen" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Lernen" })).toBeVisible({ timeout: 15_000 });
 }
 
 export async function loginInContext(context: BrowserContext) {

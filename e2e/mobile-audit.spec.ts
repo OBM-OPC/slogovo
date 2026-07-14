@@ -14,6 +14,7 @@ test("keeps every learning screen thumb-friendly without horizontal overflow", a
   for (const route of routes) {
     await page.goto(route, { waitUntil: "domcontentloaded" });
     await expect(page.locator("main").last()).toBeVisible();
+    await expect(page.locator("h1").first(), `${route} did not finish rendering`).toBeVisible({ timeout: 15_000 });
     const audit = await page.evaluate(() => {
       const overflow = document.documentElement.scrollWidth > document.documentElement.clientWidth + 1;
       const selector = "button, input, select, textarea, summary, [role='button'], nav a";
