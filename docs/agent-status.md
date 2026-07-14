@@ -1,12 +1,13 @@
 # Slogovo controlled-development status
 
-Last updated: 2026-07-14 17:20 UTC
+Last updated: 2026-07-14 17:37 UTC
 
 ## Phase 9 implementation checkpoint — issue #98
 
 - Current branch: `feat/complete-slogovo-backlog`.
 - Base commit: `80b1ac2773dd778882ceea6c4ccb4445885d356f` on `main`.
 - Implementation commit: `4116a6a1c4b018f942fdf6e1dcfa3d44d4c9754f` (`feat: complete Phase 9 security hardening`).
+- Validated delivery head: `606aad30fa5857f87386a12de278974b7f3ce72f`; all source-actionable work and required checks are complete.
 - Backlog inspected: #98 is the only open GitHub issue and was selected in full; no second issue, branch, worktree, coding run, or pull request was introduced.
 - Delivery state: Draft pull request #99 is the sole new/open implementation PR from the sole implementation branch to `main`: https://github.com/OBM-OPC/slogovo/pull/99. The agent will not merge it.
 
@@ -29,10 +30,12 @@ Last updated: 2026-07-14 17:20 UTC
 - `npm run lint` passed with no warnings or errors (Next.js emitted only its CLI deprecation notice).
 - `npm test` passed: 53 Vitest files / 201 tests.
 - `npm run validate:database` passed: 10 ordered migrations, RLS, additive/destructive policy, and generated types.
+- The clean-project Supabase CI stack applied all 10 migrations and passed the pgTAP two-user/anonymous RLS suite, including least-privilege grants and ownership-change rejection.
 - `npm run validate:content` passed: 12 modules, 60 lessons, and 9 grammar topics with 0 errors and 0 warnings. The separate pre-existing quality report still lists 299 untested vocabulary items, 554 items without authored audio, and 37 lessons without productive exercises.
 - `npm run build` passed and generated 107 pages. The Supabase client emitted a non-fatal Edge-runtime compatibility warning during compilation.
 - `npm run test:e2e` passed: 11/11 registration, protected-session, expiry/logout, mobile learning, lesson pass/fail/retry, authoritative cross-device restore, vocabulary review, and telemetry journeys.
 - `npm audit --audit-level=high` passed. Two moderate PostCSS findings remain nested under the current Next.js package; npm's suggested forced remediation incorrectly downgrades Next.js and was not applied.
+- Gitleaks passed across all 49 commits after narrowly allowlisting only the exact isolated E2E fixture password; OWASP ZAP passed its 43-URL baseline with documented informational exceptions.
 - `git diff --check` passed.
 
 ### Remaining and owner-controlled work
@@ -41,7 +44,7 @@ Last updated: 2026-07-14 17:20 UTC
 - Supply and legally approve the operator address/contact details in the legal notice before public production use.
 - Decide the owner-controlled removal/backfill plan for obsolete legacy reset/verification columns. The migration already blocks client updates but does not destructively drop production columns.
 - Enable repository-native GitHub secret scanning if the repository plan supports it; Gitleaks now provides the source-controlled CI equivalent.
-- Review the single Draft pull request and its GitHub Actions/Vercel results. Do not merge until required checks are green and the owner accepts the documented production/legal steps.
+- Review pull request #99 and the documented production/legal steps. The implementation is ready for human review; only the owner may decide whether and when to merge.
 - Issue #98 remains open pending owner review and these owner-controlled acceptance steps; no production migration, data deletion, environment/secret change, paid-service activation, manual deployment, issue closure, or merge was performed.
 
 ### Commands and external state inspected
@@ -49,7 +52,7 @@ Last updated: 2026-07-14 17:20 UTC
 - Inspected local status/history/worktrees/branches/locks/processes and confirmed no concurrent Slogovo coding run.
 - Inspected all remote branches, open pull requests, open issues, issue #98's complete acceptance criteria, and the latest `main` Actions run (`29280694621`, passed).
 - Ran the validation commands listed above plus focused security, registration, scheduler, middleware, authoritative-progress, and failing-browser reruns during implementation.
-- The branch and implementation/status commits were pushed and Draft PR #99 was opened. GitHub Actions, Vercel, and the local Supabase CI job are pending on the PR head; production Supabase was not accessed or changed.
+- GitHub Actions CI run `29354269134`, Security run `29354269137` (dependency/Gitleaks, clean-project Supabase RLS, and ZAP), and Vercel passed on validated delivery head `606aad3`. Production Supabase was not accessed or changed.
 
 ---
 
