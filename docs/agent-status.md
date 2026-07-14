@@ -24,11 +24,13 @@ Last updated: 2026-07-14 21:39 UTC
 - #115 verification: five focused branding/design-system tests passed; type-check and lint passed; content validation and a 110-page production build passed, including `/icon.svg`, `/manifest.webmanifest`, and `/opengraph-image`; `git diff --check` passed.
 - #105 Navigation Redesign: replaced the feature-oriented four-tab bar with exactly five product areas—Home, Lernen, Wiederholen, Fortschritt, Profil. Added a branded desktop navigation with an accessible Learn disclosure containing Kurs, Grammatik, Alphabet, and Wortschatz; added an active/current state and a five-item mobile bottom bar with icons, labels, 48px targets, and safe-area support. All old URLs remain intact.
 - #105 verification: two focused navigation tests passed for exact item order, active-page semantics, and Learn children; type-check and lint passed; desktop adaptive-session and narrow-mobile Bulgarian-input Playwright journeys passed; `git diff --check` passed.
+- #104 Dashboard Redesign: replaced the course-list home with a decision-focused dashboard backed exclusively by authenticated `/api/dashboard` data. The top action names the next lesson within the adaptive daily session, duration, chapter progress, and primary CTA; supporting cards show today's due-review count/time, five-day weekly goal, prominent streak and real learning stats, next achievement progress, and preserved quick practice links. Loading, retry, empty/complete-course, and responsive stacked states are included.
+- #104 verification: two focused tests passed for server-derived next action/review/goal/stats/achievement data and no-store authenticated rendering; type-check and lint passed; the existing end-to-end login/home/adaptive-session journey passed against the mock authenticated backend; `git diff --check` passed.
 
 ### Current and remaining work
 
-- Current issue: commit, push, and close #105, then complete the decision-focused dashboard in #104.
-- Remaining Epic issues: #104, #106–#113, and parent #100.
+- Current issue: commit, push, and close #104, then complete the personalized one-question-at-a-time onboarding in #111 and the course roadmap in #108.
+- Remaining Epic issues: #106–#113 and parent #100.
 - Production migrations, secrets, environments, production data, paid services, and manual deployments remain untouched.
 
 Last updated: 2026-07-14 17:42 UTC
