@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { login, resetBackend } from "./helpers";
+import { loginViaApi, resetBackend } from "./helpers";
 
 const routes = [
   "/lernen", "/kurs", "/wiederholen", "/fortschritt", "/profil", "/erfolge", "/einstellungen",
@@ -10,7 +10,7 @@ test.beforeEach(async ({ request }) => { await resetBackend(request); });
 
 test("keeps every learning screen thumb-friendly without horizontal overflow", async ({ page }) => {
   test.setTimeout(90_000);
-  await login(page);
+  await loginViaApi(page);
   for (const route of routes) {
     await page.goto(route, { waitUntil: "domcontentloaded" });
     await expect(page.locator("main").last()).toBeVisible();

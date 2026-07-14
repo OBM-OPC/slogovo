@@ -17,6 +17,17 @@ export async function login(page: Page) {
   await expect(page.getByRole("heading", { name: "Lernen" })).toBeVisible();
 }
 
+export async function loginViaApi(page: Page) {
+  const response = await page.request.post("/api/auth/login", {
+    data: { email: "learner@example.com", password: testPassword },
+    headers: { Origin: "http://127.0.0.1:3100" },
+  });
+  expect(response.ok(), `API login failed with ${response.status()}`).toBeTruthy();
+  await page.goto("/lernen");
+  await expect(page).toHaveURL(/\/lernen$/, { timeout: 15_000 });
+  await expect(page.getByRole("heading", { name: "Lernen" })).toBeVisible();
+}
+
 export async function loginInContext(context: BrowserContext) {
   const page = await context.newPage();
   await login(page);
