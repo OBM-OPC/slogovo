@@ -1,6 +1,6 @@
 # Slogovo controlled-development status
 
-Last updated: 2026-07-14 17:17 UTC
+Last updated: 2026-07-14 17:20 UTC
 
 ## Phase 9 implementation checkpoint — issue #98
 
@@ -8,7 +8,7 @@ Last updated: 2026-07-14 17:17 UTC
 - Base commit: `80b1ac2773dd778882ceea6c4ccb4445885d356f` on `main`.
 - Implementation commit: `4116a6a1c4b018f942fdf6e1dcfa3d44d4c9754f` (`feat: complete Phase 9 security hardening`).
 - Backlog inspected: #98 is the only open GitHub issue and was selected in full; no second issue, branch, worktree, coding run, or pull request was introduced.
-- Delivery state: the sole branch is ready to push and exactly one Draft pull request will be opened from it to `main`. The agent will not merge it.
+- Delivery state: Draft pull request #99 is the sole new/open implementation PR from the sole implementation branch to `main`: https://github.com/OBM-OPC/slogovo/pull/99. The agent will not merge it.
 
 ### Work completed
 
@@ -49,7 +49,7 @@ Last updated: 2026-07-14 17:17 UTC
 - Inspected local status/history/worktrees/branches/locks/processes and confirmed no concurrent Slogovo coding run.
 - Inspected all remote branches, open pull requests, open issues, issue #98's complete acceptance criteria, and the latest `main` Actions run (`29280694621`, passed).
 - Ran the validation commands listed above plus focused security, registration, scheduler, middleware, authoritative-progress, and failing-browser reruns during implementation.
-- GitHub Actions, Vercel, and the local Supabase CI job are pending the first push/PR run; production Supabase was not accessed or changed.
+- The branch and implementation/status commits were pushed and Draft PR #99 was opened. GitHub Actions, Vercel, and the local Supabase CI job are pending on the PR head; production Supabase was not accessed or changed.
 
 ---
 
