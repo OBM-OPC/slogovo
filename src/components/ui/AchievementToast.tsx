@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { ACHIEVEMENTS } from "@/lib/achievements";
 import { AchievementIllustration } from "@/components/brand/Illustrations";
+import { triggerConfetti } from "@/lib/confetti";
 
 interface AchievementToastProps {
   achievementIds: string[];
@@ -11,6 +12,10 @@ interface AchievementToastProps {
 
 export function AchievementToast({ achievementIds, onClose }: AchievementToastProps) {
   const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    if (achievementIds.length > 0) triggerConfetti({ scalar: 1.1 });
+  }, [achievementIds]);
 
   useEffect(() => {
     const timer = setTimeout(() => {

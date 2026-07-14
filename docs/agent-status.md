@@ -1,6 +1,6 @@
 # Slogovo controlled-development status
 
-Last updated: 2026-07-14 22:41 UTC
+Last updated: 2026-07-14 22:52 UTC
 
 ## UI/UX Epic #100 — active direct-main run
 
@@ -36,11 +36,13 @@ Last updated: 2026-07-14 22:41 UTC
 - #107 verification: ten cross-exercise tests passed, plus focused tests for wrong-answer solution/explanation, grammar link, audio keyboard replay, review selection, Enter dismissal, matching feedback, and actual optional-item retry insertion; type-check and lint passed; `git diff --check` passed.
 - #109 Progress & Statistics Redesign: replaced the mixed local/server progress page with a read-only authenticated server report. The API now combines authoritative progress, attempt rows, and review-event history to report confidence-threshold words learned, passed/mastered lessons, first-attempt listening accuracy, productive grammar accuracy, active study time, personalized weekly-goal progress, and the exact proportion of reviews due at the start of today that were completed today. XP is absent from the hierarchy; explicit empty/error states never fabricate percentages.
 - #109 verification: focused calculation and rendering tests passed for ≥3/70% word confidence, listening and grammar rates, active time, personalized weekly target, due-at-start review completion, authenticated no-store fetching, and all visual progress semantics; type-check and lint passed; `git diff --check` passed.
+- #110 Improve Gamification: expanded rewards around real milestones: first productive conversation, all 30 alphabet letters reviewed, 100 mastered words, seven review sessions, 50 listening items at ≥80%, lesson/grammar/time/streak milestones, and a configurable weekly lesson goal defaulting to three. Added a dedicated locked/unlocked/progress achievement screen, alphabet completion evidence, first-attempt listening counters, weekly lesson counters, and once-per-week automatic protection for exactly one missed day. Freeze state, counters, settings, cross-device merge, and authoritative rebuild are persisted; unlock celebrations now detect achievements added during the same store update and use confetti with reduced-motion disabled automatically.
+- #110 verification: 16 focused tests passed for milestone eligibility/progress, three-lesson goal, listening threshold, once-weekly freeze, authoritative rebuild, schema normalization, cross-device merge, and the complete achievement screen; type-check and lint passed; `git diff --check` passed.
 
 ### Current and remaining work
 
-- Current issue: commit, push, and close #109, then improve learning-based achievements, goals, streak protection, and celebrations in #110.
-- Remaining Epic issues after #109: #110, #112–#113, and parent #100.
+- Current issue: commit, push, and close #110, then run the cross-screen mobile optimization in #112 and final accessibility hardening in #113.
+- Remaining Epic issues after #110: #112–#113 and parent #100.
 - Production migrations, secrets, environments, production data, paid services, and manual deployments remain untouched.
 
 Last updated: 2026-07-14 17:42 UTC

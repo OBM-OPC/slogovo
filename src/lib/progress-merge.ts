@@ -48,6 +48,7 @@ export function mergeProgress(local: UserProgress, remote: UserProgress): UserPr
         minutes: Math.max(localDay.minutes, remoteDay.minutes),
         vocabulary: Math.max(localDay.vocabulary, remoteDay.vocabulary),
         activeSeconds: Math.max(localDay.activeSeconds ?? 0, remoteDay.activeSeconds ?? 0),
+        lessons: Math.max(localDay.lessons ?? 0, remoteDay.lessons ?? 0),
       };
     }
   }
@@ -60,6 +61,8 @@ export function mergeProgress(local: UserProgress, remote: UserProgress): UserPr
       local.exerciseStats.consecutiveCorrect ?? 0,
       remote.exerciseStats.consecutiveCorrect ?? 0
     ),
+    listeningCorrect: Math.max(local.exerciseStats.listeningCorrect ?? 0, remote.exerciseStats.listeningCorrect ?? 0),
+    listeningTotal: Math.max(local.exerciseStats.listeningTotal ?? 0, remote.exerciseStats.listeningTotal ?? 0),
   };
 
   const achievements = union(local.achievements, remote.achievements);
@@ -76,6 +79,8 @@ export function mergeProgress(local: UserProgress, remote: UserProgress): UserPr
       (local.streak.lastStudyDate ?? "") >= (remote.streak.lastStudyDate ?? "")
         ? local.streak.lastStudyDate
         : remote.streak.lastStudyDate,
+    freezeUsedWeek: (local.streak.freezeUsedWeek ?? "") >= (remote.streak.freezeUsedWeek ?? "") ? local.streak.freezeUsedWeek : remote.streak.freezeUsedWeek,
+    freezeAppliedOn: (local.streak.freezeAppliedOn ?? "") >= (remote.streak.freezeAppliedOn ?? "") ? local.streak.freezeAppliedOn : remote.streak.freezeAppliedOn,
   };
 
   return {

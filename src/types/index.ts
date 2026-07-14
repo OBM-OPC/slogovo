@@ -154,6 +154,9 @@ export type DailyGoal = "light" | "medium" | "intense";
 
 export interface UserSettings {
   dailyGoal: DailyGoal;
+  weeklyLessonGoal: number;
+  alphabetCompleted: boolean;
+  streakFreezeUsedWeek?: string;
   ttsEnabled: boolean;
   showLatin: boolean;
   speechRate: number;
@@ -171,6 +174,8 @@ export interface Streak {
   current: number;
   longest: number;
   lastStudyDate?: string;
+  freezeUsedWeek?: string;
+  freezeAppliedOn?: string;
 }
 
 export interface UserProgress {
@@ -186,8 +191,10 @@ export interface UserProgress {
     correct: number;
     wrong: number;
     consecutiveCorrect?: number;
+    listeningCorrect?: number;
+    listeningTotal?: number;
   };
-  dailyStats: Record<string, { minutes: number; vocabulary: number; activeSeconds?: number }>;
+  dailyStats: Record<string, { minutes: number; vocabulary: number; activeSeconds?: number; lessons?: number }>;
   /** Attempt ids already applied to aggregate progress, for retry idempotency. */
   recordedAttemptIds: string[];
   settings: UserSettings;

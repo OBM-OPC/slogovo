@@ -1,4 +1,4 @@
-import { ACHIEVEMENTS } from "@/lib/achievements";
+import { ACHIEVEMENTS, achievementProgress } from "@/lib/achievements";
 import { learningMetrics } from "@/lib/gamification";
 import { recommendedWeeklyLearningDays } from "@/lib/onboarding";
 import type { ModuleMeta, UserProgress } from "@/types";
@@ -31,21 +31,6 @@ function withinLastSevenDays(date: string, now: Date) {
   return !Number.isNaN(value.getTime()) && value >= start && value <= now;
 }
 
-function achievementTarget(id: string, progress: UserProgress, now: Date): { current: number; target: number } {
-  const metrics = learningMetrics(progress, now);
-  const targets: Record<string, { current: number; target: number }> = {
-    "first-steps": { current: progress.masteredLessons.length, target: 1 },
-    "seven-day-streak": { current: progress.streak.current, target: 7 },
-    "hundred-vocabulary": { current: metrics.masteredWords, target: 25 },
-    "review-rhythm": { current: metrics.distinctReviewDays, target: 7 },
-    "speaking-practice": { current: metrics.productionAttempts, target: 20 },
-    "a1-master": { current: metrics.masteredGrammarLessons, target: 5 },
-    "world-citizen": { current: metrics.activeMinutes, target: 120 },
-    "weekly-goal": { current: metrics.weeklyGoalDays, target: 5 },
-  };
-  return targets[id] ?? { current: 0, target: 1 };
-}
-
 export function buildDashboardData(progress: UserProgress, modules: ModuleMeta[], now = new Date()): DashboardData {
   const orderedModules = [...modules].sort((a, b) => a.order - b.order);
   const nextLesson = orderedModules.flatMap((module) => module.lessons.map((lesson) => ({ ...lesson, module }))).find(({ lessonId }) => !progress.completedLessons.includes(lessonId));
@@ -57,7 +42,7 @@ export function buildDashboardData(progress: UserProgress, modules: ModuleMeta[]
   const weeklyDays = Object.entries(progress.dailyStats).filter(([date, day]) => withinLastSevenDays(date, now) && day.minutes >= dailyGoalMinutes).length;
   const metrics = learningMetrics(progress, now);
   const achievement = ACHIEVEMENTS.find((item) => !progress.achievements.includes(item.id));
-  const achievementValue = achievement ? achievementTarget(achievement.id, progress, now) : null;
+  const achievementValue = achievement ? achievementProgress(achievement.id, progress, now) : null;
   const targetDays = recommendedWeeklyLearningDays(progress.settings.dailyGoal);
   const isPersonalizedFirstStep = progress.settings.onboarding.completed && progress.completedLessons.length === 0;
   const personalizedAction = isPersonalizedFirstStep && progress.settings.onboarding.recommendedPath === "alphabet" ? {
@@ -107,6 +92,6 @@ export function buildDashboardData(progress: UserProgress, modules: ModuleMeta[]
     review: { due: reviewDue, estimatedMinutes: reviewDue === 0 ? 0 : Math.max(1, Math.ceil(reviewDue * 0.3)) },
     weeklyGoal: { completedDays: weeklyDays, targetDays, percent: Math.min(100, Math.round((weeklyDays / targetDays) * 100)) },
     stats: { streak: progress.streak.current, lessons: progress.completedLessons.length, activeMinutes: metrics.activeMinutes, masteredWords: metrics.masteredWords },
-    nextAchievement: achievement && achievementValue ? { ...achievement, ...achievementValue, percent: Math.min(100, Math.round((achievementValue.current / achievementValue.target) * 100)) } : null,
+    nextAchievement: achievement && achievementValue ? { ...achievement, ...achievementValue } : null,
   };
 }

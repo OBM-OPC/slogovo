@@ -98,6 +98,26 @@ export default function EinstellungenPage() {
         </div>
       </section>
 
+      <section className="mb-6 rounded-3xl bg-white p-5 shadow-card">
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <h2 className="font-serif font-bold">Wöchentliches Lektionen-Ziel</h2>
+            <p className="mt-1 text-xs text-muted">Standard: 3 abgeschlossene Lektionen</p>
+          </div>
+          <label className="text-sm font-semibold">
+            <span className="sr-only">Lektionen pro Woche</span>
+            <select
+              aria-label="Lektionen pro Woche"
+              value={settings.weeklyLessonGoal}
+              onChange={(event) => void updateSettings({ weeklyLessonGoal: Number(event.target.value) })}
+              className="min-h-12 rounded-2xl border border-warm-200 bg-white px-4 text-lg font-bold text-primary"
+            >
+              {[1, 2, 3, 4, 5, 6, 7].map((value) => <option key={value} value={value}>{value}</option>)}
+            </select>
+          </label>
+        </div>
+      </section>
+
       {/* Toggles */}
       <section className="mb-6 overflow-hidden rounded-3xl bg-white shadow-card">
         <ToggleRow

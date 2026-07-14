@@ -13,6 +13,9 @@ export interface LearningMetrics {
   masteredGrammarLessons: number;
   activeMinutes: number;
   weeklyGoalDays: number;
+  weeklyLessons: number;
+  listeningCorrect: number;
+  listeningTotal: number;
 }
 
 function dateKey(value?: string): string | null {
@@ -36,6 +39,10 @@ export function learningMetrics(progress: UserProgress, now = new Date()): Learn
     const parsed = new Date(`${date}T00:00:00`);
     return !Number.isNaN(parsed.getTime()) && parsed >= weekStart && parsed <= now && day.minutes >= goalMinutes;
   }).length;
+  const weeklyLessons = Object.entries(progress.dailyStats).filter(([date]) => {
+    const parsed = new Date(`${date}T00:00:00`);
+    return !Number.isNaN(parsed.getTime()) && parsed >= weekStart && parsed <= now;
+  }).reduce((sum, [, day]) => sum + (day.lessons ?? 0), 0);
 
   return {
     masteredWords: vocabulary.filter((item) => item.status === "mastered").length,
@@ -44,5 +51,8 @@ export function learningMetrics(progress: UserProgress, now = new Date()): Learn
     masteredGrammarLessons: progress.masteredLessons.length,
     activeMinutes: Math.floor(activeSeconds / 60),
     weeklyGoalDays,
+    weeklyLessons,
+    listeningCorrect: progress.exerciseStats.listeningCorrect ?? 0,
+    listeningTotal: progress.exerciseStats.listeningTotal ?? 0,
   };
 }
