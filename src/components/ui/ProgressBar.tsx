@@ -5,9 +5,10 @@ interface ProgressBarProps {
   max?: number;
   className?: string;
   barClassName?: string;
+  ariaLabel?: string;
 }
 
-export function ProgressBar({ value, max = 100, className, barClassName }: ProgressBarProps) {
+export function ProgressBar({ value, max = 100, className, barClassName, ariaLabel }: ProgressBarProps) {
   const percentage = Math.min(Math.max((value / max) * 100, 0), 100);
 
   return (
@@ -16,6 +17,7 @@ export function ProgressBar({ value, max = 100, className, barClassName }: Progr
       aria-valuemin={0}
       aria-valuemax={max}
       aria-valuenow={Math.min(Math.max(value, 0), max)}
+      aria-label={ariaLabel}
       className={cn("h-2 w-full overflow-hidden rounded-full bg-gray-200", className)}
     >
       <div

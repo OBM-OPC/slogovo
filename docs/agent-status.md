@@ -13,11 +13,13 @@ Last updated: 2026-07-14 21:39 UTC
 
 - #101 Redesign Landing Page: replaced the client-heavy narrow landing screen with a static, responsive marketing experience; strengthened the value proposition and primary registration CTA; made login a secondary link; added a faithful learning-interface preview, benefit cards, trust metrics, audience use cases, transparent testimonial placeholder, FAQ, legal/social-proof footer, and 5–10-minute lesson guidance.
 - #101 verification: focused React test passed; type-check and lint passed; content validation passed (12 modules, 60 lessons, 9 grammar topics, 0 errors/warnings); production build passed (107 pages); Lighthouse production audit scored Performance 98, Accessibility 100, Best Practices 93, SEO 91; `git diff --check` passed.
+- #102 Create Interactive Demo Lesson: implemented a no-account, four-stage mini lesson with five audio-capable vocabulary flashcards, a listening question, actionable wrong-answer feedback with the correct solution, three accessible matching pairs, live progress, a completion metrics preview, replay, and registration CTA.
+- #102 verification: focused interaction test passed; type-check and lint passed; a Playwright journey completed the entire demo at 320×700, verified the wrong-answer explanation and registration CTA, and found no horizontal overflow; `git diff --check` passed.
 
 ### Current and remaining work
 
-- Current issue: commit, push, and close #101, then continue directly with #102.
-- Remaining Epic issues: #102–#115 and parent #100.
+- Current issue: commit, push, and close #102, then continue directly with #103.
+- Remaining Epic issues: #103–#115 and parent #100.
 - Production migrations, secrets, environments, production data, paid services, and manual deployments remain untouched.
 
 Last updated: 2026-07-14 17:42 UTC
