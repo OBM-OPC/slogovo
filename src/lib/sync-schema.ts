@@ -99,6 +99,8 @@ const syncEventSchema = z.discriminatedUnion("type", [
       wordId: z.string().min(1),
       rating: z.enum(["repeat", "hard", "good", "easy"]),
       mode: z.enum(["recognition", "production"]).optional(),
+      responseTimeMs: z.number().int().nonnegative().max(60 * 60 * 1000).optional(),
+      errorCategory: z.enum(["vocabulary", "cyrillic-confusion", "article-usage", "verb-conjugation", "gender-agreement", "word-order", "listening-confusion", "bulgarian-clitics"]).optional(),
       reviewedAt: timestampSchema,
     }),
   }),
@@ -110,14 +112,23 @@ const syncEventSchema = z.discriminatedUnion("type", [
         ttsEnabled: z.boolean(),
         showLatin: z.boolean(),
         speechRate: z.number().min(0.5).max(2),
+        onboarding: z.object({
+          completed: z.boolean(),
+          knowsCyrillic: z.boolean(),
+          priorBulgarian: z.enum(["none", "basic", "intermediate"]),
+          knowsSlavicLanguage: z.boolean(),
+          learningGoal: z.enum(["erasmus", "travel", "work", "family"]),
+          recommendedPath: z.enum(["alphabet", "a1-foundation", "a1-review"]),
+        }).default({ completed: false, knowsCyrillic: false, priorBulgarian: "none", knowsSlavicLanguage: false, learningGoal: "travel", recommendedPath: "alphabet" }),
       }),
     }),
   }),
 ]);
 
 export const syncBatchRequestSchema = z.object({
+  schemaVersion: z.literal(1).default(1),
   events: z.array(syncEventSchema).min(1).max(100),
-});
+}).strict();
 
 export function parseSyncBatch(input: unknown): SyncEvent[] {
   return syncBatchRequestSchema.parse(input).events as SyncEvent[];

@@ -54,6 +54,11 @@ describe("TypingExercise", () => {
     fireEvent.click(screen.getByRole("button", { name: "Prüfen" }));
     fireEvent.click(screen.getByRole("button", { name: "Gut" }));
 
-    expect(mocks.review).toHaveBeenCalledWith("word-1", "good", "production");
+    expect(mocks.review).toHaveBeenCalledWith(
+      "word-1",
+      "good",
+      "production",
+      expect.objectContaining({ responseTimeMs: expect.any(Number) })
+    );
   });
 });

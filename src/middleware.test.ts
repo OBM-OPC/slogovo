@@ -52,4 +52,21 @@ describe("authentication middleware", () => {
       middleware(new NextRequest("https://slogovo.test/lernen"))
     ).resolves.toBe(response);
   });
+
+  it("does not make nested paths public and protects /api/auth/me", async () => {
+    updateSessionMock.mockResolvedValue({ response: refreshedResponse(), user: null });
+    expect((await middleware(new NextRequest("https://slogovo.test/login/admin"))).status).toBe(307);
+    const me = await middleware(new NextRequest("https://slogovo.test/api/auth/me"));
+    expect(me.status).toBe(401);
+  });
+
+  it("rejects cross-origin mutations before auth and emits CSP on responses", async () => {
+    const response = await middleware(new NextRequest("https://slogovo.test/api/sync", {
+      method: "POST",
+      headers: { origin: "https://evil.test", "content-type": "application/json" },
+    }));
+    expect(response.status).toBe(403);
+    expect(response.headers.get("content-security-policy")).toContain("frame-ancestors 'none'");
+    expect(updateSessionMock).not.toHaveBeenCalled();
+  });
 });

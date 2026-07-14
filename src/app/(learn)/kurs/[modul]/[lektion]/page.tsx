@@ -14,22 +14,23 @@ export function generateStaticParams() {
 }
 
 interface LessonPageProps {
-  params: { modul: string; lektion: string };
+  params: Promise<{ modul: string; lektion: string }>;
 }
 
-export default function LessonPage({ params }: LessonPageProps) {
-  const lesson = getLessonById(params.lektion);
-  if (!lesson || lesson.moduleId !== params.modul) {
+export default async function LessonPage({ params }: LessonPageProps) {
+  const { modul, lektion } = await params;
+  const lesson = getLessonById(lektion);
+  if (!lesson || lesson.moduleId !== modul) {
     notFound();
   }
 
-  const nextLessonId = getNextLessonId(params.modul, params.lektion);
-  const context = getModuleAndLessonIndex(params.lektion);
+  const nextLessonId = getNextLessonId(modul, lektion);
+  const context = getModuleAndLessonIndex(lektion);
 
   return (
     <LessonView
       lesson={lesson}
-      moduleId={params.modul}
+      moduleId={modul}
       nextLessonId={nextLessonId}
       context={context}
     />

@@ -16,6 +16,14 @@ const vocabularyProgressSchema = z.object({
   recognitionTotal: z.number().int().nonnegative().max(1_000_000).optional(),
   productionCorrect: z.number().int().nonnegative().max(1_000_000).optional(),
   productionTotal: z.number().int().nonnegative().max(1_000_000).optional(),
+  stability: z.number().nonnegative().max(100_000).optional(),
+  difficulty: z.number().min(1).max(10).optional(),
+  lapseCount: z.number().int().nonnegative().max(1_000_000).optional(),
+  lastResponseMs: z.number().int().nonnegative().max(60 * 60 * 1000).optional(),
+  lastErrorCategory: z.enum(["vocabulary", "cyrillic-confusion", "article-usage", "verb-conjugation", "gender-agreement", "word-order", "listening-confusion", "bulgarian-clitics"]).optional(),
+  lastMistakeAt: z.string().datetime({ offset: true }).optional(),
+  successfulReviewsSinceMistake: z.number().int().nonnegative().max(1_000_000).optional(),
+  improvedAt: z.string().datetime({ offset: true }).optional(),
 });
 
 export const userProgressSchema = z.object({
@@ -50,6 +58,14 @@ export const userProgressSchema = z.object({
     ttsEnabled: z.boolean(),
     showLatin: z.boolean(),
     speechRate: z.number().min(0.5).max(2),
+    onboarding: z.object({
+      completed: z.boolean(),
+      knowsCyrillic: z.boolean(),
+      priorBulgarian: z.enum(["none", "basic", "intermediate"]),
+      knowsSlavicLanguage: z.boolean(),
+      learningGoal: z.enum(["erasmus", "travel", "work", "family"]),
+      recommendedPath: z.enum(["alphabet", "a1-foundation", "a1-review"]),
+    }).default({ completed: false, knowsCyrillic: false, priorBulgarian: "none", knowsSlavicLanguage: false, learningGoal: "travel", recommendedPath: "alphabet" }),
   }),
   achievements: z.array(idSchema).max(1_000),
 });

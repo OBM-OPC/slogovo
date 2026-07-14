@@ -40,6 +40,12 @@ export default function HomePage() {
             {!isLoading && !isAuthenticated ? (
               <>
                 <Link
+                  href="/demo"
+                  className="rounded-xl px-3 py-2 text-xs font-medium text-primary hover:bg-primary-50 transition-colors"
+                >
+                  Demo
+                </Link>
+                <Link
                   href="/login"
                   className="rounded-xl px-3 py-2 text-xs font-medium text-foreground hover:bg-warm-50 transition-colors"
                 >
@@ -140,6 +146,13 @@ export default function HomePage() {
                 <UserPlus className="h-5 w-5" />
                 Kostenlos starten
                 <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link
+                href="/demo"
+                className="flex items-center justify-center gap-2 rounded-2xl border-2 border-primary bg-white px-6 py-3.5 text-base font-medium text-primary shadow-card active:scale-[0.98] transition-all"
+              >
+                <Play className="h-5 w-5" />
+                Demo ohne Konto
               </Link>
               <Link
                 href="/login"
@@ -257,6 +270,9 @@ export default function HomePage() {
       <footer className="border-t border-warm-100 py-6 text-center">
         <p className="text-xs text-muted">
           © 2026 Slogovo — Български език за всеки
+        </p>
+        <p className="mt-2 text-xs text-muted">
+          <Link href="/datenschutz" className="underline">Datenschutz</Link> · <Link href="/impressum" className="underline">Impressum</Link>
         </p>
       </footer>
     </div>

@@ -1,10 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
+import { readJsonBody, RequestBodyError } from "@/lib/request-security";
+import { ipIdentity } from "@/lib/rate-limit";
+import { RATE_LIMITS, rateLimitClient, rateLimitRequest } from "@/lib/api-protection";
+import { logEvent } from "@/lib/structured-log";
+import { z } from "zod";
 
 export const dynamic = "force-dynamic";
 
 const FISH_TTS_URL = "https://api.fish.audio/v1/tts";
 const DEFAULT_FISH_VOICE_ID = "2a1036d645634680b3cc69aeeb60375b";
 const MAX_TEXT_LENGTH = 300;
+const ttsRequestSchema = z.object({
+  text: z.string().trim().min(1).max(MAX_TEXT_LENGTH),
+  speed: z.number().finite().min(0.75).max(1.1).optional(),
+}).strict();
 
 function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max);
@@ -52,28 +62,35 @@ async function requestFishAudio(apiKey: string, text: string, speed: number, voi
       model: "s2.1-pro-free",
     },
     body: JSON.stringify(buildFishPayload(text, speed, voiceId)),
+    signal: AbortSignal.timeout(10_000),
   });
 }
 
 export async function POST(request: NextRequest) {
   try {
+    const supabase = await createClient();
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) {
+      return NextResponse.json({ error: "Nicht authentifiziert" }, { status: 401 });
+    }
+
+    const limited = await rateLimitRequest(rateLimitClient(supabase), request, [
+      { identity: ipIdentity(request), rule: RATE_LIMITS.ttsIp },
+      { identity: `user:${user.id}`, rule: RATE_LIMITS.ttsUser },
+    ]);
+    if (limited) return limited;
+
     const apiKey = process.env.FISH_API_KEY;
     if (!apiKey) {
       return NextResponse.json({ error: "Fish Audio API key is not configured" }, { status: 503 });
     }
 
-    const body = await request.json();
-    const text = typeof body?.text === "string" ? body.text.trim() : "";
-
-    if (!text) {
-      return NextResponse.json({ error: "Text is required" }, { status: 400 });
+    const parsed = ttsRequestSchema.safeParse(await readJsonBody(request, 8 * 1024));
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Ungültige TTS-Anfrage" }, { status: 400 });
     }
-
-    if (text.length > MAX_TEXT_LENGTH) {
-      return NextResponse.json({ error: "Text is too long" }, { status: 400 });
-    }
-
-    const speed = typeof body?.speed === "number" ? clamp(body.speed, 0.75, 1.1) : 0.9;
+    const text = parsed.data.text;
+    const speed = clamp(parsed.data.speed ?? 0.9, 0.75, 1.1);
     const configuredVoiceId = sanitizeVoiceId(process.env.FISH_VOICE_ID);
     const defaultVoiceId = sanitizeVoiceId(DEFAULT_FISH_VOICE_ID);
     const voiceAttempts = [configuredVoiceId, defaultVoiceId, null].filter(
@@ -91,20 +108,33 @@ export async function POST(request: NextRequest) {
           status: 200,
           headers: {
             "Content-Type": "audio/mpeg",
-            "Cache-Control": "public, max-age=31536000, immutable",
+            "Cache-Control": "private, max-age=86400",
             "X-Fish-Voice-Id": voiceId || "default",
           },
         });
       }
 
-      const errorText = await fishResponse.text().catch(() => "");
-      lastError = `${fishResponse.status} ${errorText}`.trim();
-      console.error("Fish TTS error:", { voiceId: voiceId || "default", status: fishResponse.status, errorText });
+      await fishResponse.body?.cancel().catch(() => undefined);
+      lastError = String(fishResponse.status);
+      logEvent("audio_failure", {
+        errorCode: "TTS_PROVIDER_REJECTED",
+        statusCode: fishResponse.status,
+        reason: voiceId ? "configured_voice" : "provider_default",
+      });
     }
 
-    return NextResponse.json({ error: "Fish TTS request failed", details: lastError }, { status: 502 });
+    return NextResponse.json({ error: "TTS-Anfrage fehlgeschlagen", code: lastError }, { status: 502 });
   } catch (error) {
-    console.error("Fish TTS route error:", error);
+    if (error instanceof RequestBodyError) {
+      return NextResponse.json(
+        { error: "Ungültige TTS-Anfrage", code: error.code },
+        { status: error.code === "BODY_TOO_LARGE" ? 413 : 400 }
+      );
+    }
+    logEvent("audio_failure", {
+      errorCode: error instanceof Error && error.name === "TimeoutError" ? "TTS_TIMEOUT" : "TTS_FAILED",
+      reason: "server",
+    });
     return NextResponse.json({ error: "TTS generation failed" }, { status: 500 });
   }
 }

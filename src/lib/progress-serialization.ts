@@ -17,6 +17,14 @@ export function defaultProgress(userId: string): UserProgress {
       ttsEnabled: true,
       showLatin: true,
       speechRate: 0.9,
+      onboarding: {
+        completed: false,
+        knowsCyrillic: false,
+        priorBulgarian: "none",
+        knowsSlavicLanguage: false,
+        learningGoal: "travel",
+        recommendedPath: "alphabet",
+      },
     },
     achievements: [],
   };
@@ -40,7 +48,14 @@ export function normalizeProgress(
     dailyStats: progress.dailyStats ?? {},
     lessonScores: progress.lessonScores ?? {},
     recordedAttemptIds: Array.isArray(progress.recordedAttemptIds) ? progress.recordedAttemptIds : [],
-    settings: { ...defaults.settings, ...(progress.settings ?? {}) },
+    settings: {
+      ...defaults.settings,
+      ...(progress.settings ?? {}),
+      onboarding: {
+        ...defaults.settings.onboarding,
+        ...(progress.settings?.onboarding ?? {}),
+      },
+    },
     achievements: Array.isArray(progress.achievements) ? progress.achievements : [],
   };
 }

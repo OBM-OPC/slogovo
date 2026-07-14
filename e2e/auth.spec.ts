@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { login, mockUrl, resetBackend } from "./helpers";
+import { login, mockUrl, resetBackend, testPassword } from "./helpers";
 
 test.beforeEach(async ({ request }) => {
   await resetBackend(request);
@@ -9,11 +9,11 @@ test("registers a learner through the public form", async ({ page }) => {
   await page.goto("/register");
   await page.getByLabel("Name").fill("Neue Lernerin");
   await page.getByLabel("E-Mail").fill("new@example.com");
-  await page.getByLabel("Passwort", { exact: true }).fill("Password1");
-  await page.getByLabel("Passwort bestätigen").fill("Password1");
+  await page.getByLabel("Passwort", { exact: true }).fill(testPassword);
+  await page.getByLabel("Passwort bestätigen").fill(testPassword);
   await page.getByRole("button", { name: "Konto erstellen" }).click();
 
-  await expect(page.getByRole("heading", { name: "Registrierung erfolgreich!" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Anfrage erhalten" })).toBeVisible();
   await expect(page.getByRole("link", { name: "Zum Login" })).toBeVisible();
 });
 

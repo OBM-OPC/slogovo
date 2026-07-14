@@ -14,8 +14,8 @@ function getEnv() {
   return { url, key };
 }
 
-export function createClient() {
-  const cookieStore = cookies();
+export async function createClient() {
+  const cookieStore = await cookies();
   const { url, key } = getEnv();
 
   return createServerClient(url, key, {

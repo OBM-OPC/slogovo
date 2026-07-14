@@ -17,7 +17,8 @@ export default function ReviewPage() {
   return (
     <main className="animate-fade-in px-4 py-6 safe-top">
       <h1 className="mb-2 text-2xl font-bold">Wiederholen</h1>
-      <p className="mb-6 text-muted">Fällige Vokabeln, ohne neue Inhalte.</p>
+      <p className="mb-2 text-muted">Fällige Vokabeln, ohne neue Inhalte.</p>
+      <p className="mb-6 rounded-xl bg-primary-50 p-3 text-sm text-primary">Heute fällig: {dueWords.length}. Antwortzeit, Schwierigkeit, Stabilität und Fehlversuche bestimmen den nächsten Termin; aktive Produktion und Erkennen werden getrennt geübt.</p>
       {dueWords.length > 0 ? <Flashcard words={dueWords} /> : (
         <section className="card text-center">
           <CheckCircle2 className="mx-auto mb-3 h-10 w-10 text-success" />

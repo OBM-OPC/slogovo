@@ -80,6 +80,7 @@ export function Flashcard({ words }: FlashcardProps) {
   const [consecutiveCorrect, setConsecutiveCorrect] = useState(0);
   const [stats, setStats] = useState<SessionStats>(initialStats);
   const [sessionStartedAt, setSessionStartedAt] = useState(() => Date.now());
+  const [cardStartedAt, setCardStartedAt] = useState(() => Date.now());
 
   const finished = finishedAt !== null;
   const word = words[index];
@@ -105,12 +106,15 @@ export function Flashcard({ words }: FlashcardProps) {
     setConsecutiveCorrect(0);
     setStats(initialStats);
     setSessionStartedAt(Date.now());
+    setCardStartedAt(Date.now());
   };
 
   const handleRating = useCallback((rating: DifficultyRating) => {
     if (!word || finished) return;
 
-    void reviewVocabularyWithDifficulty(word.id, rating);
+    void reviewVocabularyWithDifficulty(word.id, rating, "recognition", {
+      responseTimeMs: Date.now() - cardStartedAt,
+    });
 
     setStats((current) => ({ ...current, [rating]: current[rating] + 1 }));
 
@@ -129,10 +133,11 @@ export function Flashcard({ words }: FlashcardProps) {
     if (index < words.length - 1) {
       setIndex((i) => i + 1);
       setFlipped(false);
+      setCardStartedAt(Date.now());
     } else {
       setFinishedAt(Date.now());
     }
-  }, [consecutiveCorrect, finished, index, reviewVocabularyWithDifficulty, word, words.length]);
+  }, [cardStartedAt, consecutiveCorrect, finished, index, reviewVocabularyWithDifficulty, word, words.length]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {

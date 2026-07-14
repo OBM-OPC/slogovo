@@ -19,6 +19,7 @@ type StoredState = {
   accessTokens: Map<string, string>;
   refreshTokens: Map<string, string>;
   progress: Map<string, Record<string, unknown>>;
+  rows: Map<string, Record<string, unknown>[]>;
   writes: Record<string, number>;
 };
 
@@ -27,6 +28,7 @@ const state: StoredState = {
   accessTokens: new Map(),
   refreshTokens: new Map(),
   progress: new Map(),
+  rows: new Map(),
   writes: {},
 };
 
@@ -34,7 +36,7 @@ function seedUser() {
   state.users.set("learner@example.com", {
     id: learnerId,
     email: "learner@example.com",
-    password: "Password1",
+    password: "Test-Passwort-2026",
     name: "Test Learner",
     created_at: "2026-07-13T00:00:00.000Z",
   });
@@ -45,6 +47,7 @@ function reset() {
   state.accessTokens.clear();
   state.refreshTokens.clear();
   state.progress.clear();
+  state.rows.clear();
   state.writes = {};
   seedUser();
 }
@@ -232,10 +235,8 @@ async function restRoute(request: IncomingMessage, response: ServerResponse, url
     return;
   }
 
-  if (request.method === "GET" && table === "lesson_attempts") {
-    // Attempt writes are counted by the fixture; detailed rows are not needed
-    // outside the dedicated progress-insight contract tests.
-    json(response, 200, []);
+  if (request.method === "GET" && (table === "lesson_attempts" || table === "vocabulary_review_events")) {
+    json(response, 200, state.rows.get(table) ?? []);
     return;
   }
 
@@ -244,6 +245,16 @@ async function restRoute(request: IncomingMessage, response: ServerResponse, url
     increment(table);
     if (table === "user_progress") {
       state.progress.set(user.id, { ...(state.progress.get(user.id) ?? {}), ...body, user_id: user.id });
+    } else {
+      const rows = state.rows.get(table) ?? [];
+      const eventId = String(body.client_event_id ?? "");
+      const existingIndex = eventId
+        ? rows.findIndex((row) => row.user_id === user.id && row.client_event_id === eventId)
+        : -1;
+      const row = { ...body, user_id: user.id };
+      if (existingIndex >= 0) rows[existingIndex] = row;
+      else rows.push(row);
+      state.rows.set(table, rows);
     }
     json(response, 201, []);
     return;

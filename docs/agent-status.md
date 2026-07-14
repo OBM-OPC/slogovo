@@ -1,5 +1,55 @@
 # Slogovo controlled-development status
 
+Last updated: 2026-07-14 16:32 UTC
+
+## Active run — issue #98 Phase 9 security and product hardening
+
+- Current branch at audit: `main` (`80b1ac2773dd778882ceea6c4ccb4445885d356f`); the single implementation branch will be `feat/complete-slogovo-backlog`.
+- GitHub state: issue #98 is the only open issue; only remote `main` exists; no pull request is open; latest `main` CI run `29280694621` passed.
+- Concurrent-run state: one clean worktree, no Git lock, no Slogovo implementation process, and no controlled-development cron job or parallel coding run exists.
+- Production boundary: this run may add reviewed migrations and deployment configuration in source control, but will not apply production migrations, alter production environment values/secrets, change production data, activate paid services, or merge the resulting pull request.
+
+### Complete issue #98 audit
+
+| Workstream | Classification | Current evidence and remaining acceptance work |
+| --- | --- | --- |
+| 1. Security headers/CSP | Open | `next.config.js` has no headers and middleware emits no nonce/CSP. |
+| 2. Distributed rate limiting | Open | Auth, sync, telemetry, and TTS routes have no shared-instance limiter. |
+| 3. Account enumeration | Partial | Forgot-password is generic; registration returns a duplicate-specific 409 and user payload. |
+| 4. Sensitive `users` columns | Open | Legacy schema permits broad own-row updates and retains Auth-managed token columns. |
+| 5. Provider-token access | Open | Legacy `accounts` RLS allows authenticated reads of raw provider tokens. |
+| 6. Explicit RLS checks | Partial | Inserts use `WITH CHECK`; several update policies lack explicit `WITH CHECK`, and the legacy user policy does too. |
+| 7. Signup trigger hardening | Open | Legacy `handle_new_user()` is `SECURITY DEFINER` without an empty search path or explicit execution revocation. |
+| 8. Explicit public routes | Open | Middleware uses broad prefix matching and treats `/api/auth/me` as public. |
+| 9. Origin/CSRF checks | Open | State-changing APIs do not centrally validate origin or JSON content type. |
+| 10. Password policy | Open | Password rules differ by route, allow unbounded inputs, and require composition instead of passphrase length. |
+| 11. Authoritative progress/rewards | Partial | Lesson IDs, answers, scores, XP, user ownership, and attempt IDs are server-validated/idempotent; aggregate progress save still accepts client-controlled streak/achievement state and review IDs are not content-validated. |
+| 12. TTS abuse/cost controls | Partial | TTS is authenticated by middleware and caps text/voice/speed; shared rate limits, timeout, safer caching/logging, and usage monitoring remain. |
+| 13. RLS regression tests | Partial | Static policy contracts exist; explicit two-user/anonymous permission regression coverage and local execution documentation remain. |
+| 14. Security scanning | Open | CI lacks dependency, secret, and web baseline scanning; Dependabot is absent. |
+| 15. Privacy/account controls | Open | Local reset exists, but verified export/deletion/password/email/session controls and legal/retention documentation are absent. |
+| 16. Public demo lesson | Open | The landing page has no interactive, no-account learning demo. |
+| 17. Goal onboarding/placement | Partial | Daily goal and transliteration settings exist; first-run knowledge/goal questions and initial recommendation are absent. |
+| 18. Spaced repetition | Partial | Due queue, bidirectional prompts, review dates, ease, synchronization IDs, and explanations exist; explicit stability/difficulty/lapse and response-time scheduling fields remain. |
+| 19. Mistake practice | Partial | Mistake queue/page and recent/weak prioritization exist; normalized error categories and explicit improved-state lifecycle remain. |
+| 20. Pronunciation/listening | Partial | Normal/slow playback, source fallback, self-review, and honest non-scoring disclosure exist; recording/replay, consent handling, word playback/stress guidance remain. |
+
+### Dependency order and acceptance plan
+
+1. Establish request security primitives: nonce CSP/headers, exact route policy, origin/content-type/body limits, and database-backed rate limiting.
+2. Harden authentication, legacy database privileges/functions/RLS, TTS, and server-authoritative synchronization.
+3. Add repeatable security tests/scanning and account privacy/export/deletion/session controls without performing production actions.
+4. Complete the genuinely missing demo/onboarding/review/mistake/pronunciation behavior, preserving the already-authoritative learning domain.
+5. Run focused and full validation, push the single branch, open exactly one Draft PR, and verify GitHub/Vercel status where accessible.
+
+### Owner-controlled or conditional items
+
+- Production migrations and new production environment values (including a rate-limit HMAC secret) require owner execution after review.
+- Native-language copy beyond existing reviewed phrases, legal-text approval, GitHub Advanced Security features unavailable to the repository plan, paid monitoring/rate-limit vendors, and production data deletion/export operations are not performed by this run.
+- Breached-password checking will use a local high-confidence denylist unless the owner later approves a network dependency and its availability/privacy trade-offs.
+
+---
+
 Last updated: 2026-07-13 19:42 UTC
 
 ## Complete-backlog final checkpoint

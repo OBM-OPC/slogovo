@@ -130,7 +130,25 @@ export interface VocabularyProgress {
   recognitionTotal?: number;
   productionCorrect?: number;
   productionTotal?: number;
+  stability?: number;
+  difficulty?: number;
+  lapseCount?: number;
+  lastResponseMs?: number;
+  lastErrorCategory?: MistakeCategory;
+  lastMistakeAt?: string;
+  successfulReviewsSinceMistake?: number;
+  improvedAt?: string;
 }
+
+export type MistakeCategory =
+  | "vocabulary"
+  | "cyrillic-confusion"
+  | "article-usage"
+  | "verb-conjugation"
+  | "gender-agreement"
+  | "word-order"
+  | "listening-confusion"
+  | "bulgarian-clitics";
 
 export type DailyGoal = "light" | "medium" | "intense";
 
@@ -139,6 +157,14 @@ export interface UserSettings {
   ttsEnabled: boolean;
   showLatin: boolean;
   speechRate: number;
+  onboarding: {
+    completed: boolean;
+    knowsCyrillic: boolean;
+    priorBulgarian: "none" | "basic" | "intermediate";
+    knowsSlavicLanguage: boolean;
+    learningGoal: "erasmus" | "travel" | "work" | "family";
+    recommendedPath: "alphabet" | "a1-foundation" | "a1-review";
+  };
 }
 
 export interface Streak {

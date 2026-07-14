@@ -7,13 +7,14 @@ export function generateStaticParams() {
   return modules.map((m) => ({ kategorie: m.moduleId }));
 }
 
-export default function VocabularyCategoryPage({
+export default async function VocabularyCategoryPage({
   params,
 }: {
-  params: { kategorie: string };
+  params: Promise<{ kategorie: string }>;
 }) {
-  const moduleMeta = getModuleById(params.kategorie);
-  const words = getVocabularyByCategory(params.kategorie);
+  const { kategorie } = await params;
+  const moduleMeta = getModuleById(kategorie);
+  const words = getVocabularyByCategory(kategorie);
 
   if (!moduleMeta || words.length === 0) {
     notFound();

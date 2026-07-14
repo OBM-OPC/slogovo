@@ -7,12 +7,13 @@ export function generateStaticParams() {
   return topics.map((t) => ({ thema: t.slug }));
 }
 
-export default function GrammarDetailPage({
+export default async function GrammarDetailPage({
   params,
 }: {
-  params: { thema: string };
+  params: Promise<{ thema: string }>;
 }) {
-  const topic = getGrammarTopicBySlug(params.thema);
+  const { thema } = await params;
+  const topic = getGrammarTopicBySlug(thema);
   if (!topic) {
     notFound();
   }

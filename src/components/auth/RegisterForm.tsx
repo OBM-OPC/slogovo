@@ -52,10 +52,10 @@ export default function RegisterForm() {
             </svg>
           </div>
           <h2 className="text-2xl font-serif font-bold text-foreground mb-2">
-            Registrierung erfolgreich!
+            Anfrage erhalten
           </h2>
           <p className="text-sm text-muted mb-6">
-            Schön, dass du dabei bist! Du kannst dich jetzt anmelden.
+            Falls für diese E-Mail noch kein Konto besteht, erhältst du weitere Anweisungen.
           </p>
           <Link
             href="/login"
@@ -145,7 +145,8 @@ export default function RegisterForm() {
                 className="input pl-11 pr-12"
                 placeholder="••••••••"
                 required
-                minLength={8}
+                minLength={12}
+                maxLength={128}
               />
               <button
                 type="button"
@@ -156,7 +157,7 @@ export default function RegisterForm() {
               </button>
             </div>
             <p className="mt-1 text-xs text-muted">
-              Mindestens 8 Zeichen, 1 Großbuchstabe, 1 Kleinbuchstabe, 1 Zahl
+              12–128 Zeichen; lange Passphrasen und Passwortmanager werden unterstützt.
             </p>
           </div>
 
@@ -174,6 +175,8 @@ export default function RegisterForm() {
                 className="input pl-11"
                 placeholder="••••••••"
                 required
+                minLength={12}
+                maxLength={128}
               />
             </div>
           </div>

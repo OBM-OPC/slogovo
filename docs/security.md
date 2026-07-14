@@ -1,50 +1,78 @@
-# Authentication and data-security contract
+# Application security baseline
 
-## Trust boundaries
+## Trust boundaries and secrets
 
-- Supabase access and refresh tokens are stored only in `HttpOnly`, `SameSite=Lax`
-  cookies. Production cookies are also `Secure`.
-- Login, registration, current-user lookup, and logout run through Slogovo's
-  server routes. Client components never read or persist auth tokens.
-- Middleware refreshes the Supabase session and calls `auth.getUser()` before a
-  protected page or API is allowed through.
-- Protected API handlers independently call `auth.getUser()`; middleware is
-  defense in depth, not their only authorization check.
-- Public/publishable Supabase keys may be used by the app. Service-role keys are
-  server-only and are not referenced by browser code.
+- Supabase access and refresh tokens stay in `HttpOnly`, `SameSite=Lax`
+  cookies (`Secure` in production); browser components never persist or read
+  them.
+- Protected middleware and each protected API independently verify the user
+  with Supabase Auth. Middleware is defense in depth, not the sole boundary.
+- Publishable Supabase keys may be exposed. `SUPABASE_SERVICE_ROLE_KEY`, SMTP
+  passwords, TTS keys, and `RATE_LIMIT_HMAC_SECRET` are server-only and must
+  never use a `NEXT_PUBLIC_` name or appear in logs.
+- If a real credential enters Git history, coordinate owner-led rotation and
+  incident handling; do not silently rewrite shared history.
 
-## Row-Level Security coverage
+## Browser and request boundary
 
-| Learning data | Storage | Ownership policy |
-| --- | --- | --- |
-| Progress, settings, achievements | `user_progress` | `auth.uid() = user_id` |
-| Lesson history | `lesson_attempts` | `auth.uid() = user_id` |
-| Item outcomes | `exercise_results` | `auth.uid() = user_id` |
-| Vocabulary review history | `vocabulary_review_events` | `auth.uid() = user_id` |
-| Activity history | `daily_activity` | `auth.uid() = user_id` |
-| Offline audit queue | `offline_events` | `auth.uid() = user_id` |
+Every response receives HSTS, MIME-sniffing, frame, referrer, permissions,
+cross-origin, and nonce-based Content Security Policy headers. The CSP permits
+only Slogovo itself plus the configured Supabase HTTP/WebSocket origin. Audio,
+images, fonts, workers, and blob URLs are limited to the explicit directives in
+`src/lib/security-headers.ts`; Vercel assets are same-origin. Production never
+adds `unsafe-eval`. Inline styles remain allowed because the current
+Next/Tailwind stack emits them.
 
-The schema-contract test verifies that every table above enables RLS and retains
-the ownership predicate. Migrations must not broaden those policies.
+State-changing API requests require a same-origin `Origin` and JSON content
+type (except bodyless DELETE/logout operations). JSON readers enforce byte and
+nesting-depth limits. Public API routes use exact matching; `/api/auth/me`,
+logout, account, progress, telemetry, synchronization, and TTS are protected.
 
-## Secret handling
+## Rate limiting and identifiers
 
-- `.env` and `.env.*` are ignored; only `.env.example` is tracked.
-- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` is intentionally public and must never be
-  replaced with a service-role key.
-- `SUPABASE_SERVICE_ROLE_KEY`, SMTP passwords, and TTS provider keys belong only in
-  managed server environments. Do not log them or expose them through `NEXT_PUBLIC_*`.
-- If a real credential is ever committed, do not rewrite public history
-  automatically. Revoke/rotate it through the owner and document the incident.
+Authentication, recovery, registration, synchronization, telemetry, progress,
+account, and TTS routes consume purpose-specific IP/email/user counters through
+`public.consume_request_rate_limit`. The PostgreSQL function is atomic across
+Vercel instances. Only HMAC-SHA-256 keys are stored. Set a server-only
+`RATE_LIMIT_HMAC_SECRET` in each deployment environment before the migration is
+activated; a deterministic compatibility key and bounded process-local fallback
+keep previews functional while the owner-controlled migration is pending.
 
-## Verification before release
+Logs contain only allowlisted error codes, scopes, statuses, and operation names.
+They must never contain passwords, reset tokens, provider tokens, full learner
+answers, TTS text, or raw email/IP identifiers.
 
-1. Run `npm run type-check`, `npm run lint`, `npm test`, and `npm run build`.
-2. Verify anonymous requests to protected pages redirect to `/login` and protected
-   APIs return 401.
-3. Verify login survives a refresh, logout invalidates the session, and expired
-   sessions are rejected.
-4. Verify a user cannot select, insert, update, or delete another user's rows for
-   every RLS-protected table.
-5. Review migrations and generated database types; never edit production tables
-   manually.
+## Database and Auth
+
+Supabase Auth owns email verification and recovery. The optional legacy
+`public.users` table grants client updates only to `name` and `image`. The legacy
+`public.accounts` token table has no anon/authenticated privileges or policies.
+All mutable user-owned learning policies state both `USING` and `WITH CHECK`.
+`handle_new_user()` uses fully-qualified objects, `search_path = ''`, and no
+client execution privilege.
+
+Lesson answers, score, pass/mastery, XP, streaks, achievements, and aggregate
+progress are rebuilt server-side from content-verified, idempotent attempt and
+review rows. The compatibility progress-save route accepts settings only.
+
+## CI and maintenance
+
+CI blocks high/critical dependency findings, scans Git history with Gitleaks,
+and runs an OWASP ZAP baseline against a local build without production secrets.
+Dependabot groups dependency maintenance to limit PR noise. Repository-native
+GitHub secret scanning should additionally be enabled by an owner when the
+repository plan exposes it.
+
+Run locally:
+
+```bash
+npm audit --audit-level=high
+npm run validate:database
+npm test
+supabase start -x studio,imgproxy,inbucket,edge-runtime,logflare,vector,supavisor
+supabase db reset --local
+supabase test db
+```
+
+Production migrations, service-role/rate-limit secrets, retention settings, and
+security-feature toggles remain owner-controlled deployment steps.

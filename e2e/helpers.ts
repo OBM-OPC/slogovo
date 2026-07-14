@@ -1,6 +1,7 @@
 import { expect, type APIRequestContext, type BrowserContext, type Page } from "@playwright/test";
 
 export const mockUrl = "http://127.0.0.1:54321";
+export const testPassword = "Test-Passwort-2026";
 
 export async function resetBackend(request: APIRequestContext) {
   const response = await request.post(`${mockUrl}/__test/reset`);
@@ -10,9 +11,9 @@ export async function resetBackend(request: APIRequestContext) {
 export async function login(page: Page) {
   await page.goto("/login");
   await page.getByLabel("E-Mail").fill("learner@example.com");
-  await page.getByLabel("Passwort", { exact: true }).fill("Password1");
+  await page.getByLabel("Passwort", { exact: true }).fill(testPassword);
   await page.getByRole("button", { name: "Anmelden" }).click();
-  await expect(page).toHaveURL(/\/lernen$/);
+  await expect(page).toHaveURL(/\/lernen$/, { timeout: 15_000 });
   await expect(page.getByRole("heading", { name: "Lernen" })).toBeVisible();
 }
 

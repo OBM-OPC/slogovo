@@ -4,8 +4,10 @@ import { useProgressSafe } from "@/hooks/useProgressSafe";
 import { useProgressStore } from "@/stores/useProgressStore";
 import { DailyGoal } from "@/types";
 import { getDailyGoalNumbers } from "@/lib/progress-db";
-import { Volume2, Type, Target, Gauge, RotateCcw, ChevronRight, Check } from "lucide-react";
+import { Volume2, Type, Target, Gauge, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { AccountControls } from "@/components/account/AccountControls";
+import Link from "next/link";
 
 type GoalOption = {
   value: DailyGoal;
@@ -38,7 +40,6 @@ const goals: GoalOption[] = [
 export default function EinstellungenPage() {
   const progress = useProgressSafe();
   const updateSettings = useProgressStore((state) => state.updateSettings);
-  const resetProgress = useProgressStore((state) => state.resetProgress);
 
   const { settings } = progress;
   const goal = getDailyGoalNumbers(settings.dailyGoal);
@@ -50,6 +51,11 @@ export default function EinstellungenPage() {
         <p className="text-xs font-medium uppercase tracking-widest text-muted">Настройки</p>
         <h1 className="text-3xl font-serif font-bold text-foreground">Einstellungen</h1>
       </div>
+
+      <Link href="/onboarding" className="mb-6 flex min-h-12 items-center justify-between rounded-2xl bg-primary-50 p-4 font-medium text-primary">
+        <span>{settings.onboarding.completed ? "Einstiegsprofil anpassen" : "Persönlichen Einstieg festlegen"}</span>
+        <span aria-hidden="true">→</span>
+      </Link>
 
       {/* Daily Goal */}
       <section className="mb-6">
@@ -141,28 +147,12 @@ export default function EinstellungenPage() {
         </div>
       </section>
 
-      {/* Reset Progress */}
-      <section className="overflow-hidden rounded-3xl bg-white shadow-card">
-        <button
-          onClick={() => {
-            if (confirm("Möchtest du wirklich deinen gesamten Fortschritt zurücksetzen? Diese Aktion kann nicht rückgängig gemacht werden.")) {
-              resetProgress();
-            }
-          }}
-          className="flex w-full items-center justify-between p-4 text-left transition-colors hover:bg-warm-50"
-        >
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent-50 text-accent">
-              <RotateCcw className="h-5 w-5" />
-            </div>
-            <div>
-              <h3 className="font-medium text-foreground">Fortschritt zurücksetzen</h3>
-              <p className="text-xs text-muted">Alle Daten löschen</p>
-            </div>
-          </div>
-          <ChevronRight className="h-5 w-5 text-warm-300" />
-        </button>
-      </section>
+      <AccountControls />
+
+      <footer className="mt-6 flex justify-center gap-4 text-xs text-muted">
+        <Link href="/datenschutz" className="underline">Datenschutz</Link>
+        <Link href="/impressum" className="underline">Impressum</Link>
+      </footer>
     </main>
   );
 }
