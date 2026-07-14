@@ -16,6 +16,13 @@ describe("primary product navigation", () => {
     const links = within(nav).getAllByRole("link");
     expect(links.map((link) => link.textContent)).toEqual(["Home", "Lernen", "Wiederholen", "Fortschritt", "Profil"]);
     expect(within(nav).getByRole("link", { name: "Home" }).getAttribute("aria-current")).toBe("page");
+    expect(nav.className).toContain("safe-area-inset-bottom");
+  });
+
+  it("keeps achievements inside the active profile area", () => {
+    pathname = "/erfolge";
+    render(<BottomNav />);
+    expect(screen.getByRole("link", { name: "Profil" }).getAttribute("aria-current")).toBe("page");
   });
 
   it("puts grammar, alphabet, and vocabulary under the desktop Learn menu", async () => {

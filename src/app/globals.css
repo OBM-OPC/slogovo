@@ -23,6 +23,8 @@
     @apply antialiased;
     -webkit-tap-highlight-color: transparent;
     scroll-behavior: smooth;
+    max-width: 100%;
+    overflow-x: clip;
   }
 
   body {
@@ -30,6 +32,10 @@
     font-family: var(--font-sans), "Noto Sans Cyrillic", system-ui, sans-serif;
     font-size: 16px;
     line-height: 1.5;
+    min-height: 100dvh;
+    max-width: 100%;
+    overflow-x: clip;
+    overscroll-behavior-y: contain;
   }
 
   :focus-visible {
@@ -132,6 +138,26 @@
 }
 
 @media (max-width: 639px) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+
+  button,
+  [role="button"],
+  input,
+  select,
+  textarea,
+  summary {
+    min-height: 44px;
+  }
+
+  button,
+  [role="button"] {
+    min-width: 44px;
+  }
+
   .lesson-step {
     padding-bottom: 5.5rem;
   }

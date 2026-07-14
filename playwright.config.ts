@@ -18,10 +18,24 @@ export default defineConfig({
   projects: [
     {
       name: "chromium",
+      testIgnore: /mobile-audit\.spec\.ts/,
       use: {
         ...devices["Desktop Chrome"],
         launchOptions: process.env.CI ? {} : { executablePath: localChromium },
       },
+    },
+    {
+      name: "mobile-chrome",
+      testMatch: /mobile-audit\.spec\.ts/,
+      use: {
+        ...devices["Pixel 7"],
+        launchOptions: process.env.CI ? {} : { executablePath: localChromium },
+      },
+    },
+    {
+      name: "mobile-webkit",
+      testMatch: /mobile-audit\.spec\.ts/,
+      use: { ...devices["iPhone 13"], browserName: "webkit" },
     },
   ],
   webServer: {

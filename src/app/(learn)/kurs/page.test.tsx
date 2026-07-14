@@ -1,9 +1,14 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { createDefaultProgress } from "@/lib/progress-db";
 import type { ModuleMeta } from "@/types";
-import { buildCourseRoadmap, CourseRoadmap } from "./page";
+import { buildCourseRoadmap } from "@/lib/course-roadmap";
+
+const mocks = vi.hoisted(() => ({ progress: undefined as unknown, modules: undefined as unknown }));
+vi.mock("@/hooks/useProgressSafe", () => ({ useProgressSafe: () => mocks.progress }));
+vi.mock("@/lib/content", () => ({ getAllModules: () => mocks.modules }));
+import CoursePage from "./page";
 
 const modules: ModuleMeta[] = [
   {
@@ -34,7 +39,9 @@ describe("course roadmap", () => {
   it("shows objectives and statuses inside expandable chapter cards", async () => {
     const user = userEvent.setup();
     const progress = createDefaultProgress("roadmap-test");
-    render(<CourseRoadmap modules={modules} progress={progress} />);
+    mocks.progress = progress;
+    mocks.modules = modules;
+    render(<CoursePage />);
 
     expect(screen.getByRole("progressbar", { name: "0 von 3 Lektionen abgeschlossen" })).toBeTruthy();
     expect(screen.getByRole("button", { name: /Begrüßung/ }).getAttribute("aria-expanded")).toBe("true");

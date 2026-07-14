@@ -16,6 +16,7 @@ interface DialogProps {
 
 export function Dialog({ open, onOpenChange, title, description, variant = "modal", children, footer }: DialogProps) {
   const panelRef = useRef<HTMLDivElement>(null);
+  const touchStartY = useRef<number | null>(null);
   const titleId = `dialog-${title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
 
   useEffect(() => {
@@ -43,7 +44,21 @@ export function Dialog({ open, onOpenChange, title, description, variant = "moda
   return (
     <div className="fixed inset-0 z-[110] flex items-end justify-center p-0 sm:items-center sm:p-4" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) onOpenChange(false); }}>
       <div className="absolute inset-0 bg-foreground/45 backdrop-blur-sm" aria-hidden="true" />
-      <div ref={panelRef} role={variant === "alert" ? "alertdialog" : "dialog"} aria-modal="true" aria-labelledby={titleId} tabIndex={-1} className="relative z-10 max-h-[90dvh] w-full max-w-lg overflow-y-auto rounded-t-3xl bg-white p-6 shadow-2xl sm:rounded-3xl">
+      <div
+        ref={panelRef}
+        role={variant === "alert" ? "alertdialog" : "dialog"}
+        aria-modal="true"
+        aria-labelledby={titleId}
+        tabIndex={-1}
+        className="relative z-10 max-h-[calc(var(--visual-viewport-height,100dvh)-1rem)] w-full max-w-lg overflow-y-auto overscroll-contain rounded-t-3xl bg-white p-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] shadow-2xl sm:max-h-[90dvh] sm:rounded-3xl"
+        onTouchStart={(event) => { touchStartY.current = panelRef.current?.scrollTop === 0 ? event.touches[0]?.clientY ?? null : null; }}
+        onTouchEnd={(event) => {
+          const start = touchStartY.current;
+          touchStartY.current = null;
+          if (start !== null && (event.changedTouches[0]?.clientY ?? start) - start > 80) onOpenChange(false);
+        }}
+      >
+        <div className="mx-auto -mt-2 mb-3 h-1 w-10 rounded-full bg-warm-300 sm:hidden" aria-hidden="true" />
         <div className="flex items-start gap-3">
           {variant !== "modal" && <span className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl", variant === "alert" ? "bg-accent-50 text-danger" : "bg-gold-50 text-gold-800")}><AlertTriangle className="h-5 w-5" aria-hidden="true" /></span>}
           <div className="min-w-0 flex-1"><h2 id={titleId} className="text-xl font-bold">{title}</h2>{description && <p className="mt-2 text-sm leading-6 text-muted">{description}</p>}</div>

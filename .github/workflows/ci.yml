@@ -22,7 +22,7 @@ jobs:
       - run: npm run lint
       - run: npm run validate:database
       - run: npm test
-      - run: npx playwright install --with-deps chromium
+      - run: npx playwright install --with-deps chromium webkit
       - run: npm run test:e2e
       # `npm run build` starts with the filesystem-complete content validator.
       - run: npm run build

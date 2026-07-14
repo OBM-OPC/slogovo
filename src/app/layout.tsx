@@ -1,8 +1,9 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Lora } from "next/font/google";
 import { TelemetryMonitor } from "@/components/telemetry/TelemetryMonitor";
 import { ToastProvider } from "@/components/ui/Toast";
 import "./globals.css";
+import { MobileInteractionManager } from "@/components/layout/MobileInteractionManager";
 
 const inter = Inter({ subsets: ["latin", "cyrillic"], variable: "--font-sans", display: "swap" });
 const lora = Lora({ subsets: ["latin", "cyrillic"], variable: "--font-serif", display: "swap" });
@@ -23,6 +24,8 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport: Viewport = { width: "device-width", initialScale: 1, viewportFit: "cover", themeColor: "#FAF8F5" };
+
 export default function RootLayout({
   children,
 }: {
@@ -33,6 +36,7 @@ export default function RootLayout({
       <body className={`${inter.variable} ${lora.variable}`}>
         <ToastProvider>
           <TelemetryMonitor />
+          <MobileInteractionManager />
           {children}
         </ToastProvider>
       </body>

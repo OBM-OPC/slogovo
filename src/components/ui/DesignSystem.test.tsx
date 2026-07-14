@@ -34,6 +34,18 @@ describe("design-system primitives", () => {
     expect(document.activeElement).toBe(trigger);
   });
 
+  it("lets a mobile bottom sheet dismiss with a downward swipe", () => {
+    function Demo() {
+      const [open, setOpen] = useState(true);
+      return <Dialog open={open} onOpenChange={setOpen} title="Mobiler Dialog" />;
+    }
+    render(<Demo />);
+    const dialog = screen.getByRole("dialog");
+    fireEvent.touchStart(dialog, { touches: [{ clientY: 100 }] });
+    fireEvent.touchEnd(dialog, { changedTouches: [{ clientY: 210 }] });
+    expect(screen.queryByRole("dialog")).toBeNull();
+  });
+
   it("supports persistent toasts with actions and manual dismissal", async () => {
     const user = userEvent.setup();
     const action = vi.fn();

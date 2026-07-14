@@ -58,7 +58,7 @@ test("keeps a Bulgarian typing flow usable on a narrow mobile viewport", async (
 test("shows an honest empty progress state before learning events exist", async ({ page }) => {
   await login(page);
   await page.goto("/fortschritt");
-  await expect(page.getByRole("heading", { name: "Dein Lernstand" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Was du wirklich gelernt hast" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Noch keine Lernereignisse" })).toBeVisible();
   await expect(page.getByRole("link", { name: "Heute lernen" })).toBeVisible();
 });

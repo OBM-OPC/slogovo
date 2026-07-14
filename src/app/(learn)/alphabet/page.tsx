@@ -111,7 +111,7 @@ export default function AlphabetPage() {
               setShowDetails(false);
             }}
             className={cn(
-              "rounded-lg py-2 text-lg font-bold",
+              "min-h-11 rounded-lg py-2 text-lg font-bold",
               i === index ? "bg-primary text-white" : "bg-gray-100 text-foreground hover:bg-gray-200"
             )}
           >

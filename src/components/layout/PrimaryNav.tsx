@@ -17,7 +17,7 @@ const primaryItems = [
   { href: "/kurs", label: "Lernen", icon: BookOpen, matches: ["/kurs", "/grammatik", "/alphabet", "/vokabeln", "/sprechen", "/fehler"] },
   { href: "/wiederholen", label: "Wiederholen", icon: RotateCcw, matches: ["/wiederholen"] },
   { href: "/fortschritt", label: "Fortschritt", icon: ChartNoAxesColumnIncreasing, matches: ["/fortschritt"] },
-  { href: "/profil", label: "Profil", icon: UserRound, matches: ["/profil", "/einstellungen", "/onboarding"] },
+  { href: "/profil", label: "Profil", icon: UserRound, matches: ["/profil", "/einstellungen", "/onboarding", "/erfolge"] },
 ] as const;
 
 export function isNavigationItemActive(pathname: string, matches: readonly string[]) {
