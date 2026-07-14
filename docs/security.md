@@ -63,10 +63,15 @@ Dependabot groups dependency maintenance to limit PR noise. Repository-native
 GitHub secret scanning should additionally be enabled by an owner when the
 repository plan exposes it.
 
+`.gitleaks.toml` allowlists only the exact password used by the isolated,
+in-memory E2E account. False positives must be narrowed to a specific fake value;
+do not exclude whole test files, directories, or secret rules.
+
 Run locally:
 
 ```bash
 npm audit --audit-level=high
+/tmp/gitleaks detect --source . --config .gitleaks.toml --redact
 npm run validate:database
 npm test
 supabase start -x studio,imgproxy,inbucket,edge-runtime,logflare,vector,supavisor
