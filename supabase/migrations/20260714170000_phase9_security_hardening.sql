@@ -90,6 +90,20 @@ alter table public.vocabulary_review_events
     'gender-agreement', 'word-order', 'listening-confusion', 'bulgarian-clitics'
   ));
 
+-- A clean project does not implicitly grant table privileges for migrations.
+-- Grant only operations that have matching user-owned RLS policies; anonymous
+-- clients receive no direct learning-data or telemetry table access.
+revoke all on public.user_progress, public.lesson_attempts,
+  public.exercise_results, public.vocabulary_review_events,
+  public.daily_activity, public.offline_events, public.telemetry_events
+  from public, anon;
+
+grant select, insert, update, delete on public.user_progress,
+  public.lesson_attempts, public.exercise_results, public.daily_activity,
+  public.offline_events to authenticated;
+grant select, insert, delete on public.vocabulary_review_events to authenticated;
+grant insert on public.telemetry_events to authenticated;
+
 -- Harden the legacy public profile table only when it is present. Supabase Auth
 -- remains authoritative for email verification and recovery tokens.
 do $$
