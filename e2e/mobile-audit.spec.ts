@@ -8,11 +8,24 @@ const routes = [
 
 test.beforeEach(async ({ request }) => { await resetBackend(request); });
 
+async function openRoute(page: Parameters<typeof loginViaApi>[0], route: string) {
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    try {
+      await page.goto(route, { waitUntil: "domcontentloaded" });
+      return;
+    } catch (error) {
+      const interrupted = error instanceof Error && error.message.includes("interrupted by another navigation");
+      if (!interrupted || attempt === 2) throw error;
+      await page.waitForLoadState("domcontentloaded");
+    }
+  }
+}
+
 test("keeps every learning screen thumb-friendly without horizontal overflow", async ({ page }) => {
   test.setTimeout(90_000);
   await loginViaApi(page);
   for (const route of routes) {
-    await page.goto(route, { waitUntil: "domcontentloaded" });
+    await openRoute(page, route);
     await expect(page.locator("main").last()).toBeVisible();
     await expect(page.locator("h1").first(), `${route} did not finish rendering`).toBeVisible({ timeout: 15_000 });
     const audit = await page.evaluate(() => {

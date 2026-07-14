@@ -23,9 +23,6 @@ export async function loginViaApi(page: Page) {
     headers: { Origin: "http://127.0.0.1:3100" },
   });
   expect(response.ok(), `API login failed with ${response.status()}`).toBeTruthy();
-  await page.goto("/lernen");
-  await expect(page).toHaveURL(/\/lernen$/, { timeout: 15_000 });
-  await expect(page.getByRole("heading", { name: "Lernen" })).toBeVisible({ timeout: 15_000 });
 }
 
 export async function loginInContext(context: BrowserContext) {

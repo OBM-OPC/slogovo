@@ -11,7 +11,8 @@ function origin(value: string | undefined): string | null {
 
 export function contentSecurityPolicy(nonce: string): string {
   const supabaseOrigin = origin(process.env.NEXT_PUBLIC_SUPABASE_URL) ?? DEFAULT_SUPABASE_ORIGIN;
-  const developmentEval = process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : "";
+  const isDevelopment = process.env.NODE_ENV === "development";
+  const developmentEval = isDevelopment ? " 'unsafe-eval'" : "";
 
   return [
     "default-src 'self'",
@@ -27,7 +28,7 @@ export function contentSecurityPolicy(nonce: string): string {
     "base-uri 'self'",
     "form-action 'self'",
     "frame-ancestors 'none'",
-    "upgrade-insecure-requests",
+    ...(!isDevelopment ? ["upgrade-insecure-requests"] : []),
   ].join("; ");
 }
 
