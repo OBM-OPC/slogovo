@@ -1,6 +1,6 @@
 # Slogovo controlled-development status
 
-Last updated: 2026-07-14 17:37 UTC
+Last updated: 2026-07-14 17:42 UTC
 
 ## Phase 9 implementation checkpoint — issue #98
 
@@ -9,7 +9,7 @@ Last updated: 2026-07-14 17:37 UTC
 - Implementation commit: `4116a6a1c4b018f942fdf6e1dcfa3d44d4c9754f` (`feat: complete Phase 9 security hardening`).
 - Validated delivery head: `606aad30fa5857f87386a12de278974b7f3ce72f`; all source-actionable work and required checks are complete.
 - Backlog inspected: #98 is the only open GitHub issue and was selected in full; no second issue, branch, worktree, coding run, or pull request was introduced.
-- Delivery state: Draft pull request #99 is the sole new/open implementation PR from the sole implementation branch to `main`: https://github.com/OBM-OPC/slogovo/pull/99. The agent will not merge it.
+- Delivery state: pull request #99 is the sole new/open implementation PR from the sole implementation branch to `main` and is ready for human review: https://github.com/OBM-OPC/slogovo/pull/99. The agent will not merge it.
 
 ### Work completed
 
