@@ -26,7 +26,25 @@ describe("dashboard model", () => {
     expect(data.nextAction.moduleProgress).toBe(50);
     expect(data.review).toEqual({ due: 1, estimatedMinutes: 1 });
     expect(data.weeklyGoal.completedDays).toBe(2);
+    expect(data.weeklyGoal.targetDays).toBe(4);
     expect(data.stats).toEqual({ streak: 3, lessons: 1, activeMinutes: 35, masteredWords: 0 });
     expect(data.nextAchievement?.title).toBeTruthy();
+  });
+
+  it("uses the onboarding recommendation for a learner's first dashboard action", () => {
+    const progress = createDefaultProgress("user-1");
+    progress.settings.onboarding = {
+      completed: true,
+      knowsCyrillic: false,
+      priorBulgarian: "none",
+      knowsSlavicLanguage: false,
+      learningGoal: "travel",
+      recommendedPath: "alphabet",
+    };
+
+    const data = buildDashboardData(progress, modules);
+
+    expect(data.nextAction.href).toBe("/alphabet");
+    expect(data.nextAction.title).toBe("Kyrillisch lesen lernen");
   });
 });

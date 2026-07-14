@@ -1,5 +1,6 @@
 import { ACHIEVEMENTS } from "@/lib/achievements";
 import { learningMetrics } from "@/lib/gamification";
+import { recommendedWeeklyLearningDays } from "@/lib/onboarding";
 import type { ModuleMeta, UserProgress } from "@/types";
 
 export interface DashboardData {
@@ -57,9 +58,32 @@ export function buildDashboardData(progress: UserProgress, modules: ModuleMeta[]
   const metrics = learningMetrics(progress, now);
   const achievement = ACHIEVEMENTS.find((item) => !progress.achievements.includes(item.id));
   const achievementValue = achievement ? achievementTarget(achievement.id, progress, now) : null;
+  const targetDays = recommendedWeeklyLearningDays(progress.settings.dailyGoal);
+  const isPersonalizedFirstStep = progress.settings.onboarding.completed && progress.completedLessons.length === 0;
+  const personalizedAction = isPersonalizedFirstStep && progress.settings.onboarding.recommendedPath === "alphabet" ? {
+    href: "/alphabet",
+    eyebrow: "Dein persönlicher Start",
+    title: "Kyrillisch lesen lernen",
+    description: "Lerne zuerst Buchstaben und Laute – mit Umschrift als Starthilfe.",
+    duration: "5 Min.",
+    moduleTitle: "Alphabet",
+    moduleProgress: 0,
+    moduleCompleted: 0,
+    moduleTotal: 1,
+  } : isPersonalizedFirstStep && progress.settings.onboarding.recommendedPath === "a1-review" ? {
+    href: "/heute-lernen",
+    eyebrow: "Dein persönlicher Start",
+    title: "A1-Einstiegscheck",
+    description: "Bestätige Bekanntes und finde gezielt deine nächsten Themen.",
+    duration: "5–10 Min.",
+    moduleTitle: "A1-Einstiegscheck",
+    moduleProgress: 0,
+    moduleCompleted: 0,
+    moduleTotal: 1,
+  } : null;
 
   return {
-    nextAction: nextLesson ? {
+    nextAction: personalizedAction ?? (nextLesson ? {
       href: "/heute-lernen",
       eyebrow: "Als Nächstes",
       title: nextLesson.title,
@@ -79,9 +103,9 @@ export function buildDashboardData(progress: UserProgress, modules: ModuleMeta[]
       moduleProgress: 100,
       moduleCompleted,
       moduleTotal,
-    },
+    }),
     review: { due: reviewDue, estimatedMinutes: reviewDue === 0 ? 0 : Math.max(1, Math.ceil(reviewDue * 0.3)) },
-    weeklyGoal: { completedDays: weeklyDays, targetDays: 5, percent: Math.min(100, Math.round((weeklyDays / 5) * 100)) },
+    weeklyGoal: { completedDays: weeklyDays, targetDays, percent: Math.min(100, Math.round((weeklyDays / targetDays) * 100)) },
     stats: { streak: progress.streak.current, lessons: progress.completedLessons.length, activeMinutes: metrics.activeMinutes, masteredWords: metrics.masteredWords },
     nextAchievement: achievement && achievementValue ? { ...achievement, ...achievementValue, percent: Math.min(100, Math.round((achievementValue.current / achievementValue.target) * 100)) } : null,
   };

@@ -1,6 +1,6 @@
 # Slogovo controlled-development status
 
-Last updated: 2026-07-14 21:39 UTC
+Last updated: 2026-07-14 22:20 UTC
 
 ## UI/UX Epic #100 — active direct-main run
 
@@ -26,11 +26,13 @@ Last updated: 2026-07-14 21:39 UTC
 - #105 verification: two focused navigation tests passed for exact item order, active-page semantics, and Learn children; type-check and lint passed; desktop adaptive-session and narrow-mobile Bulgarian-input Playwright journeys passed; `git diff --check` passed.
 - #104 Dashboard Redesign: replaced the course-list home with a decision-focused dashboard backed exclusively by authenticated `/api/dashboard` data. The top action names the next lesson within the adaptive daily session, duration, chapter progress, and primary CTA; supporting cards show today's due-review count/time, five-day weekly goal, prominent streak and real learning stats, next achievement progress, and preserved quick practice links. Loading, retry, empty/complete-course, and responsive stacked states are included.
 - #104 verification: two focused tests passed for server-derived next action/review/goal/stats/achievement data and no-store authenticated rendering; type-check and lint passed; the existing end-to-end login/home/adaptive-session journey passed against the mock authenticated backend; `git diff --check` passed.
+- #111 Personalized Onboarding: replaced the six-question wall with a skippable five-step, one-question-at-a-time flow covering learning goal, Cyrillic knowledge, prior experience, daily commitment, and transliteration. Cyrillic choice sets the sensible transliteration default, daily commitment produces a realistic weekly learning-day target, all preferences persist through the existing synchronized profile settings, and the first dashboard action now follows the recommended alphabet/review path.
+- #111 verification: six focused model and interaction tests passed, including step isolation, progress, automatic transliteration, persisted recommendation, weekly-goal derivation, personalized dashboard action, and safe skip defaults; type-check and lint passed; `git diff --check` passed.
 
 ### Current and remaining work
 
-- Current issue: commit, push, and close #104, then complete the personalized one-question-at-a-time onboarding in #111 and the course roadmap in #108.
-- Remaining Epic issues: #106–#113 and parent #100.
+- Current issue: commit, push, and close #111, then complete the course roadmap in #108.
+- Remaining Epic issues after #111: #106–#110, #112–#113, and parent #100.
 - Production migrations, secrets, environments, production data, paid services, and manual deployments remain untouched.
 
 Last updated: 2026-07-14 17:42 UTC
