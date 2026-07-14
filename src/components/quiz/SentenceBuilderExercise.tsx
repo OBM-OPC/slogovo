@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ExerciseItemResult, ExerciseResult, SentenceBuilder } from "@/types";
 import { Button } from "@/components/ui/Button";
 import { buildExerciseItemResult, buildExerciseResult } from "@/lib/evaluation";
@@ -11,6 +11,7 @@ interface SentenceBuilderExerciseProps {
   sentences: SentenceBuilder[];
   attemptNumber?: number;
   onInteraction?: () => void;
+  onItemChange?: (index: number, total: number) => void;
   onComplete: (result: ExerciseResult) => void;
 }
 
@@ -19,6 +20,7 @@ export function SentenceBuilderExercise({
   sentences,
   attemptNumber = 1,
   onInteraction,
+  onItemChange,
   onComplete,
 }: SentenceBuilderExerciseProps) {
   const exerciseStartedAt = useRef(new Date().toISOString());
@@ -30,6 +32,8 @@ export function SentenceBuilderExercise({
   const sentence = sentences[current];
   const available = sentence.words.filter((word) => !selected.includes(word));
   const isCorrect = selected.length === sentence.correctOrder.length && selected.every((word, index) => word === sentence.correctOrder[index]);
+
+  useEffect(() => onItemChange?.(current, sentences.length), [current, onItemChange, sentences.length]);
 
   const checkAnswer = () => {
     if (showResult || selected.length !== sentence.correctOrder.length) return;
@@ -101,14 +105,14 @@ export function SentenceBuilderExercise({
             onClick={() => { onInteraction?.(); setSelected((items) => [...items, word]); }}
             disabled={showResult}
             aria-label={`${word} zum Satz hinzufügen`}
-            className="min-h-11 rounded-lg bg-primary-50 px-3 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary-100 disabled:opacity-50"
+            className="min-h-14 rounded-xl bg-primary-50 px-4 py-3 text-sm font-medium text-primary transition-colors duration-200 hover:bg-primary-100 disabled:opacity-50"
           >
             {word}
           </button>
         ))}
       </div>
       {!showResult ? (
-        <Button onClick={checkAnswer} fullWidth disabled={selected.length !== sentence.correctOrder.length}>Prüfen</Button>
+        <Button className="lesson-action" onClick={checkAnswer} fullWidth disabled={selected.length !== sentence.correctOrder.length}>Prüfen</Button>
       ) : (
         <div className="space-y-3">
           {sentence.explanation && (
@@ -120,7 +124,7 @@ export function SentenceBuilderExercise({
           <div role="status" aria-live="polite" className={cn("rounded-xl p-4 text-center font-medium", isCorrect ? "bg-success/10 text-success" : "bg-danger/10 text-danger")}>
             {isCorrect ? "Richtig!" : `Richtige Reihenfolge: ${sentence.correctOrder.join(" ")}`}
           </div>
-          <Button onClick={handleNext} fullWidth>{current < sentences.length - 1 ? "Weiter" : "Fertig"}</Button>
+          <Button className="lesson-action" onClick={handleNext} fullWidth>{current < sentences.length - 1 ? "Weiter" : "Fertig"}</Button>
         </div>
       )}
     </div>

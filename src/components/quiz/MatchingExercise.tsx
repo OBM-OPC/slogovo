@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ExerciseItemResult, ExerciseResult, MatchingPair } from "@/types";
 import { buildExerciseItemResult, buildExerciseResult } from "@/lib/evaluation";
 import { cn, shuffleArray } from "@/lib/utils";
@@ -10,6 +10,7 @@ interface MatchingExerciseProps {
   pairs: MatchingPair[];
   attemptNumber?: number;
   onInteraction?: () => void;
+  onItemChange?: (index: number, total: number) => void;
   onComplete: (result: ExerciseResult) => void;
 }
 
@@ -18,6 +19,7 @@ export function MatchingExercise({
   pairs,
   attemptNumber = 1,
   onInteraction,
+  onItemChange,
   onComplete,
 }: MatchingExerciseProps) {
   const exerciseStartedAt = useRef(new Date().toISOString());
@@ -28,6 +30,8 @@ export function MatchingExercise({
   const [wrong, setWrong] = useState<Set<string>>(new Set());
   const [lastExplanation, setLastExplanation] = useState<{ text?: string; grammarTopicSlug?: string }>({});
   const [bgOptions] = useState(() => shuffleArray(pairs.map((pair) => pair.bg)));
+
+  useEffect(() => onItemChange?.(matched.size, pairs.length), [matched.size, onItemChange, pairs.length]);
 
   const handleDeClick = (de: string) => {
     onInteraction?.();

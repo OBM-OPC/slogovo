@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ExerciseItemResult, ExerciseResult, QuizQuestion } from "@/types";
 import { Button } from "@/components/ui/Button";
 import { buildExerciseItemResult, buildExerciseResult } from "@/lib/evaluation";
@@ -11,6 +11,7 @@ interface QuizExerciseProps {
   questions: QuizQuestion[];
   attemptNumber?: number;
   onInteraction?: () => void;
+  onItemChange?: (index: number, total: number) => void;
   onComplete: (result: ExerciseResult) => void;
 }
 
@@ -19,6 +20,7 @@ export function QuizExercise({
   questions,
   attemptNumber = 1,
   onInteraction,
+  onItemChange,
   onComplete,
 }: QuizExerciseProps) {
   const exerciseStartedAt = useRef(new Date().toISOString());
@@ -28,6 +30,8 @@ export function QuizExercise({
   const [selected, setSelected] = useState<number | null>(null);
   const [showResult, setShowResult] = useState(false);
   const question = questions[current];
+
+  useEffect(() => onItemChange?.(current, questions.length), [current, onItemChange, questions.length]);
 
   const handleSelect = (index: number) => {
     if (showResult) return;
@@ -89,7 +93,7 @@ export function QuizExercise({
               disabled={showResult}
               aria-pressed={isSelected}
               aria-label={`${option}${showResult && isCorrect ? ", richtig" : showResult && isSelected ? ", falsch" : ""}`}
-              className={cn("min-h-12 w-full rounded-xl border-2 p-4 text-left font-medium transition-colors", stateClass)}
+              className={cn("min-h-14 w-full rounded-xl border-2 p-4 text-left font-medium transition-colors duration-200", stateClass)}
             >
               {option}
             </button>
@@ -111,7 +115,7 @@ export function QuizExercise({
               )}
             </div>
           )}
-          <Button onClick={handleNext} fullWidth>
+          <Button className="lesson-action" onClick={handleNext} fullWidth>
             {current < questions.length - 1 ? "Weiter" : "Fertig"}
           </Button>
         </div>

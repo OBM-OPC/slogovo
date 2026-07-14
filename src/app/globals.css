@@ -120,6 +120,32 @@
       linear-gradient(90deg, rgba(45, 106, 79, 0.04) 1px, transparent 1px);
     background-size: 32px 32px;
   }
+
+  .lesson-step {
+    animation: lesson-step-in 200ms ease-out;
+  }
+}
+
+@keyframes lesson-step-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 639px) {
+  .lesson-step {
+    padding-bottom: 5.5rem;
+  }
+
+  .lesson-action {
+    position: fixed;
+    z-index: 35;
+    right: 1rem;
+    bottom: calc(5.25rem + env(safe-area-inset-bottom, 0px));
+    left: 1rem;
+    width: auto;
+    min-height: 3.5rem;
+    box-shadow: 0 8px 30px rgba(30, 26, 22, 0.18);
+  }
 }
 
 @layer utilities {

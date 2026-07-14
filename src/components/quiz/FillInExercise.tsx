@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ExerciseItemResult, ExerciseResult, FillInSentence } from "@/types";
 import { Button } from "@/components/ui/Button";
 import { buildExerciseItemResult, buildExerciseResult } from "@/lib/evaluation";
@@ -14,6 +14,7 @@ interface FillInExerciseProps {
   sentences: FillInSentence[];
   attemptNumber?: number;
   onInteraction?: () => void;
+  onItemChange?: (index: number, total: number) => void;
   onComplete: (result: ExerciseResult) => void;
 }
 
@@ -22,6 +23,7 @@ export function FillInExercise({
   sentences,
   attemptNumber = 1,
   onInteraction,
+  onItemChange,
   onComplete,
 }: FillInExerciseProps) {
   const exerciseStartedAt = useRef(new Date().toISOString());
@@ -41,6 +43,8 @@ export function FillInExercise({
     sentence.explanation
   );
   const isCorrect = evaluation.status === "correct" || evaluation.status === "typo";
+
+  useEffect(() => onItemChange?.(current, sentences.length), [current, onItemChange, sentences.length]);
 
   const checkAnswer = () => {
     if (showResult || !input.trim()) return;
@@ -116,7 +120,7 @@ export function FillInExercise({
       />
       <BulgarianKeyboard disabled={showResult} onInsert={(character) => setInput((value) => value + character)} />
       {!showResult ? (
-        <Button onClick={checkAnswer} fullWidth disabled={!input.trim()}>Prüfen</Button>
+        <Button className="lesson-action" onClick={checkAnswer} fullWidth disabled={!input.trim()}>Prüfen</Button>
       ) : (
         <div className="space-y-3">
           {sentence.explanation && (
@@ -130,7 +134,7 @@ export function FillInExercise({
           <div className={cn("rounded-xl p-4 text-center font-medium", isCorrect ? "bg-success/10 text-success" : "bg-danger/10 text-danger")}>
             <p id="fill-in-feedback" role="status" aria-live="polite">{formatRichFeedback(richFeedback)}</p>
           </div>
-          <Button onClick={handleNext} fullWidth>{current < sentences.length - 1 ? "Weiter" : "Fertig"}</Button>
+          <Button className="lesson-action" onClick={handleNext} fullWidth>{current < sentences.length - 1 ? "Weiter" : "Fertig"}</Button>
         </div>
       )}
     </div>

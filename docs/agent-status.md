@@ -1,6 +1,6 @@
 # Slogovo controlled-development status
 
-Last updated: 2026-07-14 22:24 UTC
+Last updated: 2026-07-14 22:29 UTC
 
 ## UI/UX Epic #100 — active direct-main run
 
@@ -30,11 +30,13 @@ Last updated: 2026-07-14 22:24 UTC
 - #111 verification: six focused model and interaction tests passed, including step isolation, progress, automatic transliteration, persisted recommendation, weekly-goal derivation, personalized dashboard action, and safe skip defaults; type-check and lint passed; `git diff --check` passed.
 - #108 Course Overview Redesign: replaced the flat list with a connected level roadmap. Expandable chapter cards expose learning objectives, individual lesson duration and combined chapter time, per-chapter progress, completed/current/available/locked status, completion badges, sequential unlocking, checkmarks, and a motion-safe current-step highlight; the overall course summary remains visible above the path.
 - #108 verification: focused model and interaction tests passed for sequential status derivation, total duration, current expanded content, objectives, lesson destinations, and locked lesson guidance; type-check and lint passed; `git diff --check` passed.
+- #106 Lesson Experience Improvements: rebuilt the live lesson shell around a sticky, always-visible header and granular journey progress. Exercises now expose a global current/total question count, elapsed and estimated remaining time with a dismissible timer, 56px answer targets, a fixed mobile primary action that reserves content space, a stable-height stage, 200ms reduced-motion-safe transitions, and programmatic focus movement after each step/question. Retry questions are included in the live total rather than hidden from progress.
+- #106 verification: nine lesson/quiz interaction tests passed across quiz, fill-in, listening, sentence-building, matching, and required-item retry, including progress semantics, timer, touch-target class, and automatic focus; type-check and lint passed; `git diff --check` passed.
 
 ### Current and remaining work
 
-- Current issue: commit, push, and close #108, then improve the live lesson experience in #106 and its feedback in #107.
-- Remaining Epic issues after #108: #106–#107, #109–#110, #112–#113, and parent #100.
+- Current issue: commit, push, and close #106, then implement explanatory cross-exercise feedback in #107.
+- Remaining Epic issues after #106: #107, #109–#110, #112–#113, and parent #100.
 - Production migrations, secrets, environments, production data, paid services, and manual deployments remain untouched.
 
 Last updated: 2026-07-14 17:42 UTC
