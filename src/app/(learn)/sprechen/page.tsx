@@ -18,7 +18,7 @@ export default function SpeakingPage() {
 
   if (!word) {
     return (
-      <main className="animate-fade-in px-4 py-6 safe-top">
+      <main className="px-4 py-6 safe-top">
         <h1 className="mb-2 text-2xl font-bold">Sprechen</h1>
         <p className="text-muted">Für die Sprechübung sind noch keine Wörter verfügbar.</p>
       </main>
@@ -31,7 +31,7 @@ export default function SpeakingPage() {
   };
 
   return (
-    <main className="animate-fade-in px-4 py-6 safe-top">
+    <main className="px-4 py-6 safe-top">
       <h1 className="mb-2 text-2xl font-bold">Sprechen</h1>
       <p className="mb-6 text-muted">Höre, sprich nach und bewerte dich ehrlich.</p>
       <section className="card text-center">
