@@ -40,6 +40,15 @@ The test server starts Next.js against an in-memory Supabase-compatible auth and
 PostgREST fixture. It never uses deployed Supabase credentials or production
 data. Tests run serially and reset the fixture before each journey.
 
+The focused CSP/login journey reads the document CSP and `x-nonce`, verifies
+every rendered Next.js script carries that exact nonce, authenticates through
+the hydrated login form, and fails on application `securitypolicyviolation`
+events. Browser-extension `contentscript.js` and ObjectMultiplex noise is
+excluded because it does not originate in the application. After a production
+build, run `E2E_NEXT_MODE=start npx playwright test e2e/csp-login.spec.ts` to
+exercise this journey against the unprotected local production server instead
+of a Vercel-protected preview.
+
 Run with:
 
 ```bash

@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Lora } from "next/font/google";
+import { connection } from "next/server";
 import { TelemetryMonitor } from "@/components/telemetry/TelemetryMonitor";
 import { ToastProvider } from "@/components/ui/Toast";
 import "./globals.css";
@@ -27,11 +28,13 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = { width: "device-width", initialScale: 1, viewportFit: "cover", themeColor: "#FAF8F5" };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  await connection();
+
   return (
     <html lang="de">
       <body className={`${inter.variable} ${lora.variable}`}>

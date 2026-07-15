@@ -23,6 +23,19 @@ images, fonts, workers, and blob URLs are limited to the explicit directives in
 adds `unsafe-eval`. Inline styles remain allowed because the current
 Next/Tailwind stack emits them.
 
+The middleware creates exactly one nonce for each document request, forwards
+the CSP and `x-nonce` to the Next.js renderer, and writes the same values to the
+final response. The root layout waits for a request so nonce-protected pages
+cannot be prerendered or served from the static HTML cache. Supabase session
+refreshes and redirect/replacement responses preserve the forwarded headers and
+every cookie.
+
+Vercel Deployment Protection is a separate platform login that runs before the
+application and cannot validate Slogovo's CSP. Preview smoke tests therefore use
+the unprotected local production server. Preview and production application
+responses keep the same strict nonce policy; no preview-only CSP relaxation is
+enabled.
+
 State-changing API requests require a same-origin `Origin` and JSON content
 type (except bodyless DELETE/logout operations). JSON readers enforce byte and
 nesting-depth limits. Public API routes use exact matching; `/api/auth/me`,

@@ -2,6 +2,20 @@ import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { secureAuthCookieOptions } from "./cookies";
 
+export function createSessionResponse(request: NextRequest, previous?: NextResponse) {
+  const response = NextResponse.next({
+    request: {
+      headers: new Headers(request.headers),
+    },
+  });
+
+  for (const cookie of previous?.cookies.getAll() ?? []) {
+    response.cookies.set(cookie);
+  }
+
+  return response;
+}
+
 function getEnv() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
@@ -12,11 +26,7 @@ function getEnv() {
 }
 
 export async function updateSession(request: NextRequest) {
-  let response = NextResponse.next({
-    request: {
-      headers: request.headers,
-    },
-  });
+  let response = createSessionResponse(request);
 
   const { url, key } = getEnv();
   const supabase = createServerClient(url, key, {
@@ -27,17 +37,13 @@ export async function updateSession(request: NextRequest) {
       set(name: string, value: string, options: CookieOptions) {
         const secured = secureAuthCookieOptions(options);
         request.cookies.set({ name, value, ...secured });
-        response = NextResponse.next({
-          request: { headers: request.headers },
-        });
+        response = createSessionResponse(request, response);
         response.cookies.set({ name, value, ...secured });
       },
       remove(name: string, options: CookieOptions) {
         const secured = secureAuthCookieOptions(options);
         request.cookies.set({ name, value: "", ...secured });
-        response = NextResponse.next({
-          request: { headers: request.headers },
-        });
+        response = createSessionResponse(request, response);
         response.cookies.set({ name, value: "", ...secured });
       },
     },
