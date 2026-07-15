@@ -1,5 +1,17 @@
 # Slogovo controlled-development status
 
+Last updated: 2026-07-15 08:42 UTC
+
+## Dependency pull-request merge run
+
+- Repository preflight inspected `docs/agent-status.md`, local/remote branches, both open pull requests, all open issues (none), recent Actions, reviews, mergeability, and active worktrees/processes. No parallel Slogovo coding run was found.
+- PR #116 (`dependabot/github_actions/actions-da8963f5f3`) was updated to current `main`; CI, dependency/secret scan, database security, ZAP, and Vercel all passed. It was squash-merged with owner authorization as `b54e440f0656c0a10ca587446a7201aecc4b9cbf`.
+- Selected remaining PR #117 on branch `dependabot/npm_and_yarn/security-and-maintenance-b51be97627`; its updated pre-repair head was `eb71bfe993216130e2ddbfe9c91d5546e5a57206`.
+- PR #117 initially failed every install-based check because the Dependabot lockfile was inconsistent (`typescript@5.9.3` missing under CI's npm version). The grouped TypeScript 7, ESLint 10, Tailwind 4, and Node 26 type jumps were also incompatible with the current Next/ESLint/PostCSS toolchain and were retained at supported major versions. The compatible Supabase, Next 16, React 19, PostCSS, and TSX updates remain.
+- Next 16's removed `next lint` command was migrated to the supported ESLint 9 flat configuration; Next 16's required TypeScript settings were recorded. Existing React compiler-only lint rules remain disabled until their associated ref/effect refactors are handled as a dedicated change.
+- Local validation passed: npm 10 clean install, lint, type-check, database validation (10 migrations), content validation (12 modules, 60 lessons, 9 grammar topics; 0 errors/warnings), 67 Vitest files / 230 tests, production build (110 static/dynamic routes), and `git diff --check`.
+- Delivery gate: push the repair on the existing PR #117 branch, update it to the post-#116 `main`, require all CI/security/database/ZAP/Vercel checks to pass, then squash-merge it under the owner's explicit request. No production migration, environment, secret, data, paid-service, or manual deployment action is involved.
+
 Last updated: 2026-07-15 00:12 UTC
 
 ## UI/UX Epic #100 — active direct-main run
