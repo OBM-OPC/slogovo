@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { ACHIEVEMENTS } from "@/lib/achievements";
+import { AchievementIllustration } from "@/components/brand/Illustrations";
+import { triggerConfetti } from "@/lib/confetti";
 
 interface AchievementToastProps {
   achievementIds: string[];
@@ -10,6 +12,10 @@ interface AchievementToastProps {
 
 export function AchievementToast({ achievementIds, onClose }: AchievementToastProps) {
   const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    if (achievementIds.length > 0) triggerConfetti({ scalar: 1.1 });
+  }, [achievementIds]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -30,7 +36,7 @@ export function AchievementToast({ achievementIds, onClose }: AchievementToastPr
       }`}
     >
       <div className="flex items-center gap-3">
-        <span className="text-3xl">🏆</span>
+        <AchievementIllustration className="h-16 w-20 shrink-0" />
         <div className="flex-1">
           <p className="text-sm font-semibold uppercase tracking-wide text-white/80">Erfolg freigeschaltet</p>
           {achievementIds.map((id) => {

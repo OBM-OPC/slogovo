@@ -1,8 +1,8 @@
 import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "accent" | "outline" | "ghost" | "secondary";
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: "primary" | "accent" | "outline" | "ghost" | "secondary" | "danger" | "link";
   size?: "sm" | "md" | "lg";
   isLoading?: boolean;
   fullWidth?: boolean;
@@ -14,6 +14,8 @@ const variants = {
   outline: "btn-outline",
   ghost: "btn-ghost",
   secondary: "btn bg-white text-primary hover:bg-gray-50",
+  danger: "btn bg-danger text-white hover:bg-accent-700 shadow-card",
+  link: "inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-2 font-semibold text-primary underline-offset-4 hover:underline",
 };
 
 const sizes = {
@@ -38,7 +40,7 @@ export function Button({
         variants[variant],
         sizes[size],
         fullWidth && "w-full",
-        "disabled:opacity-50 disabled:cursor-not-allowed",
+        "min-h-11 disabled:opacity-50 disabled:cursor-not-allowed",
         className
       )}
       disabled={disabled || isLoading}

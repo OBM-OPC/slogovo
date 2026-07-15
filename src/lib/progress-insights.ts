@@ -1,4 +1,5 @@
 import type { ExerciseType, UserProgress, VocabularyProgress } from "@/types";
+import { recommendedWeeklyLearningDays } from "@/lib/onboarding";
 
 export interface AttemptSkillSummary {
   exerciseType: ExerciseType;
@@ -22,11 +23,15 @@ export interface ProgressInsights {
   activeStudyMinutes: number;
   lessonsPassed: number;
   lessonsMastered: number;
+  wordsLearned: number;
   vocabularyDue: number;
   receptiveVocabularyMastered: number;
   productiveVocabularyMastered: number;
   grammarSkills: GrammarSkillSummary[];
   listening: { correct: number; total: number; accuracy: number | null };
+  grammar: { correct: number; total: number; accuracy: number | null };
+  weeklyGoal: { completedDays: number; targetDays: number; percent: number };
+  reviewCompletion: { completed: number; due: number; percent: number | null };
   weakAreas: Array<{ label: string; accuracy: number }>;
   recentImprovement: number | null;
 }
@@ -54,7 +59,8 @@ export function buildProgressInsights(
   progress: UserProgress,
   attempts: ProgressAttemptSummary[],
   grammarLessons: Array<{ lessonId: string; title: string }>,
-  today: string
+  today: string,
+  reviewSummary: { dueAtStart: number; completedDue: number } = { dueAtStart: 0, completedDue: 0 }
 ): ProgressInsights {
   const vocabulary = Object.values(progress.vocabularyProgress);
   const skillTotals = new Map<ExerciseType, { correct: number; total: number }>();
@@ -67,6 +73,9 @@ export function buildProgressInsights(
     }
   }
   const listening = skillTotals.get("listen") ?? { correct: 0, total: 0 };
+  const grammar = [skillTotals.get("fill-in"), skillTotals.get("sentence-builder")]
+    .filter((value): value is { correct: number; total: number } => Boolean(value))
+    .reduce((sum, value) => ({ correct: sum.correct + value.correct, total: sum.total + value.total }), { correct: 0, total: 0 });
   const weakAreas = [...skillTotals.entries()]
     .filter(([, stats]) => stats.total >= 2 && rate(stats.correct, stats.total) < 0.7)
     .map(([exerciseType, stats]) => ({ label: SKILL_LABELS[exerciseType], accuracy: rate(stats.correct, stats.total) }))
@@ -85,11 +94,22 @@ export function buildProgressInsights(
     (sum, day) => sum + (day.activeSeconds ?? Math.round(day.minutes * 60)),
     0
   );
+  const targetDays = recommendedWeeklyLearningDays(progress.settings.dailyGoal);
+  const dailyMinutes = progress.settings.dailyGoal === "light" ? 5 : progress.settings.dailyGoal === "medium" ? 15 : 30;
+  const todayDate = new Date(`${today}T12:00:00Z`);
+  const weekStart = new Date(todayDate);
+  weekStart.setUTCDate(weekStart.getUTCDate() - 6);
+  const completedDays = Object.entries(progress.dailyStats).filter(([date, day]) => {
+    const value = new Date(`${date}T12:00:00Z`);
+    return value >= weekStart && value <= todayDate && day.minutes >= dailyMinutes;
+  }).length;
+  const wordsLearned = vocabulary.filter((item) => mastered(item, "recognition") || mastered(item, "production")).length;
 
   return {
     activeStudyMinutes: Math.floor(activeSeconds / 60),
     lessonsPassed: progress.completedLessons.length,
     lessonsMastered: progress.masteredLessons.length,
+    wordsLearned,
     vocabularyDue: vocabulary.filter((item) => !item.nextReview || item.nextReview <= today).length,
     receptiveVocabularyMastered: vocabulary.filter((item) => mastered(item, "recognition")).length,
     productiveVocabularyMastered: vocabulary.filter((item) => mastered(item, "production")).length,
@@ -100,6 +120,13 @@ export function buildProgressInsights(
     listening: {
       ...listening,
       accuracy: listening.total === 0 ? null : rate(listening.correct, listening.total),
+    },
+    grammar: { ...grammar, accuracy: grammar.total === 0 ? null : rate(grammar.correct, grammar.total) },
+    weeklyGoal: { completedDays, targetDays, percent: Math.min(100, Math.round((completedDays / targetDays) * 100)) },
+    reviewCompletion: {
+      completed: Math.min(reviewSummary.completedDue, reviewSummary.dueAtStart),
+      due: reviewSummary.dueAtStart,
+      percent: reviewSummary.dueAtStart === 0 ? null : Math.min(100, Math.round((reviewSummary.completedDue / reviewSummary.dueAtStart) * 100)),
     },
     weakAreas,
     recentImprovement,

@@ -9,6 +9,7 @@ describe("progress insights", () => {
     progress.masteredLessons = ["l1"];
     progress.lessonScores = { l1: 92, l2: 64 };
     progress.dailyStats = { "2026-07-13": { minutes: 12, activeSeconds: 720, vocabulary: 4 } };
+    progress.settings.dailyGoal = "light";
     progress.vocabularyProgress = {
       due: { status: "review", nextReview: "2026-07-12", timesCorrect: 3, timesWrong: 1, intervalIndex: 2, recognitionCorrect: 3, recognitionTotal: 3 },
       productive: { status: "mastered", nextReview: "2026-08-01", timesCorrect: 4, timesWrong: 0, intervalIndex: 4, productionCorrect: 3, productionTotal: 4 },
@@ -25,16 +26,20 @@ describe("progress insights", () => {
     const insights = buildProgressInsights(progress, attempts, [
       { lessonId: "l1", title: "Sein" },
       { lessonId: "l2", title: "Artikel" },
-    ], "2026-07-13");
+    ], "2026-07-13", { dueAtStart: 4, completedDue: 3 });
 
     expect(insights).toMatchObject({
       activeStudyMinutes: 12,
       lessonsPassed: 2,
       lessonsMastered: 1,
+      wordsLearned: 2,
       vocabularyDue: 1,
       receptiveVocabularyMastered: 1,
       productiveVocabularyMastered: 1,
       listening: { correct: 5, total: 10, accuracy: 0.5 },
+      grammar: { correct: 10, total: 10, accuracy: 1 },
+      weeklyGoal: { completedDays: 1, targetDays: 5, percent: 20 },
+      reviewCompletion: { completed: 3, due: 4, percent: 75 },
       recentImprovement: 20,
     });
     expect(insights.grammarSkills.map((skill) => skill.score)).toEqual([64, 92]);
@@ -44,6 +49,8 @@ describe("progress insights", () => {
   it("uses explicit empty states instead of fabricated percentages", () => {
     const insights = buildProgressInsights(createDefaultProgress("u1"), [], [], "2026-07-13");
     expect(insights.listening.accuracy).toBeNull();
+    expect(insights.grammar.accuracy).toBeNull();
+    expect(insights.reviewCompletion.percent).toBeNull();
     expect(insights.recentImprovement).toBeNull();
     expect(insights.weakAreas).toEqual([]);
   });

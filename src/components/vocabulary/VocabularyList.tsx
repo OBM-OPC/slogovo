@@ -19,7 +19,7 @@ export function VocabularyList({ items }: VocabularyListProps) {
           className="flex items-center justify-between rounded-xl border border-gray-100 bg-white p-4"
         >
           <div className="flex-1">
-            <p className="text-lg font-semibold text-foreground">{item.bg}</p>
+            <p className="text-lg font-semibold text-foreground" lang="bg">{item.bg}</p>
             <p className="text-sm text-muted">{item.de}</p>
             {progress.settings.showLatin && item.bgLatin && (
               <p className="text-xs italic text-muted">{item.bgLatin}</p>

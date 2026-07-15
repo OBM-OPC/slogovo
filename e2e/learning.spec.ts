@@ -58,7 +58,7 @@ test("keeps a Bulgarian typing flow usable on a narrow mobile viewport", async (
 test("shows an honest empty progress state before learning events exist", async ({ page }) => {
   await login(page);
   await page.goto("/fortschritt");
-  await expect(page.getByRole("heading", { name: "Dein Lernstand" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Was du wirklich gelernt hast" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Noch keine Lernereignisse" })).toBeVisible();
   await expect(page.getByRole("link", { name: "Heute lernen" })).toBeVisible();
 });
@@ -93,7 +93,9 @@ test("starts a lesson, retries one failed item, passes, syncs, and restores on a
 
   const secondDevice = await browser.newContext();
   const secondPage = await loginInContext(secondDevice);
-  await expect(secondPage.getByRole("link", { name: /Hallo & Abschiede 1\/5/ })).toBeVisible();
+  const restoredAction = secondPage.getByRole("region", { name: "Sich vorstellen" });
+  await expect(restoredAction).toContainText("Hallo & Abschiede");
+  await expect(restoredAction).toContainText("1/5 Lektionen");
   await secondDevice.close();
 });
 

@@ -28,12 +28,12 @@ export function BulgarianKeyboard({ disabled = false, onInsert }: BulgarianKeybo
         Bulgarische Tastaturhilfe
       </button>
       {open && (
-        <div id={keysId} className="mt-2 grid grid-cols-9 gap-1" aria-label="Bulgarische Sonderbuchstaben">
+        <div id={keysId} className="mt-2 grid grid-cols-5 gap-1.5 sm:grid-cols-9" aria-label="Bulgarische Sonderbuchstaben">
           {BULGARIAN_KEYS.map((character) => (
             <button
               key={character}
               type="button"
-              className="min-h-11 min-w-0 rounded-lg bg-white text-lg font-semibold text-primary shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+              className="min-h-11 min-w-11 rounded-lg bg-white text-lg font-semibold text-primary shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
               onClick={() => onInsert(character)}
               disabled={disabled}
               aria-label={`${character} einfügen`}

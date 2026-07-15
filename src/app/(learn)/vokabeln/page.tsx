@@ -47,7 +47,7 @@ export default function VocabularyPage() {
           onClick={() => setMode("categories")}
           className={cn(
             "flex flex-col items-center rounded-xl py-2 text-sm font-medium transition-colors",
-            mode === "categories" ? "bg-primary text-white" : "bg-gray-100 text-muted"
+            mode === "categories" ? "bg-primary text-white" : "bg-gray-100 text-warm-800"
           )}
         >
           <Grid3X3 className="h-5 w-5" />
@@ -57,7 +57,7 @@ export default function VocabularyPage() {
           onClick={() => setMode("trainer")}
           className={cn(
             "flex flex-col items-center rounded-xl py-2 text-sm font-medium transition-colors",
-            mode === "trainer" ? "bg-primary text-white" : "bg-gray-100 text-muted"
+            mode === "trainer" ? "bg-primary text-white" : "bg-gray-100 text-warm-800"
           )}
         >
           <Brain className="h-5 w-5" />
@@ -67,7 +67,7 @@ export default function VocabularyPage() {
           onClick={() => setMode("all")}
           className={cn(
             "flex flex-col items-center rounded-xl py-2 text-sm font-medium transition-colors",
-            mode === "all" ? "bg-primary text-white" : "bg-gray-100 text-muted"
+            mode === "all" ? "bg-primary text-white" : "bg-gray-100 text-warm-800"
           )}
         >
           <Search className="h-5 w-5" />
@@ -161,6 +161,7 @@ export default function VocabularyPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Deutsch oder Bulgarisch suchen"
+              aria-label="Wortschatz durchsuchen"
               className="input pl-10"
             />
           </div>
@@ -168,7 +169,7 @@ export default function VocabularyPage() {
             {filtered.map((w) => (
               <li key={w.id} className="card flex items-center justify-between">
                 <div>
-                  <p className="font-semibold">{w.bg}</p>
+                  <p className="font-semibold" lang="bg">{w.bg}</p>
                   <p className="text-sm text-muted">{w.de}</p>
                 </div>
               </li>

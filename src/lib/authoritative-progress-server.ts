@@ -31,7 +31,7 @@ interface AuthoritativeProgressClient {
 export async function rebuildAuthoritativeProgress(clientValue: unknown, userId: string): Promise<UserProgress> {
   const client = clientValue as AuthoritativeProgressClient;
   const attemptsQuery = client.from("lesson_attempts")
-    .select("id,lesson_id,module_id,active_time_seconds,finished_at,items_answered,correct_count,incorrect_count,passed,mastered,score") as SelectQuery<Record<string, unknown>>;
+    .select("id,lesson_id,module_id,active_time_seconds,finished_at,items_answered,correct_count,incorrect_count,passed,mastered,score,results") as SelectQuery<Record<string, unknown>>;
   const reviewsQuery = client.from("vocabulary_review_events")
     .select("word_id,rating,practice_mode,reviewed_at,response_time_ms,error_category") as SelectQuery<Record<string, unknown>>;
   const existingQuery = client.from("user_progress")
@@ -56,6 +56,8 @@ export async function rebuildAuthoritativeProgress(clientValue: unknown, userId:
   const existing = rowToProgress(existingResult.data, userId);
   const settings = existing?.settings ?? {
     dailyGoal: "medium" as const,
+    weeklyLessonGoal: 3,
+    alphabetCompleted: false,
     ttsEnabled: true,
     showLatin: true,
     speechRate: 0.9,

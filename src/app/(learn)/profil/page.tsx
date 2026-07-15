@@ -7,6 +7,7 @@ import { ACHIEVEMENTS } from "@/lib/achievements";
 import { Flame, BookOpen, Trophy, CheckCircle2, Lock, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { learningMetrics } from "@/lib/gamification";
+import Link from "next/link";
 
 export default function ProfilPage() {
   const { user, logout } = useAuth();
@@ -85,10 +86,10 @@ export default function ProfilPage() {
       <div className="card mb-8">
         <h3 className="mb-3 font-serif font-bold">Was Belohnungen antreibt</h3>
         <div className="grid grid-cols-2 gap-2 text-center">
-          <div className="rounded-xl bg-primary-50 p-3"><p className="text-xl font-bold">{metrics.masteredWords}</p><p className="text-xs text-muted">Wörter gemeistert</p></div>
-          <div className="rounded-xl bg-primary-50 p-3"><p className="text-xl font-bold">{metrics.productionAttempts}</p><p className="text-xs text-muted">Produktive Versuche</p></div>
-          <div className="rounded-xl bg-primary-50 p-3"><p className="text-xl font-bold">{metrics.activeMinutes}</p><p className="text-xs text-muted">Aktive Minuten</p></div>
-          <div className="rounded-xl bg-primary-50 p-3"><p className="text-xl font-bold">{metrics.weeklyGoalDays}/5</p><p className="text-xs text-muted">Wochenzieltage</p></div>
+          <div className="rounded-xl bg-primary-50 p-3"><p className="text-xl font-bold">{metrics.masteredWords}</p><p className="text-xs text-warm-800">Wörter gemeistert</p></div>
+          <div className="rounded-xl bg-primary-50 p-3"><p className="text-xl font-bold">{metrics.productionAttempts}</p><p className="text-xs text-warm-800">Produktive Versuche</p></div>
+          <div className="rounded-xl bg-primary-50 p-3"><p className="text-xl font-bold">{metrics.activeMinutes}</p><p className="text-xs text-warm-800">Aktive Minuten</p></div>
+          <div className="rounded-xl bg-primary-50 p-3"><p className="text-xl font-bold">{metrics.weeklyLessons}/{progress.settings.weeklyLessonGoal}</p><p className="text-xs text-warm-800">Wochenlektionen</p></div>
         </div>
         <p className="mt-3 text-xs text-muted">Öffnen, Durchklicken und wiederholtes leichtes Tippen erzeugen keine Belohnung.</p>
       </div>
@@ -126,6 +127,7 @@ export default function ProfilPage() {
             );
           })}
         </div>
+        <Link href="/erfolge" className="btn-outline mt-4 flex w-full justify-center">Alle Erfolge und Fortschritte</Link>
       </div>
 
       {/* Logout */}

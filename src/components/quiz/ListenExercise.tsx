@@ -19,12 +19,15 @@ import {
 import { cn } from "@/lib/utils";
 import { trackLearningEvent, trackMonitoringEvent } from "@/lib/telemetry";
 import { BulgarianKeyboard } from "@/components/ui/BulgarianKeyboard";
+import { ExerciseFeedback } from "./ExerciseFeedback";
 
 interface ListenExerciseProps {
   exerciseId: string;
   items: ListenExerciseItem[];
   attemptNumber?: number;
   onInteraction?: () => void;
+  onItemChange?: (index: number, total: number) => void;
+  onReviewRequest?: (itemId: string) => void;
   onComplete: (result: ExerciseResult) => void;
 }
 
@@ -33,6 +36,8 @@ export function ListenExercise({
   items,
   attemptNumber = 1,
   onInteraction,
+  onItemChange,
+  onReviewRequest,
   onComplete,
 }: ListenExerciseProps) {
   const progress = useProgressSafe();
@@ -166,12 +171,14 @@ export function ListenExercise({
     return () => window.removeEventListener("keydown", onKeyDown);
   });
 
+  useEffect(() => onItemChange?.(current, items.length), [current, items.length, onItemChange]);
+
   const renderAnswer = () => {
     if (item.format === "listen-select") {
       return item.options.map((option, index) => {
         const correct = result && option.id === item.correctOptionId;
         const incorrect = result && selectedIndex === index && !correct;
-        return <button key={option.id} type="button" disabled={Boolean(result)} aria-pressed={selectedIndex === index} aria-label={`${option.de}${correct ? ", richtig" : incorrect ? ", falsch" : ""}`} onClick={() => selectOption(index)} className={cn("min-h-12 w-full rounded-xl border-2 p-4 text-left", correct ? "border-success bg-success/10 text-success" : incorrect ? "border-danger bg-danger/10 text-danger" : "border-gray-200 hover:bg-gray-50", result && "opacity-80")}>
+        return <button key={option.id} type="button" disabled={Boolean(result)} aria-pressed={selectedIndex === index} aria-label={`${option.de}${correct ? ", richtig" : incorrect ? ", falsch" : ""}`} onClick={() => selectOption(index)} className={cn("min-h-14 w-full rounded-xl border-2 p-4 text-left transition-colors duration-200", correct ? "border-success bg-success/10 text-success" : incorrect ? "border-danger bg-danger/10 text-danger" : "border-gray-200 hover:bg-gray-50", result && "opacity-80")}>
           <span className="mr-2 text-xs text-muted">{index + 1}</span>{option.de}
         </button>;
       });
@@ -182,7 +189,7 @@ export function ListenExercise({
         {item.options.map((option, index) => {
           const correct = result && index === item.correctOptionIndex;
           const incorrect = result && selectedIndex === index && !correct;
-          return <button key={option} type="button" disabled={Boolean(result)} aria-pressed={selectedIndex === index} aria-label={`${option}${correct ? ", richtig" : incorrect ? ", falsch" : ""}`} onClick={() => selectOption(index)} className={cn("min-h-12 w-full rounded-xl border-2 p-4 text-left", correct ? "border-success bg-success/10 text-success" : incorrect ? "border-danger bg-danger/10 text-danger" : "border-gray-200 hover:bg-gray-50", result && "opacity-80")}>
+          return <button key={option} type="button" disabled={Boolean(result)} aria-pressed={selectedIndex === index} aria-label={`${option}${correct ? ", richtig" : incorrect ? ", falsch" : ""}`} onClick={() => selectOption(index)} className={cn("min-h-14 w-full rounded-xl border-2 p-4 text-left transition-colors duration-200", correct ? "border-success bg-success/10 text-success" : incorrect ? "border-danger bg-danger/10 text-danger" : "border-gray-200 hover:bg-gray-50", result && "opacity-80")}>
             <span className="mr-2 text-xs text-muted">{index + 1}</span>{option}
           </button>;
         })}
@@ -199,7 +206,7 @@ export function ListenExercise({
         <div className="mb-3 flex flex-wrap gap-2">
           {remaining.map((word) => <button key={word} type="button" disabled={Boolean(result)} onClick={() => setSelectedOrder((words) => [...words, word])} className="rounded-lg border px-3 py-2">{word}</button>)}
         </div>
-        {!result && <Button onClick={checkAnswer} fullWidth disabled={selectedOrder.length !== item.correctOrder.length}>Prüfen</Button>}
+        {!result && <Button className="lesson-action" onClick={checkAnswer} fullWidth disabled={selectedOrder.length !== item.correctOrder.length}>Prüfen</Button>}
       </>;
     }
     return <>
@@ -217,7 +224,7 @@ export function ListenExercise({
         lang="bg"
       />
       <BulgarianKeyboard disabled={Boolean(result)} onInsert={(character) => setInput((value) => value + character)} />
-      {!result && <Button onClick={checkAnswer} fullWidth disabled={!input.trim()}>Prüfen</Button>}
+      {!result && <Button className="lesson-action" onClick={checkAnswer} fullWidth disabled={!input.trim()}>Prüfen</Button>}
     </>;
   };
 
@@ -230,6 +237,11 @@ export function ListenExercise({
   };
   const maxReveals = item.revealText ? Math.max(0, item.maxReveals ?? 1) : 0;
   const canReveal = !result && revealCount < maxReveals;
+  const correctAnswer = item.format === "listen-select"
+    ? (item.options.find((option) => option.id === item.correctOptionId)?.bg || item.options.find((option) => option.id === item.correctOptionId)?.de || item.audioText)
+    : item.format === "audio-comprehension"
+      ? item.options[item.correctOptionIndex]
+      : result?.acceptedAnswers[0] || item.audioText;
 
   return (
     <div>
@@ -266,10 +278,16 @@ export function ListenExercise({
       )}
       <div className="mt-5 space-y-2">{renderAnswer()}</div>
       {result && (
-        <div className="mt-4 space-y-3">
-          <div role="status" aria-live="polite" className={cn("rounded-xl p-4 text-center font-medium", result.correct ? "bg-success/10 text-success" : "bg-danger/10 text-danger")}>{result.feedback}</div>
-          <Button onClick={next} fullWidth>{current < items.length - 1 ? "Weiter" : "Fertig"}</Button>
-        </div>
+        <ExerciseFeedback
+          correct={result.correct}
+          correctAnswer={correctAnswer}
+          explanation={result.correct ? result.feedback : "Höre die Aufnahme noch einmal und vergleiche Klang, Wortgrenzen und Endungen mit der Lösung."}
+          grammarError={result.richStatus === "wrong_form"}
+          audioText={item.audioText}
+          nextLabel={current < items.length - 1 ? "Weiter" : "Fertig"}
+          onNext={next}
+          onAddToReview={!result.correct ? () => onReviewRequest?.(item.id) : undefined}
+        />
       )}
       {selectedIndex !== null && <span className="sr-only">Auswahl {selectedIndex + 1}</span>}
     </div>

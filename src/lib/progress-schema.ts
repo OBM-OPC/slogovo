@@ -32,6 +32,8 @@ export const userProgressSchema = z.object({
     current: z.number().int().nonnegative().max(100_000),
     longest: z.number().int().nonnegative().max(100_000),
     lastStudyDate: dateSchema.optional(),
+    freezeUsedWeek: dateSchema.optional(),
+    freezeAppliedOn: dateSchema.optional(),
   }),
   completedLessons: z.array(idSchema).max(10_000),
   masteredLessons: z.array(idSchema).max(10_000),
@@ -43,6 +45,8 @@ export const userProgressSchema = z.object({
     correct: z.number().int().nonnegative().max(1_000_000_000),
     wrong: z.number().int().nonnegative().max(1_000_000_000),
     consecutiveCorrect: z.number().int().nonnegative().max(1_000_000).optional(),
+    listeningCorrect: z.number().int().nonnegative().max(1_000_000_000).optional(),
+    listeningTotal: z.number().int().nonnegative().max(1_000_000_000).optional(),
   }),
   dailyStats: z.record(
     dateSchema,
@@ -50,11 +54,15 @@ export const userProgressSchema = z.object({
       minutes: z.number().nonnegative().max(24 * 60),
       vocabulary: z.number().int().nonnegative().max(1_000_000),
       activeSeconds: z.number().int().nonnegative().max(24 * 60 * 60).optional(),
+      lessons: z.number().int().nonnegative().max(1_000).optional(),
     })
   ),
   recordedAttemptIds: z.array(idSchema).max(100_000),
   settings: z.object({
     dailyGoal: z.enum(["light", "medium", "intense"]),
+    weeklyLessonGoal: z.number().int().min(1).max(14).default(3),
+    alphabetCompleted: z.boolean().default(false),
+    streakFreezeUsedWeek: dateSchema.optional(),
     ttsEnabled: z.boolean(),
     showLatin: z.boolean(),
     speechRate: z.number().min(0.5).max(2),

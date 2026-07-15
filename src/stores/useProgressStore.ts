@@ -24,6 +24,7 @@ import { recordProductionAttempt, recordRecognitionAttempt } from "@/lib/mastery
 import { trackLearningEvent } from "@/lib/telemetry";
 import { getAllVocabulary as getVocabularyInventory } from "@/lib/content";
 import { classifyVocabularyMistake } from "@/lib/mistake-categories";
+import { firstItemAttempts } from "@/lib/evaluation";
 
 const vocabularyById = new Map(getVocabularyInventory().map((word) => [word.id, word]));
 
@@ -118,6 +119,8 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
     const completedLessons = attempt.passed && !state.progress.completedLessons.includes(attempt.lessonId)
       ? [...state.progress.completedLessons, attempt.lessonId]
       : state.progress.completedLessons;
+    const newlyCompleted = completedLessons.length > state.progress.completedLessons.length;
+    const listeningItems = firstItemAttempts(attempt.results).filter((item) => item.exerciseType === "listen");
     const masteredLessons = attempt.mastered && !state.progress.masteredLessons.includes(attempt.lessonId)
       ? [...state.progress.masteredLessons, attempt.lessonId]
       : state.progress.masteredLessons;
@@ -135,6 +138,9 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
       ? 0
       : (state.progress.exerciseStats.consecutiveCorrect ?? 0) + attempt.correctCount;
 
+    const nextStreak = attempt.passed && attempt.itemsAnswered > 0 && attempt.activeTimeSeconds > 0
+      ? updateStreakForDate(state.progress.streak, attempt.finishedAt ? new Date(attempt.finishedAt) : new Date())
+      : state.progress.streak;
     const updated = persist({
       ...state.progress,
       completedLessons,
@@ -149,6 +155,8 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
         correct: state.progress.exerciseStats.correct + attempt.correctCount,
         wrong: state.progress.exerciseStats.wrong + attempt.incorrectCount,
         consecutiveCorrect: currentConsecutive,
+        listeningCorrect: (state.progress.exerciseStats.listeningCorrect ?? 0) + listeningItems.filter((item) => item.isPassing).length,
+        listeningTotal: (state.progress.exerciseStats.listeningTotal ?? 0) + listeningItems.length,
       },
       dailyStats: {
         ...state.progress.dailyStats,
@@ -156,12 +164,12 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
           minutes: day.minutes + attempt.activeTimeSeconds / 60,
           activeSeconds: (day.activeSeconds ?? Math.round(day.minutes * 60)) + attempt.activeTimeSeconds,
           vocabulary: day.vocabulary + (attempt.passed ? vocabulary : 0),
+          lessons: (day.lessons ?? 0) + (newlyCompleted ? 1 : 0),
         },
       },
       recordedAttemptIds: [...state.progress.recordedAttemptIds, attempt.id],
-      streak: attempt.passed && attempt.itemsAnswered > 0 && attempt.activeTimeSeconds > 0
-        ? updateStreakForDate(state.progress.streak, attempt.finishedAt ? new Date(attempt.finishedAt) : new Date())
-        : state.progress.streak,
+      streak: nextStreak,
+      settings: { ...state.progress.settings, streakFreezeUsedWeek: nextStreak.freezeUsedWeek },
     });
 
     saveProgressLocal(updated);
@@ -296,6 +304,7 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
     const todayStats = state.progress.dailyStats[today] || { minutes: 0, vocabulary: 0, activeSeconds: 0 };
     const currentStreak = state.progress.streak.current;
     const measuredSeconds = Math.round(minutes * 60);
+    const nextStreak = measuredSeconds >= 30 ? updateStreakForDate(state.progress.streak) : state.progress.streak;
 
     const updated = persist({
       ...state.progress,
@@ -305,9 +314,11 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
           minutes: todayStats.minutes + minutes,
           activeSeconds: (todayStats.activeSeconds ?? Math.round(todayStats.minutes * 60)) + measuredSeconds,
           vocabulary: todayStats.vocabulary + vocabulary,
+          lessons: todayStats.lessons ?? 0,
         },
       },
-      streak: measuredSeconds >= 30 ? updateStreakForDate(state.progress.streak) : state.progress.streak,
+      streak: nextStreak,
+      settings: { ...state.progress.settings, streakFreezeUsedWeek: nextStreak.freezeUsedWeek },
     });
 
     saveProgressLocal(updated);

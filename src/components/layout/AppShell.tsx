@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useProgressStore } from "@/stores/useProgressStore";
 import { useAuth } from "@/hooks/useAuth";
 import { initVoices } from "@/lib/tts";
 import { AchievementToast } from "@/components/ui/AchievementToast";
 import { checkAchievements } from "@/lib/achievements";
+import { PrimaryNav } from "./PrimaryNav";
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -16,6 +17,7 @@ export function AppShell({ children }: AppShellProps) {
   const progress = useProgressStore((state) => state.progress);
   const unlockAchievement = useProgressStore((state) => state.unlockAchievement);
   const [toastAchievements, setToastAchievements] = useState<string[]>([]);
+  const knownAchievements = useRef<Set<string> | null>(null);
   const { user, isLoading } = useAuth();
 
   // Initialize progress store once auth is ready
@@ -32,24 +34,32 @@ export function AppShell({ children }: AppShellProps) {
   // Achievement toasts
   useEffect(() => {
     if (!progress) return;
-    const newIds = checkAchievements(progress).filter(
+    if (!knownAchievements.current) {
+      knownAchievements.current = new Set(progress.achievements);
+      return;
+    }
+    const newlyPersisted = progress.achievements.filter((id) => !knownAchievements.current?.has(id));
+    const newlyEligible = checkAchievements(progress).filter(
       (id) => !progress.achievements.includes(id)
     );
+    const newIds = [...new Set([...newlyPersisted, ...newlyEligible])];
     if (newIds.length > 0) {
-      newIds.forEach((id) => unlockAchievement(id));
+      newlyEligible.forEach((id) => void unlockAchievement(id));
+      newIds.forEach((id) => knownAchievements.current?.add(id));
       setToastAchievements(newIds);
     }
   }, [progress, unlockAchievement]);
 
   return (
-    <div className="mx-auto min-h-screen max-w-md overflow-x-hidden pb-24 safe-bottom">
+    <div className="min-h-screen overflow-x-hidden bg-background pb-24 safe-bottom md:pb-0">
+      <PrimaryNav />
       {toastAchievements.length > 0 && (
         <AchievementToast
           achievementIds={toastAchievements}
           onClose={() => setToastAchievements([])}
         />
       )}
-      {children}
+      <div className="mx-auto min-h-[calc(100vh-4.5rem)] max-w-md">{children}</div>
     </div>
   );
 }

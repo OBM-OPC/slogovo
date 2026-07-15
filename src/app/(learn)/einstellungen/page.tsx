@@ -27,7 +27,7 @@ const goals: GoalOption[] = [
     value: "medium",
     label: "Среден",
     description: "15 Min / 25 Wörter",
-    color: "bg-gold-50 text-gold-700",
+    color: "bg-gold-50 text-gold-900",
   },
   {
     value: "intense",
@@ -98,6 +98,26 @@ export default function EinstellungenPage() {
         </div>
       </section>
 
+      <section className="mb-6 rounded-3xl bg-white p-5 shadow-card">
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <h2 className="font-serif font-bold">Wöchentliches Lektionen-Ziel</h2>
+            <p className="mt-1 text-xs text-muted">Standard: 3 abgeschlossene Lektionen</p>
+          </div>
+          <label className="text-sm font-semibold">
+            <span className="sr-only">Lektionen pro Woche</span>
+            <select
+              aria-label="Lektionen pro Woche"
+              value={settings.weeklyLessonGoal}
+              onChange={(event) => void updateSettings({ weeklyLessonGoal: Number(event.target.value) })}
+              className="min-h-12 rounded-2xl border border-warm-200 bg-white px-4 text-lg font-bold text-primary"
+            >
+              {[1, 2, 3, 4, 5, 6, 7].map((value) => <option key={value} value={value}>{value}</option>)}
+            </select>
+          </label>
+        </div>
+      </section>
+
       {/* Toggles */}
       <section className="mb-6 overflow-hidden rounded-3xl bg-white shadow-card">
         <ToggleRow
@@ -113,7 +133,7 @@ export default function EinstellungenPage() {
           icon={<Type className="h-5 w-5" />}
           label="Lateinische Umschrift"
           subLabel={settings.showLatin ? "bg-Latin wird angezeigt" : "Nur Kyrillisch"}
-          color="bg-gold-50 text-gold-700"
+          color="bg-gold-50 text-gold-900"
           checked={settings.showLatin}
           onChange={(checked) => updateSettings({ showLatin: checked })}
         />
@@ -131,7 +151,9 @@ export default function EinstellungenPage() {
           </div>
         </div>
 
+        <label htmlFor="speech-rate" className="sr-only">Sprechtempo</label>
         <input
+          id="speech-rate"
           type="range"
           min={0.5}
           max={1.5}
@@ -184,6 +206,7 @@ function ToggleRow({
         </div>
       </div>
       <button
+        aria-label={`${label}: ${checked ? "aktiv" : "inaktiv"}`}
         onClick={() => onChange(!checked)}
         className={cn(
           "relative h-7 w-12 rounded-full transition-colors duration-200",

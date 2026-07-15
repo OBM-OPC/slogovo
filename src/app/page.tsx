@@ -1,381 +1,229 @@
-"use client";
-
 import Link from "next/link";
-import { useAuth } from "@/hooks/useAuth";
-import { useProgressSafe } from "@/hooks/useProgressSafe";
 import {
-  BookOpen,
-  Brain,
-  Trophy,
-  Volume2,
-  Sparkles,
-  Play,
-  Flame,
-  LogIn,
-  UserPlus,
   ArrowRight,
-  Languages,
-  Target,
+  BookOpenCheck,
+  Check,
+  Clock3,
+  Headphones,
+  HeartHandshake,
+  LockKeyhole,
+  MessageCircleMore,
+  Plane,
+  Play,
+  Sparkles,
+  UsersRound,
+  Volume2,
 } from "lucide-react";
-import { motion } from "framer-motion";
 import { BEGINNER_LABEL_BG } from "@/lib/content-copy";
+import { BrandLogo } from "@/components/brand/BrandMark";
+
+const benefits = [
+  {
+    icon: MessageCircleMore,
+    title: "Sprich vom ersten Tag an",
+    description: "Übe kurze, alltagstaugliche Dialoge statt isolierter Regeln.",
+  },
+  {
+    icon: Headphones,
+    title: "Hör Bulgarisch in deinem Tempo",
+    description: "Spiele Wörter und Sätze normal oder langsam ab und wiederhole sie jederzeit.",
+  },
+  {
+    icon: BookOpenCheck,
+    title: "Behalte, was du lernst",
+    description: "Fällige Wörter und Fehler kommen genau dann zurück, wenn Übung sinnvoll ist.",
+  },
+];
+
+const audiences = [
+  [Plane, "Reise & Erasmus", "Sicher begrüßen, bestellen und nach dem Weg fragen."],
+  [UsersRound, "Familie & Alltag", "Gespräche besser verstehen und selbstbewusst antworten."],
+  [HeartHandshake, "Leben & Arbeit", "Schrittweise Wortschatz für Ankommen, Termine und Beruf aufbauen."],
+] as const;
+
+const faqs = [
+  ["Brauche ich Vorkenntnisse?", "Nein. Der A1-Pfad beginnt beim kyrillischen Alphabet und führt dich in kleinen Schritten zu ersten Gesprächen."],
+  ["Wie viel Zeit brauche ich?", "Eine Lerneinheit dauert meist 5–10 Minuten. Slogovo plant Wiederholungen passend zu deinem Tagesziel."],
+  ["Kann ich Slogovo zuerst testen?", "Ja. Die Demo funktioniert ohne Konto und speichert keine persönlichen Daten oder Lernfortschritte."],
+  ["Lerne ich auch die Aussprache?", "Ja. Du kannst bulgarische Wörter und Sätze anhören, verlangsamen und deine eigene Aussprache lokal aufnehmen und vergleichen."],
+] as const;
 
 export default function HomePage() {
-  const { user, isLoading, isAuthenticated } = useAuth();
-  const progress = useProgressSafe();
-
   return (
-    <div className="min-h-screen bg-rose-pattern">
-      {/* Navigation */}
-      <nav className="sticky top-0 z-50 border-b border-warm-100 bg-white/90 backdrop-blur-xl">
-        <div className="mx-auto max-w-md px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-xl font-serif font-bold text-primary">Slogovo</span>
-            <span className="hidden sm:inline h-4 w-px bg-warm-200" />
-            <span className="hidden sm:inline text-xs text-muted cyrillic">
-              Български език
-            </span>
+    <div className="min-h-screen overflow-x-hidden bg-rose-pattern">
+      <header className="sticky top-0 z-50 border-b border-warm-200/70 bg-background/90 backdrop-blur-xl">
+        <nav aria-label="Seitennavigation" className="mx-auto flex min-h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
+          <BrandLogo />
+          <div className="flex items-center gap-2 sm:gap-4">
+            <Link href="/demo" className="hidden min-h-11 items-center px-2 text-sm font-semibold text-primary hover:text-primary-700 sm:inline-flex">Demo testen</Link>
+            <Link href="/login" className="inline-flex min-h-11 items-center px-2 text-sm font-medium text-foreground underline-offset-4 hover:underline">Anmelden</Link>
           </div>
-          <div className="flex items-center gap-2">
-            {!isLoading && !isAuthenticated ? (
-              <>
-                <Link
-                  href="/demo"
-                  className="rounded-xl px-3 py-2 text-xs font-medium text-primary hover:bg-primary-50 transition-colors"
-                >
-                  Demo
-                </Link>
-                <Link
-                  href="/login"
-                  className="rounded-xl px-3 py-2 text-xs font-medium text-foreground hover:bg-warm-50 transition-colors"
-                >
-                  Anmelden
-                </Link>
-                <Link
-                  href="/register"
-                  className="rounded-xl bg-primary px-3 py-2 text-xs font-medium text-white shadow-sm hover:bg-primary-600 transition-colors"
-                >
-                  Starten
-                </Link>
-              </>
-            ) : !isLoading && isAuthenticated && user ? (
-              <Link
-                href="/lernen"
-                className="flex items-center gap-1.5 rounded-xl bg-primary px-3 py-2 text-xs font-medium text-white shadow-sm hover:bg-primary-600 transition-colors"
-              >
-                <Flame className="h-3.5 w-3.5" />
-                Weiterlernen
-              </Link>
-            ) : null}
-          </div>
-        </div>
-      </nav>
+        </nav>
+      </header>
 
-      {/* Hero */}
-      <main className="mx-auto max-w-md px-4 py-10 sm:py-16">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-12 sm:mb-16"
-        >
-          <p className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-primary-50 px-3 py-1 text-xs font-medium text-primary">
-            <Sparkles className="h-3.5 w-3.5" />
-            {BEGINNER_LABEL_BG}
-          </p>
-          <h1 className="text-3xl sm:text-5xl font-serif font-bold text-foreground mb-4 leading-tight">
-            Lerne{" "}
-            <span className="text-primary">Bulgarisch</span>
-            {" "}mit Slogovo
-          </h1>
-          <p className="text-sm sm:text-base text-muted max-w-sm mx-auto mb-8 leading-relaxed">
-            Die interaktive App für Anfänger. Vom kyrillischen Alphabet bis zum ersten Gespräch.
-          </p>
-
-          {!isLoading && isAuthenticated && user ? (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="flex flex-col gap-4"
-            >
-              {/* User Welcome */}
-              <div className="rounded-2xl bg-white p-5 shadow-card text-left">
-                <p className="text-sm text-muted mb-1">Willkommen zurück, {user.displayName || user.name || user.email}</p>
-                <div className="grid grid-cols-3 gap-3">
-                  <StatItem
-                    icon={<Flame className="h-4 w-4 text-accent" />}
-                    value={progress.streak.current}
-                    label="Streak"
-                  />
-                  <StatItem
-                    icon={<BookOpen className="h-4 w-4 text-primary" />}
-                    value={progress.completedLessons.length}
-                    label="Lektionen"
-                  />
-                  <StatItem
-                    icon={<Target className="h-4 w-4 text-gold-600" />}
-                    value={progress.exerciseStats.total}
-                    label="Übungen"
-                  />
-                </div>
-              </div>
-              <div className="flex flex-col gap-3">
-                <Link
-                  href="/lernen"
-                  className="flex items-center justify-center gap-2 rounded-2xl bg-primary px-6 py-3.5 text-base font-medium text-white shadow-card active:scale-[0.98] transition-all"
-                >
-                  <Play className="h-5 w-5" />
-                  Jetzt lernen
-                  <ArrowRight className="h-4 w-4" />
+      <main>
+        <section className="relative isolate">
+          <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[36rem] bg-[radial-gradient(circle_at_20%_20%,rgba(45,106,79,0.12),transparent_38%),radial-gradient(circle_at_85%_25%,rgba(212,165,116,0.16),transparent_34%)]" aria-hidden="true" />
+          <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 py-14 sm:px-6 sm:py-20 lg:grid-cols-[1.03fr_.97fr] lg:gap-16 lg:py-24">
+            <div className="text-center lg:text-left">
+              <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-primary-100 bg-white/80 px-3 py-1.5 text-sm font-semibold text-primary shadow-card">
+                <Sparkles className="h-4 w-4" aria-hidden="true" />
+                <span lang="bg">{BEGINNER_LABEL_BG}</span>
+              </p>
+              <h1 className="text-balance text-4xl font-bold leading-[1.08] tracking-tight text-foreground sm:text-6xl">
+                Bulgarisch, das du im Alltag wirklich sprichst.
+              </h1>
+              <p className="mx-auto mt-6 max-w-xl text-balance text-lg leading-8 text-warm-700 lg:mx-0">
+                Lerne kyrillisch lesen, verstehe natürliche Aussprache und führe deine ersten Gespräche – mit einem klaren Lernweg für deutschsprachige Anfänger.
+              </p>
+              <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center lg:justify-start">
+                <Link href="/register" className="btn-primary min-h-14 w-full px-7 text-base sm:w-auto">
+                  Kostenlos starten <ArrowRight className="h-5 w-5" aria-hidden="true" />
                 </Link>
-                <Link
-                  href="/fortschritt"
-                  className="flex items-center justify-center gap-2 rounded-2xl border-2 border-warm-200 bg-white px-6 py-3.5 text-base font-medium text-foreground shadow-card active:scale-[0.98] transition-all"
-                >
-                  Mein Fortschritt
+                <Link href="/demo" className="inline-flex min-h-12 items-center gap-2 px-3 font-semibold text-primary underline-offset-4 hover:underline">
+                  <Play className="h-4 w-4" aria-hidden="true" /> Ohne Konto ausprobieren
                 </Link>
               </div>
-            </motion.div>
-          ) : (
-            <div className="flex flex-col gap-3 px-4">
-              <Link
-                href="/register"
-                className="flex items-center justify-center gap-2 rounded-2xl bg-primary px-6 py-3.5 text-base font-medium text-white shadow-card active:scale-[0.98] transition-all"
-              >
-                <UserPlus className="h-5 w-5" />
-                Kostenlos starten
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link
-                href="/demo"
-                className="flex items-center justify-center gap-2 rounded-2xl border-2 border-primary bg-white px-6 py-3.5 text-base font-medium text-primary shadow-card active:scale-[0.98] transition-all"
-              >
-                <Play className="h-5 w-5" />
-                Demo ohne Konto
-              </Link>
-              <Link
-                href="/login"
-                className="flex items-center justify-center gap-2 rounded-2xl border-2 border-warm-200 bg-white px-6 py-3.5 text-base font-medium text-foreground shadow-card active:scale-[0.98] transition-all"
-              >
-                <LogIn className="h-5 w-5" />
-                Anmelden
-              </Link>
+              <div className="mt-7 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-warm-700 lg:justify-start">
+                <span className="inline-flex items-center gap-1.5"><Clock3 className="h-4 w-4 text-primary" aria-hidden="true" /> 5–10 Minuten pro Lektion</span>
+                <span className="inline-flex items-center gap-1.5"><Check className="h-4 w-4 text-primary" aria-hidden="true" /> Kostenlos starten</span>
+                <span className="inline-flex items-center gap-1.5"><LockKeyhole className="h-4 w-4 text-primary" aria-hidden="true" /> Datenschutzbewusst</span>
+              </div>
             </div>
-          )}
-        </motion.div>
 
-        {/* Features */}
-        <section className="mb-12 sm:mb-16">
-          <h2 className="text-center text-sm font-semibold uppercase tracking-wider text-muted mb-6">
-            Was Slogovo bietet
-          </h2>
-          <div className="grid grid-cols-2 gap-3 sm:gap-4">
-            <FeatureCard
-              icon={<BookOpen className="h-5 w-5" />}
-              title="Курс"
-              subtitle="Strukturiert"
-              description="A1–A2 Schritt für Schritt"
-              color="bg-primary-50 text-primary"
-            />
-            <FeatureCard
-              icon={<Brain className="h-5 w-5" />}
-              title="Речник"
-              subtitle="Vokabeln"
-              description="Karteikarten & Repetition"
-              color="bg-accent-50 text-accent"
-            />
-            <FeatureCard
-              icon={<Volume2 className="h-5 w-5" />}
-              title="Звук"
-              subtitle="Aussprache"
-              description="Text-to-Speech integriert"
-              color="bg-gold-50 text-gold-700"
-            />
-            <FeatureCard
-              icon={<Trophy className="h-5 w-5" />}
-              title="Игри"
-              subtitle="Gamification"
-              description="Streaks & Achievements"
-              color="bg-primary-50 text-primary"
-            />
+            <LearningInterfacePreview />
           </div>
         </section>
 
-        {/* How It Works */}
-        {!isAuthenticated && (
-          <section className="mb-12 sm:mb-16">
-            <h2 className="text-center text-sm font-semibold uppercase tracking-wider text-muted mb-6">
-              So funktioniert&apos;s
-            </h2>
-            <div className="space-y-4">
-              <StepItem
-                number="1"
-                title="Lektion wählen"
-                description="Wähle aus strukturierten A1- und A2-Lektionen."
-                icon={<BookOpen className="h-5 w-5 text-primary" />}
-              />
-              <StepItem
-                number="2"
-                title="Lernen & Üben"
-                description="Vokabeln, Grammatik und interaktive Übungen."
-                icon={<Brain className="h-5 w-5 text-accent" />}
-              />
-              <StepItem
-                number="3"
-                title="Fortschritt messen"
-                description="Verfolge deinen Lernfortschritt und deine Streaks."
-                icon={<Trophy className="h-5 w-5 text-gold-600" />}
-              />
-            </div>
-          </section>
-        )}
+        <section aria-label="Vertrauensmerkmale" className="border-y border-warm-200/70 bg-white/70">
+          <div className="mx-auto grid max-w-6xl grid-cols-2 gap-px px-4 py-6 text-center sm:grid-cols-4 sm:px-6">
+            <TrustMetric value="60" label="strukturierte Lektionen" />
+            <TrustMetric value="A1–A2" label="klarer Lernpfad" />
+            <TrustMetric value="0 €" label="zum Ausprobieren" />
+            <TrustMetric value="Ohne Werbung" label="konzentriert lernen" />
+          </div>
+        </section>
 
-        {/* Quick Actions for logged in */}
-        {isAuthenticated && (
-          <section className="mb-12 sm:mb-16">
-            <h2 className="text-center text-sm font-semibold uppercase tracking-wider text-muted mb-6">
-              Schnellzugriff
-            </h2>
-            <div className="grid grid-cols-2 gap-3">
-              <QuickAction href="/kurs" icon={<BookOpen className="h-5 w-5" />} label="Kurs" />
-              <QuickAction href="/vokabeln" icon={<Languages className="h-5 w-5" />} label="Vokabeln" />
-              <QuickAction href="/grammatik" icon={<Target className="h-5 w-5" />} label="Grammatik" />
-              <QuickAction href="/fortschritt" icon={<Trophy className="h-5 w-5" />} label="Fortschritt" />
-            </div>
-          </section>
-        )}
+        <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24" aria-labelledby="benefits-heading">
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="text-sm font-bold uppercase tracking-[0.18em] text-primary">Lernen mit Richtung</p>
+            <h2 id="benefits-heading" className="mt-3 text-balance text-3xl font-bold sm:text-4xl">Jede Einheit bringt dich näher zum nächsten echten Gespräch.</h2>
+          </div>
+          <div className="mt-10 grid gap-5 md:grid-cols-3">
+            {benefits.map(({ icon: Icon, title, description }) => (
+              <article key={title} className="rounded-3xl border border-warm-200/80 bg-white p-6 shadow-card">
+                <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-50 text-primary"><Icon className="h-6 w-6" aria-hidden="true" /></span>
+                <h3 className="mt-5 text-xl font-bold">{title}</h3>
+                <p className="mt-2 leading-7 text-warm-700">{description}</p>
+              </article>
+            ))}
+          </div>
+        </section>
 
-        {/* CTA Section for logged out */}
-        {!isAuthenticated && (
-          <section className="mb-12 sm:mb-16 rounded-3xl bg-primary p-6 text-center text-white shadow-card">
-            <h2 className="text-xl font-serif font-bold mb-2">
-              Bereit für dein Bulgarisch-Abenteuer?
-            </h2>
-            <p className="text-sm text-white/80 mb-4">
-              Melde dich kostenlos an und starte deine erste Lektion.
-            </p>
-            <Link
-              href="/register"
-              className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-6 py-3.5 text-base font-medium text-primary shadow-card active:scale-[0.98] transition-all"
-            >
-              <UserPlus className="h-5 w-5" />
-              Kostenlos starten
-            </Link>
-          </section>
-        )}
+        <section className="bg-primary-900 py-16 text-white sm:py-24" aria-labelledby="audience-heading">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6">
+            <div className="max-w-2xl">
+              <p className="text-sm font-bold uppercase tracking-[0.18em] text-primary-200">Für deinen Grund</p>
+              <h2 id="audience-heading" className="mt-3 text-3xl font-bold sm:text-4xl">Bulgarisch lernen, weil dein Leben dich dorthin führt.</h2>
+            </div>
+            <div className="mt-10 grid gap-4 md:grid-cols-3">
+              {audiences.map(([Icon, title, description]) => (
+                <article key={title} className="rounded-3xl border border-white/10 bg-white/5 p-6">
+                  <Icon className="h-7 w-7 text-gold-300" aria-hidden="true" />
+                  <h3 className="mt-4 text-xl font-bold">{title}</h3>
+                  <p className="mt-2 leading-7 text-white/75">{description}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24" aria-labelledby="voices-heading">
+          <div className="rounded-[2rem] border border-warm-200 bg-white p-7 shadow-card sm:p-10">
+            <div className="grid items-center gap-8 md:grid-cols-[1fr_auto]">
+              <div>
+                <p className="text-sm font-bold uppercase tracking-[0.18em] text-primary">Stimmen aus der Testphase</p>
+                <h2 id="voices-heading" className="mt-3 text-3xl font-bold">Vertrauen entsteht durch echte Erfahrungen.</h2>
+                <p className="mt-4 max-w-2xl leading-7 text-warm-700">Slogovo wird aktuell mit Lernenden erprobt. Verifizierte Erfahrungsberichte erscheinen hier erst nach ihrer ausdrücklichen Freigabe – keine erfundenen Zitate.</p>
+              </div>
+              <div className="flex h-24 w-24 items-center justify-center rounded-full bg-gold-50 text-gold-700" aria-hidden="true"><UsersRound className="h-10 w-10" /></div>
+            </div>
+          </div>
+        </section>
+
+        <section className="border-y border-warm-200/70 bg-white/70 py-16 sm:py-24" aria-labelledby="faq-heading">
+          <div className="mx-auto max-w-3xl px-4 sm:px-6">
+            <p className="text-center text-sm font-bold uppercase tracking-[0.18em] text-primary">Kurz erklärt</p>
+            <h2 id="faq-heading" className="mt-3 text-center text-3xl font-bold sm:text-4xl">Häufige Fragen</h2>
+            <div className="mt-8 divide-y divide-warm-200 overflow-hidden rounded-3xl border border-warm-200 bg-white">
+              {faqs.map(([question, answer]) => (
+                <details key={question} className="group p-5 open:bg-warm-50 sm:p-6">
+                  <summary className="cursor-pointer list-none pr-8 font-bold marker:hidden focus-visible:rounded-lg">{question}<span className="float-right text-primary transition-transform group-open:rotate-45" aria-hidden="true">+</span></summary>
+                  <p className="mt-3 max-w-2xl leading-7 text-warm-700">{answer}</p>
+                </details>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-6xl px-4 py-16 text-center sm:px-6 sm:py-24">
+          <div className="rounded-[2rem] bg-primary px-6 py-12 text-white shadow-card sm:px-12">
+            <h2 className="text-balance text-3xl font-bold sm:text-4xl">Dein erstes bulgarisches Gespräch beginnt heute.</h2>
+            <p className="mx-auto mt-4 max-w-xl text-white/80">Starte kostenlos und finde in wenigen Fragen den Lernweg, der zu deinem Alltag passt.</p>
+            <Link href="/register" className="mt-7 inline-flex min-h-14 items-center justify-center gap-2 rounded-2xl bg-white px-7 font-bold text-primary shadow-card hover:bg-warm-50">Kostenlos starten <ArrowRight className="h-5 w-5" aria-hidden="true" /></Link>
+          </div>
+        </section>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-warm-100 py-6 text-center">
-        <p className="text-xs text-muted">
-          © 2026 Slogovo — Български език за всеки
-        </p>
-        <p className="mt-2 text-xs text-muted">
-          <Link href="/datenschutz" className="underline">Datenschutz</Link> · <Link href="/impressum" className="underline">Impressum</Link>
-        </p>
+      <footer className="border-t border-warm-200 bg-primary-900 text-white">
+        <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:grid-cols-[1fr_auto] sm:px-6">
+          <div>
+            <BrandLogo inverse />
+            <p className="mt-2 max-w-md text-sm leading-6 text-white/65">Ein klarer, werbefreier Lernweg für Bulgarisch – mit echten Lernmetriken statt künstlichem Fortschritt.</p>
+          </div>
+          <nav aria-label="Rechtliches" className="flex flex-wrap items-start gap-x-6 gap-y-3 text-sm">
+            <Link href="/demo" className="min-h-11 py-2 text-white/75 hover:text-white">Demo</Link>
+            <Link href="/datenschutz" className="min-h-11 py-2 text-white/75 hover:text-white">Datenschutz</Link>
+            <Link href="/impressum" className="min-h-11 py-2 text-white/75 hover:text-white">Impressum</Link>
+          </nav>
+        </div>
+        <div className="border-t border-white/10 px-4 py-5 text-center text-xs text-white/55">© 2026 Slogovo · <span lang="bg">Български език за всеки</span></div>
       </footer>
     </div>
   );
 }
 
-/* ── Sub-components ── */
-
-function StatItem({
-  icon,
-  value,
-  label,
-}: {
-  icon: React.ReactNode;
-  value: number;
-  label: string;
-}) {
+function LearningInterfacePreview() {
   return (
-    <div className="flex flex-col items-center gap-1 rounded-xl bg-warm-50 p-2">
-      {icon}
-      <span className="text-lg font-bold text-foreground">{value}</span>
-      <span className="text-[10px] text-muted">{label}</span>
-    </div>
-  );
-}
-
-function FeatureCard({
-  icon,
-  title,
-  subtitle,
-  description,
-  color,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  subtitle: string;
-  description: string;
-  color: string;
-}) {
-  return (
-    <div className="group rounded-2xl bg-white p-4 shadow-card transition-all duration-200 active:scale-[0.98]">
-      <div
-        className={`mb-3 flex h-10 w-10 items-center justify-center rounded-xl ${color} transition-transform duration-200 group-hover:scale-110`}
-      >
-        {icon}
-      </div>
-      <h3 className="mb-0.5 font-serif text-sm font-bold text-foreground">
-        {title}
-      </h3>
-      <p className="mb-1 text-[10px] font-medium uppercase tracking-wider text-muted">
-        {subtitle}
-      </p>
-      <p className="text-xs text-muted leading-snug">{description}</p>
-    </div>
-  );
-}
-
-function StepItem({
-  number,
-  title,
-  description,
-  icon,
-}: {
-  number: string;
-  title: string;
-  description: string;
-  icon: React.ReactNode;
-}) {
-  return (
-    <div className="flex items-start gap-3 rounded-2xl bg-white p-4 shadow-card">
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-50 text-primary font-bold text-sm">
-        {number}
-      </div>
-      <div className="flex-1">
-        <div className="flex items-center gap-2 mb-1">
-          {icon}
-          <h3 className="font-medium text-sm text-foreground">{title}</h3>
+    <div className="relative mx-auto w-full max-w-lg" aria-label="Vorschau der Slogovo-Lernoberfläche">
+      <div className="absolute -inset-4 -z-10 rounded-[2.5rem] bg-primary/10 blur-2xl" aria-hidden="true" />
+      <div className="overflow-hidden rounded-[2rem] border border-warm-200 bg-white shadow-[0_24px_70px_rgba(30,26,22,0.14)]">
+        <div className="flex items-center justify-between border-b border-warm-100 px-5 py-4">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-widest text-primary">Lektion 3 · Begrüßung</p>
+            <p className="mt-1 text-sm font-semibold">Frage 4 von 8</p>
+          </div>
+          <span className="rounded-full bg-gold-50 px-3 py-1 text-xs font-semibold text-gold-800">ca. 4 Min.</span>
         </div>
-        <p className="text-xs text-muted leading-snug">{description}</p>
+        <div className="h-1.5 bg-warm-100"><div className="h-full w-1/2 bg-primary" /></div>
+        <div className="p-5 sm:p-7">
+          <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-50 text-primary"><Volume2 className="h-6 w-6" aria-hidden="true" /></span>
+          <p className="mt-5 text-sm text-muted">Wie sagst du „Guten Tag“?</p>
+          <p className="mt-2 text-3xl font-bold" lang="bg">Добър ден</p>
+          <p className="mt-1 text-sm text-muted">Dobăr den</p>
+          <div className="mt-6 grid gap-3">
+            <div className="flex min-h-14 items-center rounded-2xl border-2 border-primary bg-primary-50 px-4 font-semibold text-primary"><Check className="mr-3 h-5 w-5" aria-hidden="true" /> Guten Tag</div>
+            <div className="flex min-h-14 items-center rounded-2xl border border-warm-200 px-4 text-warm-700">Gute Nacht</div>
+            <div className="flex min-h-14 items-center rounded-2xl border border-warm-200 px-4 text-warm-700">Vielen Dank</div>
+          </div>
+          <div className="mt-5 rounded-2xl bg-primary-50 p-4 text-sm leading-6 text-primary-800"><strong>Richtig.</strong> Diese höfliche Begrüßung passt tagsüber in fast jeder Situation.</div>
+        </div>
       </div>
+      <Link href="/demo" className="mt-4 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl border border-primary-200 bg-white font-semibold text-primary shadow-card hover:bg-primary-50"><Play className="h-4 w-4" aria-hidden="true" /> Interaktive Demo öffnen</Link>
     </div>
   );
 }
 
-function QuickAction({
-  href,
-  icon,
-  label,
-}: {
-  href: string;
-  icon: React.ReactNode;
-  label: string;
-}) {
-  return (
-    <Link
-      href={href}
-      className="flex items-center gap-3 rounded-2xl bg-white p-4 shadow-card active:scale-[0.98] transition-all hover:shadow-card-hover"
-    >
-      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-50 text-primary">
-        {icon}
-      </div>
-      <span className="text-sm font-medium text-foreground">{label}</span>
-      <ArrowRight className="ml-auto h-4 w-4 text-muted" />
-    </Link>
-  );
+function TrustMetric({ value, label }: { value: string; label: string }) {
+  return <div className="px-2 py-3"><p className="text-xl font-bold text-primary sm:text-2xl">{value}</p><p className="mt-1 text-xs text-warm-700 sm:text-sm">{label}</p></div>;
 }

@@ -130,7 +130,7 @@ export function DailySessionClient() {
     return (
       <main className="animate-fade-in px-4 py-6 safe-top">
         <header className="mb-6 flex items-center gap-3">
-          <Link href="/lernen" className="rounded-full bg-gray-100 p-2 text-muted"><ArrowLeft className="h-5 w-5" /></Link>
+          <Link href="/lernen" aria-label="Zurück zu Lernen" className="rounded-full bg-gray-100 p-2 text-muted"><ArrowLeft aria-hidden="true" className="h-5 w-5" /></Link>
           <div>
             <p className="text-xs font-medium uppercase tracking-widest text-muted">Dein Tagesplan</p>
             <h1 className="text-3xl font-bold">Heute lernen</h1>
@@ -187,7 +187,7 @@ export function DailySessionClient() {
         <section className="card text-center">
           <Mic className="mx-auto mb-4 h-10 w-10 text-primary" />
           <p className="mb-2 text-muted">Sprich laut:</p>
-          <p className="mb-6 text-3xl font-bold">{current.word.bg}</p>
+          <p className="mb-6 text-3xl font-bold" lang="bg">{current.word.bg}</p>
           <div className="mb-4"><SpeakButton text={current.word.bg} progress={progress} label="Beispiel anhören" /></div>
           <p className="mb-5 rounded-xl bg-gray-50 p-3 text-sm text-muted">
             Bewerte dich selbst: Slogovo vergibt noch keine automatische Aussprache-Punktzahl.
@@ -203,7 +203,7 @@ export function DailySessionClient() {
           <p className="mb-6 text-3xl font-bold">{current.word.de}</p>
           {revealed ? (
             <>
-              <p className="mb-1 text-3xl font-bold text-primary">{current.word.bg}</p>
+              <p className="mb-1 text-3xl font-bold text-primary" lang="bg">{current.word.bg}</p>
               {progress.settings.showLatin && current.word.bgLatin && <p className="mb-6 text-sm text-muted">{current.word.bgLatin}</p>}
               <div className="grid grid-cols-2 gap-2">
                 <Button onClick={() => void advance("repeat")} variant="outline"><RotateCcw className="h-4 w-4" /> Nochmal</Button>

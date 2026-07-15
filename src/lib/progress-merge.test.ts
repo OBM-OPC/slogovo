@@ -16,6 +16,8 @@ function baseProgress(userId: string): UserProgress {
     recordedAttemptIds: [],
     settings: {
       dailyGoal: "medium",
+      weeklyLessonGoal: 3,
+      alphabetCompleted: false,
       ttsEnabled: true,
       showLatin: true,
       speechRate: 0.9,

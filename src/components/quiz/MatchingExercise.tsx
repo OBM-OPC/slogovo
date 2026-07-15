@@ -1,15 +1,18 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ExerciseItemResult, ExerciseResult, MatchingPair } from "@/types";
 import { buildExerciseItemResult, buildExerciseResult } from "@/lib/evaluation";
 import { cn, shuffleArray } from "@/lib/utils";
+import { ExerciseFeedback } from "./ExerciseFeedback";
 
 interface MatchingExerciseProps {
   exerciseId: string;
   pairs: MatchingPair[];
   attemptNumber?: number;
   onInteraction?: () => void;
+  onItemChange?: (index: number, total: number) => void;
+  onReviewRequest?: (itemId: string) => void;
   onComplete: (result: ExerciseResult) => void;
 }
 
@@ -18,6 +21,8 @@ export function MatchingExercise({
   pairs,
   attemptNumber = 1,
   onInteraction,
+  onItemChange,
+  onReviewRequest,
   onComplete,
 }: MatchingExerciseProps) {
   const exerciseStartedAt = useRef(new Date().toISOString());
@@ -26,16 +31,26 @@ export function MatchingExercise({
   const [selectedDe, setSelectedDe] = useState<string | null>(null);
   const [matched, setMatched] = useState<Set<string>>(new Set());
   const [wrong, setWrong] = useState<Set<string>>(new Set());
-  const [lastExplanation, setLastExplanation] = useState<{ text?: string; grammarTopicSlug?: string }>({});
+  const [feedback, setFeedback] = useState<{
+    itemId: string;
+    correct: boolean;
+    correctAnswer: string;
+    explanation?: string;
+    grammarTopicSlug?: string;
+    completeAfter: boolean;
+  } | null>(null);
   const [bgOptions] = useState(() => shuffleArray(pairs.map((pair) => pair.bg)));
 
+  useEffect(() => onItemChange?.(matched.size, pairs.length), [matched.size, onItemChange, pairs.length]);
+
   const handleDeClick = (de: string) => {
+    if (feedback) return;
     onInteraction?.();
     setSelectedDe((current) => current === de ? null : de);
   };
 
   const handleBgClick = (bg: string) => {
-    if (!selectedDe || matched.has(selectedDe)) return;
+    if (feedback || !selectedDe || matched.has(selectedDe)) return;
     onInteraction?.();
     const selectedPair = pairs.find((pair) => pair.de === selectedDe);
     if (!selectedPair) return;
@@ -58,32 +73,32 @@ export function MatchingExercise({
       feedback: selectedPair.explanation,
     }));
     itemStartedAt.current.set(selectedPair.id, completedAt);
-    setLastExplanation({ text: selectedPair.explanation, grammarTopicSlug: selectedPair.grammarTopicSlug });
     setSelectedDe(null);
 
     if (isCorrect) {
       const nextMatched = new Set([...matched, selectedValue]);
       setMatched(nextMatched);
-      if (nextMatched.size === pairs.length) {
-        onComplete(buildExerciseResult({
-          exerciseId,
-          exerciseType: "matching",
-          itemResults: itemResults.current,
-          startedAt: exerciseStartedAt.current,
-        }));
-      }
+      setFeedback({ itemId: selectedPair.id, correct: true, correctAnswer: selectedPair.bg, explanation: selectedPair.explanation, grammarTopicSlug: selectedPair.grammarTopicSlug, completeAfter: nextMatched.size === pairs.length });
       return;
     }
 
     setWrong((current) => new Set([...current, selectedValue, bg]));
-    window.setTimeout(() => {
-      setWrong((current) => {
-        const next = new Set(current);
-        next.delete(selectedValue);
-        next.delete(bg);
-        return next;
-      });
-    }, 600);
+    setFeedback({ itemId: selectedPair.id, correct: false, correctAnswer: selectedPair.bg, explanation: selectedPair.explanation, grammarTopicSlug: selectedPair.grammarTopicSlug, completeAfter: false });
+  };
+
+  const dismissFeedback = () => {
+    if (!feedback) return;
+    if (feedback.completeAfter) {
+      onComplete(buildExerciseResult({
+        exerciseId,
+        exerciseType: "matching",
+        itemResults: itemResults.current,
+        startedAt: exerciseStartedAt.current,
+      }));
+      return;
+    }
+    setWrong(new Set());
+    setFeedback(null);
   };
 
   return (
@@ -95,7 +110,7 @@ export function MatchingExercise({
             <button
               key={pair.id}
               type="button"
-              disabled={matched.has(pair.de)}
+              disabled={Boolean(feedback) || matched.has(pair.de)}
               onClick={() => handleDeClick(pair.de)}
               aria-pressed={selectedDe === pair.de}
               aria-label={`${pair.de}${matched.has(pair.de) ? ", zugeordnet" : wrong.has(pair.de) ? ", falsch" : ""}`}
@@ -118,7 +133,7 @@ export function MatchingExercise({
               <button
                 key={bg}
                 type="button"
-                disabled={matched.has(de)}
+                disabled={Boolean(feedback) || matched.has(de)}
                 onClick={() => handleBgClick(bg)}
                 aria-label={`${bg}${matched.has(de) ? ", zugeordnet" : wrong.has(bg) ? ", falsch" : ""}`}
                 className={cn(
@@ -134,14 +149,16 @@ export function MatchingExercise({
           })}
         </div>
       </div>
-      {(lastExplanation.text || lastExplanation.grammarTopicSlug) && (
-        <div className="mt-4 rounded-xl bg-warm-50 p-4 text-sm text-muted">
-          {lastExplanation.text && <p className="font-medium">{lastExplanation.text}</p>}
-          {lastExplanation.grammarTopicSlug && (
-            <a href={`/grammatik/${lastExplanation.grammarTopicSlug}`} className="mt-2 inline-block text-sm text-primary underline">Zum Grammatikthema</a>
-          )}
-        </div>
-      )}
+      {feedback && <ExerciseFeedback
+        correct={feedback.correct}
+        correctAnswer={feedback.correctAnswer}
+        explanation={feedback.explanation}
+        grammarTopicSlug={feedback.grammarTopicSlug}
+        audioText={feedback.correctAnswer}
+        nextLabel={feedback.completeAfter ? "Fertig" : "Weiter"}
+        onNext={dismissFeedback}
+        onAddToReview={!feedback.correct ? () => onReviewRequest?.(feedback.itemId) : undefined}
+      />}
     </div>
   );
 }

@@ -1,14 +1,31 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Inter, Lora } from "next/font/google";
 import { TelemetryMonitor } from "@/components/telemetry/TelemetryMonitor";
+import { ToastProvider } from "@/components/ui/Toast";
 import "./globals.css";
+import { MobileInteractionManager } from "@/components/layout/MobileInteractionManager";
+import { RouteAnnouncer } from "@/components/layout/RouteAnnouncer";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin", "cyrillic"], variable: "--font-sans", display: "swap" });
+const lora = Lora({ subsets: ["latin", "cyrillic"], variable: "--font-serif", display: "swap" });
 
 export const metadata: Metadata = {
-  title: "Slogovo - Bulgarisch lernen",
-  description: "Lerne Bulgarisch mit Slogovo - der interaktiven Sprachlern-App",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? "https://slogovo.vercel.app"),
+  title: { default: "Slogovo – Bulgarisch im Alltag lernen", template: "%s · Slogovo" },
+  description: "Lerne Bulgarisch in kurzen, alltagstauglichen Einheiten – mit Aussprache, gezielten Wiederholungen und einem klaren A1–A2-Lernweg.",
+  applicationName: "Slogovo",
+  manifest: "/manifest.webmanifest",
+  icons: { icon: "/icon.svg", shortcut: "/icon.svg" },
+  openGraph: {
+    type: "website",
+    locale: "de_DE",
+    siteName: "Slogovo",
+    title: "Slogovo – Bulgarisch im Alltag lernen",
+    description: "Kurze Lektionen, natürliche Aussprache und ein klarer Lernweg für deutschsprachige Bulgarisch-Anfänger.",
+  },
 };
+
+export const viewport: Viewport = { width: "device-width", initialScale: 1, viewportFit: "cover", themeColor: "#FAF8F5" };
 
 export default function RootLayout({
   children,
@@ -17,9 +34,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="de">
-      <body className={inter.className}>
-        <TelemetryMonitor />
-        {children}
+      <body className={`${inter.variable} ${lora.variable}`}>
+        <ToastProvider>
+          <TelemetryMonitor />
+          <MobileInteractionManager />
+          <RouteAnnouncer />
+          {children}
+        </ToastProvider>
       </body>
     </html>
   );

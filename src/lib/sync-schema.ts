@@ -109,6 +109,9 @@ const syncEventSchema = z.discriminatedUnion("type", [
     payload: z.object({
       settings: z.object({
         dailyGoal: z.enum(["light", "medium", "intense"]),
+        weeklyLessonGoal: z.number().int().min(1).max(14).default(3),
+        alphabetCompleted: z.boolean().default(false),
+        streakFreezeUsedWeek: z.string().max(32).optional(),
         ttsEnabled: z.boolean(),
         showLatin: z.boolean(),
         speechRate: z.number().min(0.5).max(2),

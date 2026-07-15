@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { SpeakButton } from "@/components/ui/SpeakButton";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useProgressStore } from "@/stores/useProgressStore";
 
 const alphabet = [
   { upper: "А", lower: "а", nameBg: "а", pronunciation: "a", example: "азбука", exampleTranslation: "Alphabet" },
@@ -44,6 +45,8 @@ export default function AlphabetPage() {
   const progress = useProgressSafe();
   const [index, setIndex] = useState(0);
   const [showDetails, setShowDetails] = useState(false);
+  const [viewed, setViewed] = useState(() => new Set<number>([0]));
+  const updateSettings = useProgressStore((state) => state.updateSettings);
 
   const letter = alphabet[index];
 
@@ -53,15 +56,15 @@ export default function AlphabetPage() {
       <p className="mb-6 text-muted">Lerne die 30 Buchstaben des bulgarischen Alphabets.</p>
 
       <div className="card mb-6 text-center">
-        <div className="mb-4 text-8xl font-bold text-primary">
+        <div className="mb-4 text-8xl font-bold text-primary" lang="bg">
           {letter.upper} {letter.lower}
         </div>
-        <p className="mb-2 text-2xl font-medium">{letter.nameBg}</p>
+        <p className="mb-2 text-2xl font-medium" lang="bg">{letter.nameBg}</p>
         <p className="mb-4 text-muted">Aussprache: {letter.pronunciation}</p>
 
         {showDetails && (
           <div className="mb-4 rounded-xl bg-gray-50 p-4 animate-fade-in">
-            <p className="text-lg font-medium">{letter.example}</p>
+            <p className="text-lg font-medium" lang="bg">{letter.example}</p>
             <p className="text-sm text-muted">{letter.exampleTranslation}</p>
           </div>
         )}
@@ -104,10 +107,11 @@ export default function AlphabetPage() {
             key={l.upper}
             onClick={() => {
               setIndex(i);
+              setViewed((current) => new Set([...current, i]));
               setShowDetails(false);
             }}
             className={cn(
-              "rounded-lg py-2 text-lg font-bold",
+              "min-h-11 rounded-lg py-2 text-lg font-bold",
               i === index ? "bg-primary text-white" : "bg-gray-100 text-foreground hover:bg-gray-200"
             )}
           >
@@ -130,13 +134,21 @@ export default function AlphabetPage() {
         </Button>
         <Button
           fullWidth
-          disabled={index === alphabet.length - 1}
+          disabled={index === alphabet.length - 1 && viewed.size < alphabet.length && !progress.settings.alphabetCompleted}
           onClick={() => {
-            setIndex((i) => Math.min(alphabet.length - 1, i + 1));
+            if (index === alphabet.length - 1) {
+              void updateSettings({ alphabetCompleted: true });
+              return;
+            }
+            setIndex((i) => {
+              const next = Math.min(alphabet.length - 1, i + 1);
+              setViewed((current) => new Set([...current, next]));
+              return next;
+            });
             setShowDetails(false);
           }}
         >
-          Weiter <ArrowRight className="h-5 w-5" />
+          {index === alphabet.length - 1 ? (progress.settings.alphabetCompleted ? "Gemeistert" : "Alphabet abschließen") : <>Weiter <ArrowRight className="h-5 w-5" /></>}
         </Button>
       </div>
     </main>

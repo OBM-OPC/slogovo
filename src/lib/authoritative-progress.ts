@@ -1,10 +1,11 @@
-import type { DifficultyRating, UserProgress, VocabularyProgress } from "@/types";
+import type { DifficultyRating, ExerciseResult, UserProgress, VocabularyProgress } from "@/types";
 import { checkAchievements } from "./achievements";
 import { getAllModules } from "./content";
 import { defaultProgress } from "./progress-serialization";
 import { recordProductionAttempt, recordRecognitionAttempt } from "./mastery-tracking";
 import { reviewWordWithDifficulty } from "./spaced-repetition";
 import { updateStreakForDate } from "./streak";
+import { firstItemAttempts } from "./evaluation";
 
 export interface AuthoritativeAttemptRow {
   id: string;
@@ -18,6 +19,7 @@ export interface AuthoritativeAttemptRow {
   passed: boolean;
   mastered: boolean;
   score: number;
+  results?: ExerciseResult[];
 }
 
 export interface AuthoritativeReviewRow {
@@ -49,6 +51,7 @@ export function buildAuthoritativeProgress(
   progress.settings = settings;
 
   for (const attempt of [...attempts].sort((a, b) => (a.finished_at ?? "").localeCompare(b.finished_at ?? ""))) {
+    const newlyPassed = attempt.passed && !progress.completedLessons.includes(attempt.lesson_id);
     progress.recordedAttemptIds.push(attempt.id);
     progress.lessonScores[attempt.lesson_id] = Math.max(
       progress.lessonScores[attempt.lesson_id] ?? 0,
@@ -66,6 +69,9 @@ export function buildAuthoritativeProgress(
     progress.exerciseStats.consecutiveCorrect = attempt.incorrect_count > 0
       ? 0
       : (progress.exerciseStats.consecutiveCorrect ?? 0) + attempt.correct_count;
+    const listeningItems = firstItemAttempts(attempt.results ?? []).filter((item) => item.exerciseType === "listen");
+    progress.exerciseStats.listeningCorrect = (progress.exerciseStats.listeningCorrect ?? 0) + listeningItems.filter((item) => item.isPassing).length;
+    progress.exerciseStats.listeningTotal = (progress.exerciseStats.listeningTotal ?? 0) + listeningItems.length;
 
     if (attempt.finished_at) {
       const date = attempt.finished_at.slice(0, 10);
@@ -75,6 +81,7 @@ export function buildAuthoritativeProgress(
         ...day,
         minutes: day.minutes + activeSeconds / 60,
         activeSeconds: (day.activeSeconds ?? 0) + activeSeconds,
+        lessons: (day.lessons ?? 0) + (newlyPassed ? 1 : 0),
       };
       if (attempt.passed && attempt.items_answered > 0 && activeSeconds > 0) {
         progress.streak = updateStreakForDate(progress.streak, new Date(`${date}T12:00:00Z`));
@@ -104,5 +111,6 @@ export function buildAuthoritativeProgress(
   }
 
   progress.achievements = checkAchievements(progress);
+  progress.settings.streakFreezeUsedWeek = progress.streak.freezeUsedWeek;
   return progress;
 }

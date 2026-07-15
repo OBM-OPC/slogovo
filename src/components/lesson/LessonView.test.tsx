@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Lesson } from "@/types";
 import { LessonView } from "./LessonView";
@@ -43,7 +43,7 @@ const lesson: Lesson = {
       question: "Welche Antwort?",
       options: ["Richtig", "Falsch"],
       correctOptionIndex: 0,
-      required: true,
+      required: false,
     }],
   }],
 };
@@ -54,7 +54,7 @@ describe("LessonView retry flow", () => {
     telemetry.track.mockReset();
   });
 
-  it("moves failed required items into a different retry format", () => {
+  it("keeps progress visible and moves a learner-selected item into the retry flow", async () => {
     render(
       <LessonView
         lesson={lesson}
@@ -67,7 +67,13 @@ describe("LessonView retry flow", () => {
     fireEvent.click(screen.getByRole("button", { name: "Los geht's" }));
     fireEvent.click(screen.getByRole("button", { name: "Weiter zur Grammatik" }));
     fireEvent.click(screen.getByRole("button", { name: "Übungen starten" }));
+    expect(screen.getByText("Frage 1 von 1")).toBeTruthy();
+    expect(screen.getByRole("progressbar", { name: /Lektionsfortschritt/ })).toBeTruthy();
+    expect(screen.getByLabelText("0:00 Lernzeit")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Falsch" }).className).toContain("min-h-14");
+    await waitFor(() => expect(document.activeElement?.getAttribute("aria-label")).toBe("Aktueller Lektionsschritt"));
     fireEvent.click(screen.getByRole("button", { name: "Falsch" }));
+    fireEvent.click(screen.getByRole("button", { name: "Später wiederholen" }));
     fireEvent.click(screen.getByRole("button", { name: "Fertig" }));
 
     expect(screen.getByText("Fehler wiederholen")).toBeTruthy();

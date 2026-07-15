@@ -14,6 +14,8 @@ export function defaultProgress(userId: string): UserProgress {
     recordedAttemptIds: [],
     settings: {
       dailyGoal: "medium",
+      weeklyLessonGoal: 3,
+      alphabetCompleted: false,
       ttsEnabled: true,
       showLatin: true,
       speechRate: 0.9,
@@ -66,6 +68,7 @@ export function rowToProgress(
 ): UserProgress | null {
   if (!row) return null;
   const streak = row.streak as Partial<UserProgress["streak"]> | undefined;
+  const rowSettings = row.settings as UserProgress["settings"] | undefined;
   const userId = String(row.user_id ?? row.userId ?? fallbackUserId);
   return normalizeProgress(
     {
@@ -74,6 +77,7 @@ export function rowToProgress(
         current: Number(row.streak_current ?? streak?.current ?? 0),
         longest: Number(row.streak_longest ?? streak?.longest ?? 0),
         lastStudyDate: (row.streak_last_study_date ?? streak?.lastStudyDate) as string | undefined,
+        freezeUsedWeek: streak?.freezeUsedWeek ?? rowSettings?.streakFreezeUsedWeek,
       },
       completedLessons: (row.completed_lessons ?? row.completedLessons) as string[] | undefined,
       masteredLessons: (row.mastered_lessons ?? row.masteredLessons) as string[] | undefined,
@@ -91,7 +95,7 @@ export function rowToProgress(
       recordedAttemptIds: (row.recorded_attempt_ids ?? row.recordedAttemptIds) as
         | string[]
         | undefined,
-      settings: row.settings as UserProgress["settings"] | undefined,
+      settings: rowSettings,
       achievements: row.achievements as string[] | undefined,
     },
     userId
@@ -112,7 +116,7 @@ export function progressToRow(progress: UserProgress): Record<string, unknown> {
     exercise_stats: progress.exerciseStats,
     daily_stats: progress.dailyStats,
     recorded_attempt_ids: progress.recordedAttemptIds,
-    settings: progress.settings,
+    settings: { ...progress.settings, streakFreezeUsedWeek: progress.streak.freezeUsedWeek ?? progress.settings.streakFreezeUsedWeek },
     achievements: progress.achievements,
   };
 }

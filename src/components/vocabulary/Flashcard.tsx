@@ -237,6 +237,16 @@ export function Flashcard({ words }: FlashcardProps) {
       <div className="[perspective:1000px]">
         <div
           onClick={() => setFlipped((f) => !f)}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" || event.code === "Space") {
+              event.preventDefault();
+              event.stopPropagation();
+              setFlipped((current) => !current);
+            }
+          }}
+          role="button"
+          tabIndex={0}
+          aria-label={flipped ? "Karte wieder verdecken" : "Karte aufdecken"}
           className={cn(
             "relative min-h-[260px] cursor-pointer transition-transform duration-500 [transform-style:preserve-3d]",
             flipped && "[transform:rotateY(180deg)]"
@@ -249,7 +259,7 @@ export function Flashcard({ words }: FlashcardProps) {
             <div className="mb-4 flex items-center gap-1 text-sm text-muted">
               <Clock className="h-4 w-4" /> {reverseMode ? "Bulgarisch → Deutsch" : "Deutsch → Bulgarisch"}
             </div>
-            <p className={cn("font-bold", reverseMode ? "text-4xl text-primary" : "text-2xl")}>{cardFace?.front}</p>
+            <p className={cn("font-bold", reverseMode ? "text-4xl text-primary" : "text-2xl")} lang={reverseMode ? "bg" : "de"}>{cardFace?.front}</p>
             {reverseMode && progress.settings.showLatin && word.bgLatin && (
               <p className="mt-2 text-sm italic text-muted">{word.bgLatin}</p>
             )}
@@ -261,7 +271,7 @@ export function Flashcard({ words }: FlashcardProps) {
               <SpeakButton text={word.bg} progress={progress} size="md" />
             </div>
             <div className="mb-4 text-sm text-muted">Bewerte, wie leicht es war</div>
-            <p className={cn("font-bold", reverseMode ? "text-2xl" : "text-4xl text-primary")}>{cardFace?.backMain}</p>
+            <p className={cn("font-bold", reverseMode ? "text-2xl" : "text-4xl text-primary")} lang={reverseMode ? "de" : "bg"}>{cardFace?.backMain}</p>
             {cardFace?.backSub && <p className="mt-2 text-sm italic text-muted">{cardFace.backSub}</p>}
           </div>
         </div>
