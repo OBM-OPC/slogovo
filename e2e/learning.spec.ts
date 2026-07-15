@@ -93,7 +93,9 @@ test("starts a lesson, retries one failed item, passes, syncs, and restores on a
 
   const secondDevice = await browser.newContext();
   const secondPage = await loginInContext(secondDevice);
-  await expect(secondPage.getByRole("link", { name: /Hallo & Abschiede 1\/5/ })).toBeVisible();
+  const restoredAction = secondPage.getByRole("region", { name: "Sich vorstellen" });
+  await expect(restoredAction).toContainText("Hallo & Abschiede");
+  await expect(restoredAction).toContainText("1/5 Lektionen");
   await secondDevice.close();
 });
 

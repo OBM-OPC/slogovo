@@ -20,6 +20,7 @@ type StoredState = {
   refreshTokens: Map<string, string>;
   progress: Map<string, Record<string, unknown>>;
   rows: Map<string, Record<string, unknown>[]>;
+  rateLimits: Map<string, { count: number; expiresAt: number }>;
   writes: Record<string, number>;
 };
 
@@ -29,6 +30,7 @@ const state: StoredState = {
   refreshTokens: new Map(),
   progress: new Map(),
   rows: new Map(),
+  rateLimits: new Map(),
   writes: {},
 };
 
@@ -48,6 +50,7 @@ function reset() {
   state.refreshTokens.clear();
   state.progress.clear();
   state.rows.clear();
+  state.rateLimits.clear();
   state.writes = {};
   seedUser();
 }
@@ -199,6 +202,25 @@ async function authRoute(request: IncomingMessage, response: ServerResponse, url
 }
 
 async function restRoute(request: IncomingMessage, response: ServerResponse, url: URL) {
+  if (url.pathname === "/rest/v1/rpc/consume_request_rate_limit" && request.method === "POST") {
+    const body = await readBody(request);
+    const limit = Number(body.p_limit);
+    const windowSeconds = Number(body.p_window_seconds);
+    const key = `${String(body.p_scope)}:${String(body.p_key_hash)}`;
+    const now = Date.now();
+    const current = state.rateLimits.get(key);
+    const counter = !current || current.expiresAt <= now
+      ? { count: 1, expiresAt: now + windowSeconds * 1000 }
+      : { count: current.count + 1, expiresAt: current.expiresAt };
+    state.rateLimits.set(key, counter);
+    json(response, 200, [{
+      allowed: counter.count <= limit,
+      remaining: Math.max(limit - counter.count, 0),
+      retry_after_seconds: Math.max(Math.ceil((counter.expiresAt - now) / 1000), 1),
+    }]);
+    return;
+  }
+
   const user = authenticatedUser(request);
   if (!user) {
     json(response, 401, { code: "PGRST301", message: "JWT expired" });
