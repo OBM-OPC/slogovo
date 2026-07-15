@@ -14,8 +14,9 @@ test("accepts only authenticated privacy-safe telemetry", async ({ page, request
     timestamp: "2026-07-13T18:00:00.000Z",
     properties: { lessonId: "a1-modul-1-lektion-1", moduleId: "a1-modul-1" },
   };
+  const headers = { origin: new URL(page.url()).origin };
 
-  const accepted = await page.request.post("/api/telemetry", { data: { events: [safeEvent] } });
+  const accepted = await page.request.post("/api/telemetry", { headers, data: { events: [safeEvent] } });
   expect(accepted.status()).toBe(200);
   await expect.poll(async () => {
     const state = await (await request.get(`${mockUrl}/__test/state`)).json() as { writes: Record<string, number> };
@@ -23,6 +24,7 @@ test("accepts only authenticated privacy-safe telemetry", async ({ page, request
   }).toBe(1);
 
   const rejected = await page.request.post("/api/telemetry", {
+    headers,
     data: { events: [{ ...safeEvent, id: "00000000-0000-4000-8000-000000000100", properties: { email: "private@example.com" } }] },
   });
   expect(rejected.status()).toBe(400);
