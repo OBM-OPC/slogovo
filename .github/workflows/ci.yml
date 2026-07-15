@@ -26,3 +26,4 @@ jobs:
       - run: npm run test:e2e
       # `npm run build` starts with the filesystem-complete content validator.
       - run: npm run build
+      - run: E2E_NEXT_MODE=start npx playwright test e2e/csp-login.spec.ts

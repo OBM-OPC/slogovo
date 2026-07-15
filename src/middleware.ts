@@ -46,6 +46,15 @@ function secureResponse(response: NextResponse, csp: string, nonce: string): Nex
   return response;
 }
 
+function secureReplacement(
+  source: NextResponse,
+  target: NextResponse,
+  csp: string,
+  nonce: string
+): NextResponse {
+  return secureResponse(withSessionCookies(source, target), csp, nonce);
+}
+
 export async function middleware(request: NextRequest) {
   const nonce = crypto.randomUUID();
   const csp = contentSecurityPolicy(nonce);
@@ -72,22 +81,28 @@ export async function middleware(request: NextRequest) {
 
   if (!user) {
     if (pathname.startsWith("/api/")) {
-      return secureResponse(withSessionCookies(
+      return secureReplacement(
         response,
-        NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-      ), csp, nonce);
+        NextResponse.json({ error: "Unauthorized" }, { status: 401 }),
+        csp,
+        nonce
+      );
     }
-    return secureResponse(withSessionCookies(
+    return secureReplacement(
       response,
-      NextResponse.redirect(new URL("/login", request.url))
-    ), csp, nonce);
+      NextResponse.redirect(new URL("/login", request.url)),
+      csp,
+      nonce
+    );
   }
 
   if (pathname === "/dashboard") {
-    return secureResponse(withSessionCookies(
+    return secureReplacement(
       response,
-      NextResponse.redirect(new URL("/lernen", request.url))
-    ), csp, nonce);
+      NextResponse.redirect(new URL("/lernen", request.url)),
+      csp,
+      nonce
+    );
   }
 
   return secureResponse(response, csp, nonce);

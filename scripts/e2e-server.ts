@@ -333,7 +333,8 @@ const mockServer = createServer(async (request, response) => {
 });
 
 mockServer.listen(mockPort, "127.0.0.1", () => {
-  const child = spawn("npm", ["run", "dev", "--", "-p", String(appPort)], {
+  const nextMode = process.env.E2E_NEXT_MODE === "start" ? "start" : "dev";
+  const child = spawn("npm", ["run", nextMode, "--", "-p", String(appPort)], {
     stdio: "inherit",
     env: {
       ...process.env,

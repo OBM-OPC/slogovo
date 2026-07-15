@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { NextRequest, NextResponse } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 import { middleware } from "./middleware";
@@ -20,6 +20,29 @@ describe("authentication middleware", () => {
     updateSessionMock.mockReset();
   });
 
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("generates one nonce and forwards the identical CSP and x-nonce headers", async () => {
+    const nonce = "00000000-0000-4000-8000-000000000118";
+    const randomUUID = vi.spyOn(globalThis.crypto, "randomUUID").mockReturnValue(nonce);
+    updateSessionMock.mockImplementation(async (request) => ({
+      response: NextResponse.next({ request: { headers: request.headers } }),
+      user: null,
+    }));
+
+    const response = await middleware(new NextRequest("https://slogovo.test/login"));
+    const forwardedRequest = updateSessionMock.mock.calls[0]?.[0];
+    const csp = response.headers.get("content-security-policy");
+
+    expect(randomUUID).toHaveBeenCalledTimes(1);
+    expect(csp).toContain(`'nonce-${nonce}'`);
+    expect(response.headers.get("x-nonce")).toBe(nonce);
+    expect(forwardedRequest?.headers.get("content-security-policy")).toBe(csp);
+    expect(forwardedRequest?.headers.get("x-nonce")).toBe(nonce);
+  });
+
   it("redirects an unverified protected-page request and preserves refreshed cookies", async () => {
     updateSessionMock.mockResolvedValue({ response: refreshedResponse(), user: null });
 
@@ -28,6 +51,8 @@ describe("authentication middleware", () => {
     expect(response.status).toBe(307);
     expect(response.headers.get("location")).toBe("https://slogovo.test/login");
     expect(response.cookies.get("sb-session")?.value).toBe("refreshed");
+    expect(response.headers.get("content-security-policy")).toContain("'nonce-");
+    expect(response.headers.get("x-nonce")).toBeTruthy();
   });
 
   it("returns 401 for an unverified protected API request", async () => {
@@ -39,6 +64,8 @@ describe("authentication middleware", () => {
 
     expect(response.status).toBe(401);
     await expect(response.json()).resolves.toEqual({ error: "Unauthorized" });
+    expect(response.cookies.get("sb-session")?.value).toBe("refreshed");
+    expect(response.headers.get("content-security-policy")).toContain("'nonce-");
   });
 
   it("allows a protected request only after getUser returned a verified user", async () => {

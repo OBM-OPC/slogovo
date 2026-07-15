@@ -1,5 +1,19 @@
 # Slogovo controlled-development status
 
+Last updated: 2026-07-15 07:54 UTC
+
+## Active run — issue #118 nonce CSP login regression
+
+- Current branch: `feat/complete-slogovo-backlog`, based on `main` commit `4c675da2a07076c214ca7d45b3d23138c6bb8710`.
+- Preflight inspected this status file, the clean local worktree, all remote branches, all open pull requests/issues, latest Actions and Vercel status, worktrees, and processes. No parallel Slogovo coding run was found. Issue #118 is the only open issue and was selected in full.
+- Live production evidence before the fix: `/login` returned a strict nonce CSP and `x-nonce` but 0/19 rendered Next.js scripts carried a nonce; Vercel reported `x-vercel-cache: PRERENDER`, so hydration and login were blocked. The newest Preview deployment redirects to Vercel SSO before the application, confirming Deployment Protection is a separate test concern.
+- Implemented one nonce per middleware request, identical incoming/final CSP and `x-nonce` propagation, request-header-preserving Supabase response recreation, multi-cookie preservation, and CSP/cookie preservation on redirects and JSON replacement responses.
+- The root layout now waits for an incoming request, making every nonce-protected application page dynamic. The production build marks application routes dynamic instead of prerendered.
+- Added focused middleware/Supabase tests and a production-mode Playwright regression that reads the CSP nonce, confirms every rendered Next.js script uses it, authenticates through `/login`, verifies the new `/lernen` document receives a fresh matching nonce, and fails on application CSP violations. Browser-extension `contentscript.js`/ObjectMultiplex messages are ignored explicitly.
+- Preview handling: strict CSP remains unchanged in both Preview and Production. Because Vercel Preview Protection serves its own SSO page first, the CSP smoke test runs against the unprotected local production server; no production/preview Vercel setting, bypass secret, or relaxed policy was introduced.
+- Validation passed: type-check; lint; database validation (10 migrations); 68 Vitest files / 232 tests; full development Playwright suite (15 passed, production-only CSP journey skipped); production build/content validation (all application routes dynamic; 0 content errors/warnings); focused production CSP/login Playwright journey (1 passed); and `git diff --check`.
+- Remaining delivery work: commit and push the single branch, open/update the single Draft PR, require CI/Security/Vercel checks, then mark ready for owner review without merging. No production migration, data, secret, environment, paid-service, or deployment-setting action is required.
+
 Last updated: 2026-07-15 08:42 UTC
 
 ## Dependency pull-request merge run
