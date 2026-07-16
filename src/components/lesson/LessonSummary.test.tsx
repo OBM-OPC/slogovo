@@ -70,8 +70,10 @@ describe("LessonSummary", () => {
     expect(screen.getByText("4")).toBeTruthy();
     expect(screen.getByText("Schreiben · 100%")).toBeTruthy();
     expect(screen.getByText("Auswahl · 0%")).toBeTruthy();
-    expect(screen.getByText("грешка (Fehler)")).toBeTruthy();
-    expect(screen.getByText("успех (Erfolg)")).toBeTruthy();
+    expect(screen.getByText("грешка")).toHaveAttribute("lang", "bg");
+    expect(screen.getByText("(Fehler)")).toBeTruthy();
+    expect(screen.getByText("успех")).toHaveAttribute("lang", "bg");
+    expect(screen.getByText("(Erfolg)")).toBeTruthy();
     expect(screen.getByText(/Wiederhole die Lektion/)).toBeTruthy();
     expect(screen.getByRole("button", { name: "Lektion wiederholen" })).toBeTruthy();
     expect(screen.getByRole("link", { name: "Trotzdem weiter" }).getAttribute("href"))
