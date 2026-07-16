@@ -59,6 +59,8 @@
   .bg-text,
   .cyrillic {
     font-family: var(--font-serif), "Noto Serif", var(--font-sans), system-ui, sans-serif;
+    font-feature-settings: "locl" 0;
+    font-style: normal;
   }
 
   .no-scrollbar::-webkit-scrollbar {
