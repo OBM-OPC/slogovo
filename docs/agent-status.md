@@ -1,5 +1,20 @@
 # Slogovo controlled-development status
 
+Last updated: 2026-07-16 10:43 UTC
+
+## Active run — Bulgarian Cyrillic font rendering fix
+
+- Current branch: `feat/complete-slogovo-backlog`, based on `main` commit `4c675da2a07076c214ca7d45b3d23138c6bb8710`.
+- Preflight inspected `docs/agent-status.md`, the local worktree, all remote branches, all open pull requests/issues (none), latest Actions and Vercel status, worktrees, and processes. No parallel Slogovo coding run was found. The user requested a focused fix for Bulgarian (Cyrillic) font rendering.
+- Confirmed `src/app/layout.tsx` already loads Inter with `subsets: ["latin", "cyrillic"]` and `display: "swap"`, and `src/app/globals.css` already scopes Bulgarian text via `:lang(bg)` / `.bg-text` / `.cyrillic` rules. The root cause is Inter's Bulgarian localized OpenType glyphs (`locl`) being activated by `lang="bg"`.
+- Kept all existing `lang="bg"` attributes for accessibility and language metadata.
+- Disabled localized glyph substitution for Bulgarian learning text by adding `font-feature-settings: "locl" 0; font-style: normal;` to the existing `:lang(bg)` / `.bg-text` / `.cyrillic` rule in `src/app/globals.css`.
+- Added a BulgarianTypography Storybook story under `src/components/ui/BulgarianTypography.stories.tsx` as a visual regression fixture, rendering the alphabet and representative words in normal and bold weights.
+- Added `e2e/bulgarian-typography.spec.ts` and `playwright.visual.config.ts` to verify the override in Chromium, Firefox and WebKit against the `/alphabet` page; all three browsers report `font-feature-settings: "locl" 0` and `font-style: normal` for Bulgarian content.
+- Opened Draft PR #120 (`feat/complete-slogovo-backlog` → `main`) at commit `4de7951a...`.
+- Validation passed: lint; type-check; 68 Vitest files / 232 tests; cross-browser visual regression tests (Chromium/Firefox/WebKit); production build (110 routes); content validation; `git diff --check`. GitHub Actions CI run `29505279021` (after one transient accessibility-scanner timeout rerun) and Security run `29505278996` both passed. Vercel Preview deployed successfully.
+- Remaining delivery work: keep PR #120 in Draft until the backlog branch is ready for owner review, monitor CI/Security/Vercel checks, and do not merge without owner approval. No production migration, data, secret, environment, paid-service, or manual deployment action is required.
+
 Last updated: 2026-07-15 07:54 UTC
 
 ## Active run — issue #118 nonce CSP login regression

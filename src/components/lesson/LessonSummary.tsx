@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { CheckCircle2, XCircle } from "lucide-react";
+import type { ReactNode } from "react";
 import { Lesson, LessonAttempt } from "@/types";
 import { buildLessonPerformanceSummary } from "@/lib/lesson-summary";
 import { Button } from "@/components/ui/Button";
@@ -12,11 +13,16 @@ interface LessonSummaryProps {
   onRetry: () => void;
 }
 
-function vocabularyLabels(lesson: Lesson, ids: string[]): string[] {
+function vocabularyLabels(lesson: Lesson, ids: string[]): ReactNode[] {
   const idSet = new Set(ids);
   return lesson.vocabulary
     .filter((item) => idSet.has(item.id))
-    .map((item) => `${item.bg} (${item.de})`);
+    .map((item, idx, arr) => (
+      <span key={item.id}>
+        <span lang="bg">{item.bg}</span> ({item.de})
+        {idx < arr.length - 1 ? ", " : null}
+      </span>
+    ));
 }
 
 export function LessonSummary({
@@ -70,13 +76,13 @@ export function LessonSummary({
           {weakVocabulary.length > 0 && (
             <div className="rounded-xl bg-danger/5 p-3">
               <p className="text-sm font-semibold">Weiter üben</p>
-              <p className="text-sm text-muted">{weakVocabulary.join(", ")}</p>
+              <p className="text-sm text-muted">{weakVocabulary}</p>
             </div>
           )}
           {masteredVocabulary.length > 0 && (
             <div className="rounded-xl bg-success/10 p-3">
               <p className="text-sm font-semibold">Sicher beantwortet</p>
-              <p className="text-sm text-muted">{masteredVocabulary.join(", ")}</p>
+              <p className="text-sm text-muted">{masteredVocabulary}</p>
             </div>
           )}
         </div>
