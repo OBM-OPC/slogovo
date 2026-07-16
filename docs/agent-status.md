@@ -12,8 +12,8 @@ Last updated: 2026-07-16 10:43 UTC
   - `src/components/lesson/LessonSummary.tsx` weak/mastered vocabulary lists.
   - `src/components/vocabulary/TypingExercise.tsx` rich feedback messages (typo, wrong, correct).
 - Updated related tests in `LessonSummary.test.tsx` and `TypingExercise.test.tsx` to query the split text nodes, and added regression assertions verifying Bulgarian text carries `lang="bg"`.
-- Opened Draft PR #120 (`feat/complete-slogovo-backlog` → `main`) with the commit `1ac6be66a...`.
-- Validation passed: lint; type-check; 68 Vitest files / 232 tests; production build (110 routes); content validation; `git diff --check`.
+- Opened Draft PR #120 (`feat/complete-slogovo-backlog` → `main`) at commit `2f60451a...`.
+- Validation passed: lint; type-check; 68 Vitest files / 232 tests; production build (110 routes); content validation; `git diff --check`. GitHub Actions CI run `29492128842` and Security run `29492128824` both completed successfully.
 - Remaining delivery work: keep PR #120 in Draft until the backlog branch is ready for owner review, monitor CI/Security/Vercel checks, and do not merge without owner approval. No production migration, data, secret, environment, paid-service, or manual deployment action is required.
 
 Last updated: 2026-07-15 07:54 UTC
