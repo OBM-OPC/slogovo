@@ -38,7 +38,7 @@ describe("TypingExercise", () => {
 
     expect(screen.getByText(/Fast richtig/)).toBeTruthy();
     expect(screen.getByText(/Schreibweise:/)).toBeTruthy();
-    expect(screen.getByText("здравей")).toHaveAttribute("lang", "bg");
+    expect(screen.getByText("здравей").getAttribute("lang")).toBe("bg");
   });
 
   it("records typed recall as production practice", () => {
