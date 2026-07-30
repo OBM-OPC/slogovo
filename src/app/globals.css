@@ -55,11 +55,13 @@
     line-height: 1.2;
   }
 
+  /* Bulgarian learning content must render in the tested sans-serif font
+     (Inter / Noto Sans Cyrillic), never the decorative serif heading font. */
   :lang(bg),
   .bg-text,
-  .cyrillic {
-    font-family: var(--font-serif), "Noto Serif", var(--font-sans), system-ui, sans-serif;
-    font-feature-settings: "locl" 0;
+  .cyrillic,
+  .bulgarian-text {
+    font-family: var(--font-sans), "Noto Sans Cyrillic", system-ui, sans-serif;
     font-style: normal;
   }
 

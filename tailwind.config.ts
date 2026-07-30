@@ -84,7 +84,7 @@ const config: Config = {
       fontFamily: {
         sans: ["var(--font-sans)", "Noto Sans Cyrillic", "system-ui", "sans-serif"],
         serif: ["var(--font-serif)", "Noto Serif", "Georgia", "serif"],
-        cyrillic: ["var(--font-serif)", "Noto Serif", "Noto Sans Cyrillic", "serif"],
+        cyrillic: ["var(--font-sans)", "Noto Sans Cyrillic", "system-ui", "sans-serif"],
       },
       borderRadius: {
         "2xl": "1rem",
