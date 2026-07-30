@@ -37,7 +37,8 @@ describe("TypingExercise", () => {
     fireEvent.click(screen.getByRole("button", { name: "Prüfen" }));
 
     expect(screen.getByText(/Fast richtig/)).toBeTruthy();
-    expect(screen.getByText(/Schreibweise: здравей/)).toBeTruthy();
+    expect(screen.getByText(/Schreibweise:/)).toBeTruthy();
+    expect(screen.getByText("здравей").getAttribute("lang")).toBe("bg");
   });
 
   it("records typed recall as production practice", () => {

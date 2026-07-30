@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
+import type { ReactNode } from "react";
 import { VocabularyItem, DifficultyRating } from "@/types";
 import { Button } from "@/components/ui/Button";
 import { useProgressSafe } from "@/hooks/useProgressSafe";
@@ -11,7 +12,7 @@ import { vibrateCorrect, vibrateWrong } from "@/lib/haptics";
 import { triggerConfetti } from "@/lib/confetti";
 import { Volume2, Loader2, AlertCircle, Brain, Check, RotateCcw, Sparkles } from "lucide-react";
 import { evaluateAnswerDetailed } from "@/lib/answer-evaluation";
-import { buildEvaluationFeedback, formatRichFeedback, type RichFeedback } from "@/lib/feedback";
+import { buildEvaluationFeedback, type RichFeedback } from "@/lib/feedback";
 import { BulgarianKeyboard } from "@/components/ui/BulgarianKeyboard";
 
 
@@ -21,6 +22,24 @@ interface TypingExerciseProps {
   words: VocabularyItem[];
   mode: "type" | "build";
   onExit?: () => void;
+}
+
+function formatFeedbackWithLang(feedback: RichFeedback | null, correctAnswer: string): ReactNode {
+  if (!feedback) {
+    return <>Richtige Antwort: <span lang="bg">{correctAnswer}</span></>;
+  }
+  const message = feedback.message;
+  if (feedback.status === "correct" || feedback.status === "accepted_variant") {
+    return <>{message}</>;
+  }
+  if (feedback.status === "correct_with_typo") {
+    return feedback.matchedAnswer
+      ? <>{message} Schreibweise: <span lang="bg">{feedback.matchedAnswer}</span></>
+      : <>{message}</>;
+  }
+  return feedback.matchedAnswer
+    ? <>{message} Richtige Antwort: <span lang="bg">{feedback.matchedAnswer}</span></>
+    : <>{message}</>;
 }
 
 const DIFFICULTY_LABELS: Record<DifficultyRating, { label: string; className: string; icon: typeof Check }> = {
@@ -294,7 +313,7 @@ export function TypingExercise({ words, mode, onExit }: TypingExerciseProps) {
               isCorrect ? "bg-success/10 text-success" : "bg-danger/10 text-danger"
             )}
           >
-            {answerFeedback ? formatRichFeedback(answerFeedback) : `Richtige Antwort: ${word.bg}`}
+            {formatFeedbackWithLang(answerFeedback, word.bg)}
           </div>
           <p className="text-center text-sm text-muted">Wie schwer war diese Vokabel?</p>
           <div className="grid grid-cols-2 gap-2">

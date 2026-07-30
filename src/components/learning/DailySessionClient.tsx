@@ -251,7 +251,7 @@ export function DailySessionClient() {
           ) : (
             <>
               <p id="daily-answer-feedback" role="status" aria-live="polite" className={`mb-4 rounded-xl p-3 font-medium ${answerCorrect ? "bg-success/10 text-success" : "bg-danger/10 text-danger"}`}>
-                {answerCorrect ? "Richtig!" : `Richtige Antwort: ${current.word.bg}`}
+                {answerCorrect ? "Richtig!" : <>Richtige Antwort: <span lang="bg">{current.word.bg}</span></>}
               </p>
               <Button onClick={() => void advance(answerCorrect ? "good" : "repeat")} fullWidth>Weiter</Button>
             </>
